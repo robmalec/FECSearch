@@ -1,30 +1,56 @@
 package left.rising.FECSearchDraft.dbrepos;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import left.rising.FECSearchDraft.entities.PoliticalParty;
 
 @Entity
-@Table(name="ElectionResults")
+@Table(name = "ElectionResults")
 public class ElResult {
 	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY) // 
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //
 	private Integer id;
-	
+
 	private PoliticalParty winningParty;
-	private String rCandidate;
-	private String dCandidate;
-	
+	private int rCandId;
+	private int dCandId;
+
 	private int electionYear;
+
+
+	public ElResult() {
+	}
 	
-	public ElResult() {}
-	
-	public ElResult(String line) throws Exception {
-		String[] Fields = line.split(",");
+	public ElResult(Integer id, PoliticalParty winningParty, int rCandId, int dCandId, int electionYear) {
+		super();
+		this.id = id;
+		this.winningParty = winningParty;
+		this.rCandId = rCandId;
+		this.dCandId = dCandId;
+		this.electionYear = electionYear;
+	}
+
+
+	public ElResult(PoliticalParty winningParty, int rCandId, int dCandId, int electionYear) {
+		super();
+		this.winningParty = winningParty;
+		this.rCandId = rCandId;
+		this.dCandId = dCandId;
+		this.electionYear = electionYear;
+	}
+
+	/*
+	public ElResult(String[] Fields) throws Exception {
+
 		electionYear = Integer.valueOf(Fields[0]);
 		switch (Fields[1].toLowerCase().charAt(0)) {
 		case 'd':
@@ -33,31 +59,15 @@ public class ElResult {
 		case 'r':
 			winningParty = PoliticalParty.REPUBLICAN;
 			break;
-			default:
-				throw new Exception("Invalid party input");
+		default:
+			throw new Exception("Invalid party input");
 		}
-		dCandidate = Fields[2];
-		rCandidate = Fields[3];
+		rCandId = getIdFromCandidateList(Fields[2], PoliticalParty.REPUBLICAN);
+		dCandId = getIdFromCandidateList(Fields[3], PoliticalParty.DEMOCRAT);
 	}
+	*/
 	
-	public ElResult(PoliticalParty winningParty, String winningPresident,
-			String losingCandidate, int electionYear) {
-		super();
-		this.winningParty = winningParty;
-		this.rCandidate = winningPresident;
-		this.dCandidate = losingCandidate;
-		this.electionYear = electionYear;
-	}
-
-	public ElResult(Integer id, PoliticalParty winningParty, String winningPresident,
-			String losingCandidate, int electionYear) {
-		super();
-		this.id = id;
-		this.winningParty = winningParty;
-		this.rCandidate = winningPresident;
-		this.dCandidate = losingCandidate;
-		this.electionYear = electionYear;
-	}
+	//Standard getters and setters
 
 	public Integer getId() {
 		return id;
@@ -75,20 +85,20 @@ public class ElResult {
 		this.winningParty = winningParty;
 	}
 
-	public String getWinningPresident() {
-		return rCandidate;
+	public int getrCandId() {
+		return rCandId;
 	}
 
-	public void setWinningPresident(String winningPresident) {
-		this.rCandidate = winningPresident;
+	public void setrCandId(int rCandId) {
+		this.rCandId = rCandId;
 	}
 
-	public String getLosingCandidate() {
-		return dCandidate;
+	public int getdCandId() {
+		return dCandId;
 	}
 
-	public void setLosingCandidate(String losingCandidate) {
-		this.dCandidate = losingCandidate;
+	public void setdCandId(int dCandId) {
+		this.dCandId = dCandId;
 	}
 
 	public int getElectionYear() {
@@ -98,13 +108,4 @@ public class ElResult {
 	public void setElectionYear(int electionYear) {
 		this.electionYear = electionYear;
 	}
-
-	@Override
-	public String toString() {
-		return "ElResult [id=" + id + ", winningParty=" + winningParty + ", winningPresident=" + rCandidate
-				+ ", losingCandidate=" + dCandidate + ", electionYear="
-				+ electionYear + "]";
-	}
-	
-	
 }
