@@ -13,55 +13,32 @@
 </head>
 <body>
 
-	
+
 	<div class="container">
-	
-	<div class="jumbotron">
-	<h1>Follow The $</h1>
-	</div>
-		<form action="find-contributor">
-			<label>Name</label><input type="text" name="contributor_name">
-			<label>State</label><input type="text" name="contributor_state"
-				required>
 
-			<style>
-	.dropdown {
-		position: relative; 
-	 	display: inline-block;
-	 	border-style: groove;
-	 	border-width: 1px;
-}
+		<div class="jumbotron">
+			<h1>Follow The $</h1>
+		</div>
 
-	.dropdown-content {
-		display: none;
-		position: absolute;
-		background-color: #f9f9f9;
-		min-width: 160px;
-		box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-		padding: 12px 16px;
-		z-index: 1;
-
-}
-
-	.dropdown:hover .dropdown-content {
-		display: block;
-}
-	</style>
-
-			<div class="dropdown">
-				<span>Options</span>
-				<div class="dropdown-content">
-					<p>Biggest Winner</p>
-					<p>Biggest Loser</p>
-					<p>All Results</p>
-				</div>
+		<div class="dropdown">
+			<button class="btn btn-secondary dropdown-toggle" type="button"
+				id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+				aria-expanded="false">Search Options</button>
+			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+				<a class="dropdown-item" href="#">Location</a> <a
+					class="dropdown-item" href="#">Location Comparison</a> <a
+					class="dropdown-item" href="#">Biggest Winner</a> <a
+					class="dropdown-item" href="#">Biggest Loser</a>
 			</div>
+		</div>
+		<form action="find-contributor">
+			<label>Candidate Name</label><input type="text"
+				name="contributor_name"> <label>City</label><input
+				type="text" name="contributor_name"> <label>Zip Code</label><input
+				type="text" name="contributor_name"> <label>State</label><input
+				type="text" name="contributor_state" required>s <input
+				type="Submit" class="btn btn-dark">
 
-			<input type="Submit" class="btn btn-dark">
-
-			<!-- results in location
-			comparison location
-			biggest winner loser by cand -->
 		</form>
 	</div>
 	<br>
@@ -74,5 +51,6 @@
 			document.getElementById('alert').removeAttribute("style");
 		}
 	</script>
+	<script>$('.dropdown-toggle').dropdown()</script>
 </body>
 </html>
