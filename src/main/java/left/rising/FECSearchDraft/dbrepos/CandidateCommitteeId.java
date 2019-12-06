@@ -1,4 +1,4 @@
-package left.rising.FECSearchDraft.entities;
+package left.rising.FECSearchDraft.dbrepos;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -6,8 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import left.rising.FECSearchDraft.dbrepos.CandidateData;
 
 @Entity
 @Table(name="committee_ids")
@@ -33,6 +31,14 @@ public class CandidateCommitteeId {
 		this.committee_id = committee_id;
 	}
 
+	public CandidateCommitteeId(Integer election_year, CandidateData candidate_assigned,
+			String committee_id) {
+		super();
+		this.election_year = election_year;
+		this.candidate_assigned = candidate_assigned;
+		this.committee_id = committee_id;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
@@ -64,9 +70,4 @@ public class CandidateCommitteeId {
 	public void setCommittee_id(String committee_id) {
 		this.committee_id = committee_id;
 	}
-	
-	
-	
-	
-
 }
