@@ -19,9 +19,7 @@ public class HomeController {
 	private RestTemplate rt = new RestTemplate();
 	@Value("${fec.key}")
 	String fecKey;
-	
-	@Value("${followTheMoney.key}")
-	String ftmKey;
+
 
 	@RequestMapping("/")
 	public ModelAndView homePage() {
