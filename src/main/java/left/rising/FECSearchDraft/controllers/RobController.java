@@ -29,7 +29,9 @@ public class RobController {
 			try {
 				br = new BufferedReader(new FileReader("us-presidential-election-results.csv"));
 				String line = "";
+				line = br.readLine();
 				while ((line = br.readLine()) != null) {
+					System.out.println("Hello");
 					resRepo.save(new ElResult(line));
 				}
 			} catch (Exception e) {
