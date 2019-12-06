@@ -2,10 +2,7 @@ package left.rising.FECSearchDraft.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -133,6 +130,18 @@ public class AdamController {
 		} catch (NullPointerException e) {
 		}
 		return donations;
+	}
+	
+	@RequestMapping("find-historical-donations")
+	public List<Donation> getHistoricalDonations(String city, String state) {
+		List<CandidateData> candidates = cdr.findAll();
+		HashMap<String, List<CandidateCommitteeId>> candidate_committees = new HashMap<>();
+		for (CandidateData cd: candidates) {
+			candidate_committees.put(cd.getName(), ccr.findByCandidateAssigned(cd.getId()));
+		}
+		System.out.println(candidate_committees.values());
+		return null;
+		
 	}
 	
 }
