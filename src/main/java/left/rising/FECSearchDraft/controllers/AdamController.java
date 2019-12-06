@@ -128,7 +128,7 @@ public class AdamController {
 		ResponseEntity<ScheduleAResults> respEnt;
 		respEnt = rt.exchange(
 				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
-						+ "&committee_id=C00575795&contributor_city=Detroit&contributor_state=MI&per_page=100",
+						+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state + "&per_page=100",
 				HttpMethod.GET, httpEnt, ScheduleAResults.class);
 
 		donations.addAll(respEnt.getBody().getResults());
