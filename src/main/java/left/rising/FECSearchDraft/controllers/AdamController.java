@@ -3,6 +3,7 @@ package left.rising.FECSearchDraft.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,13 +15,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
+import left.rising.FECSearchDraft.dbrepos.ElResult;
+import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
 import left.rising.FECSearchDraft.entities.Donation;
 import left.rising.FECSearchDraft.entities.ScheduleAResults;
 
 @Controller
 public class AdamController {
 
+	@Autowired
+	ElResultRepo elr;
+	
+	@Autowired
+	CandidateDataRepo cdr;
+	
 	private RestTemplate rt = new RestTemplate();
+	
 	@Value("${fec.key}")
 	String fecKey;
 
@@ -60,7 +71,7 @@ public class AdamController {
 		double avg_winning_donation = largest_winner_total/winnerDonations.size();
 		double avg_losing_donation = largest_loser_total/loserDonations.size();
 
-		String location = "Detroit, MI";
+		String location = city + ", " + state;
 
 		ModelAndView mv = new ModelAndView("location-search-results");
 		mv.addObject("location", location);
@@ -79,14 +90,47 @@ public class AdamController {
 		return mv;
 	}
 
-	public List<Donation> getCandidateDonations(String city, String state, String committee_id) {
-		List<Donation> donations = new ArrayList<>();
+	public HttpHeaders getHeaders () {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.USER_AGENT, "testing");
 		headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 		headers.add("api_key", fecKey);
 		headers.add("location", "Detroit+MI");
-		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", headers);
+		return headers;
+	}
+	
+	public List<Donation> getCandidateDonations(String city, String state, String committee_id) {
+		List<Donation> donations = new ArrayList<>();
+		
+		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
+		ResponseEntity<ScheduleAResults> respEnt;
+		respEnt = rt.exchange(
+				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
+						+ "&committee_id=C00575795&contributor_city=Detroit&contributor_state=MI&per_page=100",
+				HttpMethod.GET, httpEnt, ScheduleAResults.class);
+
+		donations.addAll(respEnt.getBody().getResults());
+		try {
+			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
+				System.out.println(respEnt.getBody().getPagination().getLast_indexes().getLast_index());
+				respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
+						+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state + "&per_page=100&last_index="
+						+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
+						+ "&last_contribution_receipt_date="
+						+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date(),
+						HttpMethod.GET, httpEnt, ScheduleAResults.class);
+				donations.addAll(respEnt.getBody().getResults());
+			}
+		} catch (NullPointerException e) {
+		}
+		return donations;
+	}
+	
+	public List<Donation> getHistoricalCandidateDonations(String city, String state, String committee_id) {
+		List<ElResult> elResults = elr.findAll();
+		
+		List<Donation> donations = new ArrayList<>();
+		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
 		respEnt = rt.exchange(
 				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey

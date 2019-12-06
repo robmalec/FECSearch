@@ -13,4 +13,10 @@ public interface CandidateDataRepo extends JpaRepository<CandidateData,Integer>{
 	
 	@Query("SELECT name FROM CandidateData WHERE id=:ID")
 	public List<String>  getCandidateNameFromId(@Param("ID") int ID);
+	
+	@Query("FROM CandidateData WHERE name=:iName")
+	public List<CandidateData> getCandidateDataFromName(@Param("iName") String name);
+	
+	@Query("FROM CandidateData WHERE id=:ID")
+	public List<CandidateData> getCandidateDataFromID(@Param("ID") int Id);
 }
