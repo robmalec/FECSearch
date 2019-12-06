@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import left.rising.FECSearchDraft.entities.CandidateCommitteeId;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
 
 @Entity
