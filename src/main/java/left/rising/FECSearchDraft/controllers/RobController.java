@@ -31,7 +31,6 @@ public class RobController {
 				String line = "";
 				line = br.readLine();
 				while ((line = br.readLine()) != null) {
-					System.out.println("Hello");
 					resRepo.save(new ElResult(line));
 				}
 			} catch (Exception e) {
