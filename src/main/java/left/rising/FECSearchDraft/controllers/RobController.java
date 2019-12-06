@@ -2,17 +2,14 @@ package left.rising.FECSearchDraft.controllers;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.Transient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
+import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
 import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
 import left.rising.FECSearchDraft.dbrepos.ElResult;
@@ -26,7 +23,10 @@ public class RobController {
 	ElResultRepo resRepo;
 
 	@Autowired
-	public CandidateDataRepo cRepo;
+	CandidateDataRepo cRepo;
+	
+	@Autowired
+	CanCommitteeRepo canComRepo;
 
 	@RequestMapping("/load-el-data")
 	public ModelAndView loadElDataFromCSV() {
@@ -37,8 +37,9 @@ public class RobController {
 				br = new BufferedReader(new FileReader("us-presidential-election-results.csv"));
 				String line = "";
 				line = br.readLine();
+				String[] fields;
 				while ((line = br.readLine()) != null) {
-					String[] fields = line.split(",");
+					fields = line.split(",");
 
 					int electionYear = Integer.valueOf(fields[0]);
 
@@ -72,6 +73,26 @@ public class RobController {
 
 					resRepo.save(new ElResult(winningParty,rCandId, dCandId,electionYear));
 				}
+				
+				br.close();
+				//Loading committee IDs
+				br = new BufferedReader(new FileReader("committe_ids.csv"));
+				line = br.readLine();
+				while ((line = br.readLine()) != null) {
+					fields = line.split(",");
+					
+					System.out.println(fields[0]);
+					
+					int year = Integer.valueOf(fields[0]);
+					CandidateData candidate = cRepo.getCandidateDataFromName(fields[1]).get(0);
+					
+					String committeeId = fields[2];
+					
+					System.out.println(line);
+					
+					canComRepo.save(new CandidateCommitteeId(year, candidate, committeeId));
+				}
+				
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				e.printStackTrace();
@@ -79,20 +100,4 @@ public class RobController {
 		}
 		return new ModelAndView("index");
 	}
-
-	/*
-	 * Retrieves candidate ID from candidates table, adding the candidate name to
-	 * the table if it isn't already there
-	 */
-	private int getIdFromCandidateList(String cName, PoliticalParty cParty) {
-		List<CandidateData> candIDs = cRepo.findAll();
-
-		if (cRepo.getCandidateIdFromName(cName).size() == 0) {
-			cRepo.save(new CandidateData(cName, cParty));
-		}
-		return cRepo.getCandidateIdFromName(cName).get(0);
-	}
-	
-	
-
 }
