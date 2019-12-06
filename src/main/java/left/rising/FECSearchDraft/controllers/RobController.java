@@ -76,7 +76,7 @@ public class RobController {
 				
 				br.close();
 				//Loading committee IDs
-				br = new BufferedReader(new FileReader("committe_ids.csv"));
+				br = new BufferedReader(new FileReader("committee_ids.csv"));
 				line = br.readLine();
 				while ((line = br.readLine()) != null) {
 					fields = line.split(",");
@@ -92,6 +92,7 @@ public class RobController {
 					
 					canComRepo.save(new CandidateCommitteeId(year, candidate, committeeId));
 				}
+				br.close();
 				
 			} catch (Exception e) {
 				System.out.println(e.getMessage());

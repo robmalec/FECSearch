@@ -1,7 +1,11 @@
 package left.rising.FECSearchDraft.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
+import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
+import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
-import left.rising.FECSearchDraft.dbrepos.ElResult;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
 import left.rising.FECSearchDraft.entities.Donation;
 import left.rising.FECSearchDraft.entities.ScheduleAResults;
@@ -29,6 +35,9 @@ public class AdamController {
 	
 	@Autowired
 	CandidateDataRepo cdr;
+	
+	@Autowired
+	CanCommitteeRepo ccr;
 	
 	private RestTemplate rt = new RestTemplate();
 	
@@ -126,31 +135,4 @@ public class AdamController {
 		return donations;
 	}
 	
-	public List<Donation> getHistoricalCandidateDonations(String city, String state, String committee_id) {
-		List<ElResult> elResults = elr.findAll();
-		
-		List<Donation> donations = new ArrayList<>();
-		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
-		ResponseEntity<ScheduleAResults> respEnt;
-		respEnt = rt.exchange(
-				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
-						+ "&committee_id=C00575795&contributor_city=Detroit&contributor_state=MI&per_page=100",
-				HttpMethod.GET, httpEnt, ScheduleAResults.class);
-
-		donations.addAll(respEnt.getBody().getResults());
-		try {
-			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
-				System.out.println(respEnt.getBody().getPagination().getLast_indexes().getLast_index());
-				respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
-						+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state + "&per_page=100&last_index="
-						+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
-						+ "&last_contribution_receipt_date="
-						+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date(),
-						HttpMethod.GET, httpEnt, ScheduleAResults.class);
-				donations.addAll(respEnt.getBody().getResults());
-			}
-		} catch (NullPointerException e) {
-		}
-		return donations;
-	}
 }
