@@ -108,4 +108,26 @@ public class ElResult {
 	public void setElectionYear(int electionYear) {
 		this.electionYear = electionYear;
 	}
+	
+	public int getWinnerId() {
+		switch (winningParty) {
+		case DEMOCRAT:
+			return dCandId;
+		case REPUBLICAN:
+			return rCandId;
+			default:
+				return dCandId;
+		}
+	}
+	
+	public int getLoserId() {
+		switch (winningParty) {
+		case DEMOCRAT:
+			return rCandId;
+		case REPUBLICAN:
+			return dCandId;
+			default:
+				return dCandId;
+		}
+	}
 }

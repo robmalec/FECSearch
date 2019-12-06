@@ -13,10 +13,10 @@ public class CandidateCommitteeId {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
-	private Integer election_year;
+	private Integer electionYear;
 	@ManyToOne
-	private CandidateData candidate_assigned;
-	private String committee_id;
+	private CandidateData candidateAssigned;
+	private String committeeId;
 	
 	public CandidateCommitteeId() {
 		super();
@@ -26,17 +26,17 @@ public class CandidateCommitteeId {
 			String committee_id) {
 		super();
 		this.id = id;
-		this.election_year = election_year;
-		this.candidate_assigned = candidate_assigned;
-		this.committee_id = committee_id;
+		this.electionYear = election_year;
+		this.candidateAssigned = candidate_assigned;
+		this.committeeId = committee_id;
 	}
 
 	public CandidateCommitteeId(Integer election_year, CandidateData candidate_assigned,
 			String committee_id) {
 		super();
-		this.election_year = election_year;
-		this.candidate_assigned = candidate_assigned;
-		this.committee_id = committee_id;
+		this.electionYear = election_year;
+		this.candidateAssigned = candidate_assigned;
+		this.committeeId = committee_id;
 	}
 	
 	public Integer getId() {
@@ -48,26 +48,26 @@ public class CandidateCommitteeId {
 	}
 
 	public Integer getElection_year() {
-		return election_year;
+		return electionYear;
 	}
 
 	public void setElection_year(Integer election_year) {
-		this.election_year = election_year;
+		this.electionYear = election_year;
 	}
 
 	public CandidateData getCandidate_assigned() {
-		return candidate_assigned;
+		return candidateAssigned;
 	}
 
 	public void setCandidate_assigned(CandidateData candidate_assigned) {
-		this.candidate_assigned = candidate_assigned;
+		this.candidateAssigned = candidate_assigned;
 	}
 
 	public String getCommittee_id() {
-		return committee_id;
+		return committeeId;
 	}
 
 	public void setCommittee_id(String committee_id) {
-		this.committee_id = committee_id;
+		this.committeeId = committee_id;
 	}
 }

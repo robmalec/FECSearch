@@ -1,6 +1,5 @@
 package left.rising.FECSearchDraft.dbrepos;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -22,7 +21,7 @@ public class CandidateData {
 	String name;
 	PoliticalParty afiliatedParty;
 	
-	@OneToMany(mappedBy = "candidate_assigned", orphanRemoval = true)
+	@OneToMany(mappedBy = "candidateAssigned", orphanRemoval = true)
 	List<CandidateCommitteeId> committee;
 	
 	public CandidateData() {}
