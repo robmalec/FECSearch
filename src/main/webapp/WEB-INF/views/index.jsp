@@ -27,7 +27,9 @@
 			<style>
 	.dropdown {
 		position: relative; 
-	 	display: inline-block; 
+	 	display: inline-block;
+	 	border-style: groove;
+	 	border-width: 1px;
 }
 
 	.dropdown-content {
@@ -38,6 +40,7 @@
 		box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 		padding: 12px 16px;
 		z-index: 1;
+
 }
 
 	.dropdown:hover .dropdown-content {
@@ -57,8 +60,8 @@
 			<input type="Submit" class="btn btn-dark">
 
 			<!-- results in location
-	comparison location
-	biggest winner loser by cand -->
+			comparison location
+			biggest winner loser by cand -->
 		</form>
 	</div>
 	<br>
