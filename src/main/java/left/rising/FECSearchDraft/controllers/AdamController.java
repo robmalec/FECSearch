@@ -71,7 +71,7 @@ public class AdamController {
 		double avg_winning_donation = largest_winner_total/winnerDonations.size();
 		double avg_losing_donation = largest_loser_total/loserDonations.size();
 
-		String location = "Detroit, MI";
+		String location = city + ", " + state;
 
 		ModelAndView mv = new ModelAndView("location-search-results");
 		mv.addObject("location", location);

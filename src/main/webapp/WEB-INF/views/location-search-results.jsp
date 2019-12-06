@@ -19,13 +19,13 @@
 		<br>
 		<div class="row">
 			<div class="col-lg-12">
-				<h1>Location${location}</h1>
+				<h1>${location}</h1>
 			</div>
 		</div>
 		<br>
 		<div class="row">
 			<div class="col-lg-12">
-				<h4>The majority of donors in Location${location} have supported:</h4>
+				<h4>The majority of donors in ${location} have supported:</h4>
 			</div>
 		</div>
 		<div class="row">
