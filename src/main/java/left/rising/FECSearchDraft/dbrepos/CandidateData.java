@@ -1,11 +1,16 @@
 package left.rising.FECSearchDraft.dbrepos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import left.rising.FECSearchDraft.entities.CandidateCommitteeId;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
 
 @Entity
@@ -17,6 +22,9 @@ public class CandidateData {
 
 	String name;
 	PoliticalParty afiliatedParty;
+	
+	@OneToMany(mappedBy = "candidate_assigned", orphanRemoval = true)
+	List<CandidateCommitteeId> committee;
 	
 	public CandidateData() {}
 	
