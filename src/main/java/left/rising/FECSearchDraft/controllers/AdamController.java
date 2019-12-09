@@ -16,12 +16,17 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
+import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
 import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
 import left.rising.FECSearchDraft.dbrepos.ElResult;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
-import left.rising.FECSearchDraft.entities.Donation;
+import left.rising.FECSearchDraft.dbrepos.SearchResultRepo;
+import left.rising.FECSearchDraft.entities.DBDonation;
+import left.rising.FECSearchDraft.entities.LocationSearchResult;
 import left.rising.FECSearchDraft.entities.ScheduleAResults;
+import left.rising.FECSearchDraft.entities.loserCommitteeIds;
+import left.rising.FECSearchDraft.entities.winnerCommitteeIds;
 
 @Controller
 public class AdamController {
@@ -34,6 +39,9 @@ public class AdamController {
 
 	@Autowired
 	CanCommitteeRepo ccr;
+	
+	@Autowired
+	SearchResultRepo lsrr;
 
 	private RestTemplate rt = new RestTemplate();
 
@@ -45,11 +53,12 @@ public class AdamController {
 		return new ModelAndView("test-search");
 	}
 
-	@RequestMapping("location-search-results")
-	public ModelAndView locationSearchResults(String city, String state, int electionYear) {
+	@RequestMapping("/test-search-historical")
+	public ModelAndView testSearchHistorical() {
+		return new ModelAndView("test-search-historical");
+	}
 
-		// How to get committee IDs from database and tie them to candidates
-
+	public LocationSearchResult getLocationSearchResult(String city, String state, Integer electionYear) {
 		ElResult result = elr.findByElectionYear(electionYear).get(0);
 
 		Integer winner_id = result.getWinnerId();
@@ -61,11 +70,27 @@ public class AdamController {
 		String winner_name = cdr.getCandidateNameFromId(winner_id).get(0);
 		String loser_name = cdr.getCandidateNameFromId(loser_id).get(0);
 
-		String winner_committee_id = ccr.findByCandidateAssigned(winner).get(0).getCommittee_id();
-		String loser_committee_id = ccr.findByCandidateAssigned(loser).get(0).getCommittee_id();
+		List<winnerCommitteeIds> winner_committee_ids = new ArrayList<>();
+		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
+			winner_committee_ids.add(new winnerCommitteeIds(c.getCommittee_id()));
+		}
+		List<loserCommitteeIds> loser_committee_ids = new ArrayList<>();
+		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(loser)) {
+			loser_committee_ids.add(new loserCommitteeIds(c.getCommittee_id()));
+		}
 
-		List<Donation> winnerDonations = getCandidateDonations(city, state, winner_committee_id);
-		List<Donation> loserDonations = getCandidateDonations(city, state, loser_committee_id);
+		List<DBDonation> winnerDonations = new ArrayList<>();
+		for (winnerCommitteeIds w : winner_committee_ids) {
+			winnerDonations.addAll(getCandidateDonations(city, state, w.getCommitteeId()));
+			System.out.println(winnerDonations.size());
+		}
+		List<DBDonation> loserDonations = new ArrayList<>();
+		System.out.println(loserDonations.size());
+		for (loserCommitteeIds l : loser_committee_ids) {
+			System.out.println(l.getCommitteeId() );
+			loserDonations.addAll(getCandidateDonations(city, state, l.getCommitteeId()));
+			System.out.println(loserDonations.size());
+		}
 		int total_winners = 0;
 		int total_losers = 0;
 		if (winnerDonations.size() > loserDonations.size()) {
@@ -73,44 +98,102 @@ public class AdamController {
 		} else {
 			total_losers += 1;
 		}
-		double largest_winner_total = 0;
-		double largest_loser_total = 0;
-		double largest_winning_donation = winnerDonations.get(0).getContribution_receipt_amount();
-		double largest_losing_donation = loserDonations.get(0).getContribution_receipt_amount();
-		for (Donation d : winnerDonations) {
-			largest_winner_total += d.getContribution_receipt_amount();
-			if (d.getContribution_receipt_amount() > largest_winning_donation) {
-				largest_winning_donation = d.getContribution_receipt_amount();
+		double winner_total_donations = 0;
+		double loser_total_donations = 0;
+		double largest_winning_donation = winnerDonations.get(0).getContributionReceiptAmount();
+		double largest_losing_donation = loserDonations.get(0).getContributionReceiptAmount();
+		for (DBDonation d : winnerDonations) {
+			winner_total_donations += d.getContributionReceiptAmount();
+			if (d.getContributionReceiptAmount() > largest_winning_donation) {
+				largest_winning_donation = d.getContributionReceiptAmount();
 			}
 		}
 
-		for (Donation d : loserDonations) {
-			largest_loser_total += d.getContribution_receipt_amount();
-			if (d.getContribution_receipt_amount() > largest_losing_donation) {
-				largest_losing_donation = d.getContribution_receipt_amount();
+		for (DBDonation d : loserDonations) {
+			loser_total_donations += d.getContributionReceiptAmount();
+			if (d.getContributionReceiptAmount() > largest_losing_donation) {
+				largest_losing_donation = d.getContributionReceiptAmount();
 			}
 		}
-		double avg_winning_donation = largest_winner_total / winnerDonations.size();
-		double avg_losing_donation = largest_loser_total / loserDonations.size();
+		double avg_winning_donation = winner_total_donations / winnerDonations.size();
+		double avg_losing_donation = loser_total_donations / loserDonations.size();
+		LocationSearchResult lsr = new LocationSearchResult(winner_name, loser_name, winner_committee_ids, loser_committee_ids,
+				winnerDonations, loserDonations, total_winners, total_losers, winner_total_donations,
+				loser_total_donations, largest_winning_donation, largest_losing_donation, avg_winning_donation, avg_losing_donation, city, state, electionYear);
+		for (loserCommitteeIds l: loser_committee_ids) {
+			l.setLocationSearchResultAssigned(lsr);
+		}
+		for (winnerCommitteeIds w: winner_committee_ids) {
+			w.setLocationSearchResultAssigned(lsr);
+		}
+		return lsr;
+	}
+	
+	@RequestMapping("compare-location-search-results")
+	public ModelAndView compareLocationSearchResults(String city1, String state1, String city2, String state2, Integer electionYear) {
+		LocationSearchResult lsr1 = new LocationSearchResult();
+		LocationSearchResult lsr2 = new LocationSearchResult();
+		if(lsrr.getSearchResultsFromCityStateAndElectionYear(city1, state1, electionYear) == null) {
+			lsr1 = getLocationSearchResult(city1, state1, electionYear);
+			lsrr.save(lsr1);
+		} else {
+			lsr1 = lsrr.getSearchResultsFromCityStateAndElectionYear(city1, state1, electionYear);
+		}
+		if(lsrr.getSearchResultsFromCityStateAndElectionYear(city2, state2, electionYear) == null) {
+			lsr2 = getLocationSearchResult(city2, state2, electionYear);
+			lsrr.save(lsr2);
+		} else {
+			lsr2 = lsrr.getSearchResultsFromCityStateAndElectionYear(city1, state1, electionYear);
+		}
+		
+		String location1 = city1 + ", " + state1;
+		String location2 = city2 + ", " + state2;
 
+		ModelAndView mv = new ModelAndView("compare-location-search-results");
+		mv.addObject("location1", location1);
+		mv.addObject("location2", location2);
+		mv.addObject("location1_winners", lsr1.getTotalWinners());
+		mv.addObject("location2_winners", lsr2.getTotalWinners());
+		mv.addObject("avg_winning_donation_location1", String.format("%.2f", lsr1.getAvgWinningDonation()));
+		mv.addObject("avg_winning_donation_location2", String.format("%.2f", lsr2.getAvgWinningDonation()));
+		mv.addObject("largest_winning_donation_location1", String.format("%.2f", lsr1.getLargestWinningDonation()));
+		mv.addObject("largest_winning_donation_location2", String.format("%.2f", lsr2.getLargestWinningDonation()));
+		mv.addObject("largest_winner_recipient_location1", lsr1.getWinnerName());
+		mv.addObject("largest_winner_recipient_location2", lsr2.getWinnerName());
+		mv.addObject("largest_winner_total_location1", String.format("%.2f", lsr1.getWinnerTotalDonations()));
+		mv.addObject("largest_winner_total_location2", String.format("%.2f", lsr2.getWinnerTotalDonations()));
+		mv.addObject("largest_total_winner_recipient_location1", lsr1.getWinnerName());
+		mv.addObject("largest_total_winner_recipient_location1", lsr2.getWinnerName());
+		return mv;
+	} 
+	
+	@RequestMapping("location-search-results")
+	public ModelAndView locationSearchResults(String city, String state, int electionYear) {
+		LocationSearchResult lsr = new LocationSearchResult();
+		if(lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear) == null) {
+			lsr = getLocationSearchResult(city, state, electionYear);
+			lsrr.save(lsr);
+		} else {
+			lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear);
+		}
 		String location = city + ", " + state;
 
 		ModelAndView mv = new ModelAndView("location-search-results");
 		mv.addObject("location", location);
-		mv.addObject("total_winners", total_winners);
-		mv.addObject("total_losers", total_losers);
-		mv.addObject("avg_winning_donation", String.format("%.2f", avg_winning_donation));
-		mv.addObject("avg_losing_donation", String.format("%.2f", avg_losing_donation));
-		mv.addObject("largest_winning_donation", String.format("%.2f", largest_winning_donation));
-		mv.addObject("largest_losing_donation", String.format("%.2f", largest_losing_donation));
-		mv.addObject("largest_winner_recipient", winner_name);
-		mv.addObject("largest_loser_recipient", loser_name);
-		mv.addObject("largest_winner_total", String.format("%.2f", largest_winner_total));
-		mv.addObject("largest_loser_total", String.format("%.2f", largest_loser_total));
-		mv.addObject("largest_total_winner_recipient", winner_name);
-		mv.addObject("largest_total_loser_recipient", loser_name);
+		mv.addObject("total_winners", lsr.getTotalWinners());
+		mv.addObject("total_losers", lsr.getTotalLosers());
+		mv.addObject("avg_winning_donation", String.format("%.2f", lsr.getAvgWinningDonation()));
+		mv.addObject("avg_losing_donation", String.format("%.2f", lsr.getAvgLosingDonation()));
+		mv.addObject("largest_winning_donation", String.format("%.2f", lsr.getLargestWinningDonation()));
+		mv.addObject("largest_losing_donation", String.format("%.2f", lsr.getLargestLosingDonation()));
+		mv.addObject("largest_winner_recipient", lsr.getWinnerName());
+		mv.addObject("largest_loser_recipient", lsr.getLoserName());
+		mv.addObject("largest_winner_total", String.format("%.2f", lsr.getWinnerTotalDonations()));
+		mv.addObject("largest_loser_total", String.format("%.2f", lsr.getLoserTotalDonations()));
+		mv.addObject("largest_total_winner_recipient", lsr.getWinnerName());
+		mv.addObject("largest_total_loser_recipient", lsr.getLoserName());
 		return mv;
-	}
+	} 
 
 	public HttpHeaders getHeaders() {
 		HttpHeaders headers = new HttpHeaders();
@@ -121,45 +204,14 @@ public class AdamController {
 		return headers;
 	}
 
-	public List<Donation> getCandidateDonations(String city, String state, String committee_id) {
-		List<Donation> donations = new ArrayList<>();
+	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id) {
+		List<DBDonation> donations = new ArrayList<>();
 
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
 		respEnt = rt.exchange(
-				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
-						+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state + "&per_page=100",
-				HttpMethod.GET, httpEnt, ScheduleAResults.class);
-
-		donations.addAll(respEnt.getBody().getResults());
-		try {
-			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
-				System.out.println(respEnt.getBody().getPagination().getLast_indexes().getLast_index());
-				respEnt = rt.exchange(
-						"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
-								+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
-								+ "&per_page=100&last_index="
-								+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
-								+ "&last_contribution_receipt_date="
-								+ respEnt.getBody().getPagination().getLast_indexes()
-										.getLast_contribution_receipt_date(),
-						HttpMethod.GET, httpEnt, ScheduleAResults.class);
-				donations.addAll(respEnt.getBody().getResults());
-			}
-		} catch (NullPointerException e) {
-		}
-		return donations;
-	}
-
-	public List<Donation> getHistoricalCandidateDonations(String city, String state, String committee_id) {
-		List<ElResult> elResults = elr.findAll();
-
-		List<Donation> donations = new ArrayList<>();
-		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
-		ResponseEntity<ScheduleAResults> respEnt;
-		respEnt = rt.exchange(
-				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
-						+ "&committee_id=C00575795&contributor_city=Detroit&contributor_state=MI&per_page=100",
+				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id=" + committee_id
+						+ "&contributor_city=" + city + "&contributor_state=" + state + "&per_page=100",
 				HttpMethod.GET, httpEnt, ScheduleAResults.class);
 
 		donations.addAll(respEnt.getBody().getResults());
