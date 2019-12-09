@@ -17,7 +17,7 @@
 	<div class="container">
 
 		<div class="jumbotron">
-			<h1>Follow The $</h1>
+			<h1 style="font-family:Times New Roman;">Follow The $</h1>
 		</div>
 
 		<div class="dropdown">
@@ -36,7 +36,7 @@
 				name="contributor_name"> <label>City</label><input
 				type="text" name="contributor_name"> <label>Zip Code</label><input
 				type="text" name="contributor_name"> <label>State</label><input
-				type="text" name="contributor_state" required>s <input
+				type="text" name="contributor_state" required> <input
 				type="Submit" class="btn btn-dark">
 
 		</form>
@@ -51,6 +51,12 @@
 			document.getElementById('alert').removeAttribute("style");
 		}
 	</script>
-	<script>$('.dropdown-toggle').dropdown()</script>
+	<script type="text/javascript">
+	bootstrap.bundle.min.js / bootstrap.bundle.js
+	$('.dropdown-toggle').dropdown()
+	$('#myDropdown').on('show.bs.dropdown', function () {
+  // do something…
+})
+	</script>
 </body>
 </html>
