@@ -13,24 +13,23 @@ Election year,Candidate,Committee Id
 2004,George W. Bush,C00404343
 2004,George W. Bush,C00388579
 2004,George W. Bush,C00386987
-2000,Al Gore,C00342204
 2000,Al Gore,C00342212
 2000,Al Gore,C00342204
-2000,George W. Bush,C00343509 
+2000,George W. Bush,C00343509
 2000,George W. Bush,C00346932
 2000,George W. Bush,C00360503
-1996,Bill Clinton,C00321414 
-1996,Bill Clinton,C00305938 
+1996,Bill Clinton,C00321414
+1996,Bill Clinton,C00305938
 1996,Bill Clinton,C00302265
-1996,Bob Dole,C00317743 
-1996,Bob Dole,C00213850 
-1996,Bob Dole,C00301077 
+1996,Bob Dole,C00317743
+1996,Bob Dole,C00213850
+1996,Bob Dole,C00301077
 1996,Bob Dole,C00300608
-1992,Bill Clinton,C00272161 
-1992,Bill Clinton,C00268722 
+1992,Bill Clinton,C00272161
+1992,Bill Clinton,C00268722
 1992,Bill Clinton,C00253690
-1992,George H. W. Bush,C00273516 
-1992,George H. W. Bush,C00255380 
+1992,George H. W. Bush,C00273516
+1992,George H. W. Bush,C00255380
 1992,George H. W. Bush,C00254912
 1988,George H. W. Bush,C00273516
 1988,George H. W. Bush,C00255380
@@ -40,6 +39,7 @@ Election year,Candidate,Committee Id
 1988,George H. W. Bush,C00213538
 1988,Michael Dukakis,C00228957
 1988,Michael Dukakis,C00227629
+1988,Michael Dukakis,C00214213
 1988,Michael Dukakis,C00214312
 1984,Walter Mondale,C00186296
 1984,Walter Mondale,C00189886

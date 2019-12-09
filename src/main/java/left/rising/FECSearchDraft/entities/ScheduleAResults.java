@@ -8,13 +8,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ScheduleAResults {
 	
 	private Pagination pagination;
-	private List<Donation> results;
+	private List<DBDonation> results;
 	
 	public ScheduleAResults() {
 		super();
 	}
 
-	public ScheduleAResults(Pagination pagination, List<Donation> results) {
+	public ScheduleAResults(Pagination pagination, List<DBDonation> results) {
 		super();
 		this.pagination = pagination;
 		this.results = results;
@@ -28,11 +28,11 @@ public class ScheduleAResults {
 		this.pagination = pagination;
 	}
 
-	public List<Donation> getResults() {
+	public List<DBDonation> getResults() {
 		return results;
 	}
 
-	public void setResults(List<Donation> results) {
+	public void setResults(List<DBDonation> results) {
 		this.results = results;
 	}
 	
