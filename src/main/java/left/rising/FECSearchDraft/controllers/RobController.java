@@ -2,6 +2,7 @@ package left.rising.FECSearchDraft.controllers;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,8 @@ import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
 import left.rising.FECSearchDraft.dbrepos.ElResult;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
+import left.rising.FECSearchDraft.dbrepos.State;
+import left.rising.FECSearchDraft.dbrepos.StateRepo;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
 
 @Controller
@@ -27,6 +30,11 @@ public class RobController {
 	
 	@Autowired
 	CanCommitteeRepo canComRepo;
+	
+	@Autowired 
+	StateRepo sRepo;
+	
+	List<State> states;
 
 	@RequestMapping("/load-el-data")
 	public ModelAndView loadElDataFromCSV() {
@@ -100,5 +108,26 @@ public class RobController {
 			}
 		}
 		return new ModelAndView("index");
+	}
+	
+	@RequestMapping("load-test-map")
+	public ModelAndView loadMap() {
+		String mapAPIKey = "AIzaSyBNBZxsM5lncOL5puCd0OboEiOruXMJrok";
+		ModelAndView view = new ModelAndView("test-map","apiKey",mapAPIKey);
+		
+		view.addObject("opacity", 0.9);
+		
+		states = sRepo.findAll();
+		
+		String idString = "";
+		
+		for (State s : states) {
+			idString += (" " + s.getOSMStateId());
+		}
+				
+		view.addObject("states",states);
+		view.addObject("idString", idString);
+		
+		return view;
 	}
 }
