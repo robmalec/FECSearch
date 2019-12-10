@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.RateLimiter;
 
 import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
@@ -88,14 +87,14 @@ public class AdamController {
 		List<DBDonation> winnerDonations = new ArrayList<>();
 		for (winnerCommitteeIds w : winner_committee_ids) {
 			winnerDonations.addAll(getCandidateDonations(city, state, w.getCommitteeId()));
-			System.out.println(winnerDonations.size());
+			//System.out.println(winnerDonations.size());
 		}
 		List<DBDonation> loserDonations = new ArrayList<>();
 		System.out.println(loserDonations.size());
 		for (loserCommitteeIds l : loser_committee_ids) {
-			System.out.println(l.getCommitteeId());
+			//System.out.println(l.getCommitteeId());
 			loserDonations.addAll(getCandidateDonations(city, state, l.getCommitteeId()));
-			System.out.println(loserDonations.size());
+			//System.out.println(loserDonations.size());
 		}
 		int total_winners = 0;
 		int total_losers = 0;
@@ -106,8 +105,20 @@ public class AdamController {
 		}
 		double winner_total_donations = 0;
 		double loser_total_donations = 0;
-		double largest_winning_donation = winnerDonations.get(0).getContributionReceiptAmount();
-		double largest_losing_donation = loserDonations.get(0).getContributionReceiptAmount();
+		double largest_winning_donation = 0.0;
+
+		try {
+			largest_winning_donation = winnerDonations.get(0).getContributionReceiptAmount();
+		} catch (IndexOutOfBoundsException e) {
+
+		}
+
+		double largest_losing_donation = 0.0;
+		try {
+			largest_losing_donation = loserDonations.get(0).getContributionReceiptAmount();
+		} catch (IndexOutOfBoundsException e) {
+		}
+		
 		for (DBDonation d : winnerDonations) {
 			winner_total_donations += d.getContributionReceiptAmount();
 			if (d.getContributionReceiptAmount() > largest_winning_donation) {
@@ -216,26 +227,21 @@ public class AdamController {
 
 	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id) {
 		List<DBDonation> donations = new ArrayList<>();
-
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
-		System.out.println(rateLimiter.acquire());
+		//System.out.println(rateLimiter.acquire());
 		rateLimiter.acquire();
 		respEnt = rt.exchange(
 				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id=" + committee_id
 						+ "&contributor_city=" + city + "&contributor_state=" + state + "&per_page=100",
 				HttpMethod.GET, httpEnt, ScheduleAResults.class);
-		System.out.println(respEnt.getBody().getPagination().getPages());
-		/*
-		 *
-		 */
+		System.out.println("Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages()/2) + " seconds");
+		rateLimiter.acquire();
 		donations.addAll(respEnt.getBody().getResults());
 		try {
 			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
 				// System.out.println(respEnt.getBody().getPagination().getLast_indexes().getLast_index());
-				if (respEnt.getBody().getPagination().getPages() >= 120) {
-					rateLimiter.acquire();
-				}
+				rateLimiter.acquire();
 				respEnt = rt.exchange(
 						"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
 								+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
@@ -248,6 +254,12 @@ public class AdamController {
 				donations.addAll(respEnt.getBody().getResults());
 			}
 		} catch (NullPointerException e) {
+		}
+		if (donations.size() == 0) {
+			DBDonation db = new DBDonation();
+			db.setContributionReceiptAmount(0.0);
+			donations.add(db);
+			return donations;
 		}
 		return donations;
 	}
@@ -264,14 +276,17 @@ public class AdamController {
 			}
 		}
 		for (Integer i : electionYears) {
-			System.out.println(i);
+			//System.out.println(i);
 			rateLimiter.acquire();
 			if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i) == null) {
 				if (i != 2000 && i != 1976 && i != 1972) {
 					rateLimiter.acquire();
 					lsr = getLocationSearchResult(city, state, i);
 					rateLimiter.acquire();
-					lsrr.save(lsr);
+					if (lsr != null) {
+						//System.out.println(lsr.toString());
+						lsrr.save(lsr);
+					}
 					rateLimiter.acquire();
 					results.add(lsr);
 					rateLimiter.acquire();
@@ -285,11 +300,6 @@ public class AdamController {
 		}
 		double largestWinningDonation = 0.0;
 		double largestLosingDonation = 0.0;
-		double totalLosingDonations = 0.0;
-		double totalWinningDonations = 0.0;
-		int totalDonations = 0;
-		int totalNumWinningDonations = 0;
-		int totalNumLosingDonations = 0;
 		int totalWinners = 0;
 		int totalLosers = 0;
 		double largestTotalWinnerDonations = 0.0;
@@ -307,12 +317,10 @@ public class AdamController {
 			}
 			totalWinners += l.getTotalWinners();
 			totalLosers += l.getTotalLosers();
-			totalLosingDonations += l.getLoserTotalDonations();
 			if (l.getLoserTotalDonations() > largestTotalLoserDonations) {
 				largestTotalLoserDonations = l.getLoserTotalDonations();
 				largestTotalLoserName = l.getLoserName();
 			}
-			totalWinningDonations += l.getWinnerTotalDonations();
 			if (l.getWinnerTotalDonations() > largestTotalWinnerDonations) {
 				largestTotalWinnerDonations = l.getWinnerTotalDonations();
 				largestTotalWinnerName = l.getWinnerName();
@@ -324,8 +332,8 @@ public class AdamController {
 			averageWinningDonation += l.getAvgWinningDonation();
 			averageLosingDonation += l.getAvgLosingDonation();
 		}
-		System.out.println(totalDonations);
-		System.out.println(totalWinningDonations + " " + totalNumWinningDonations);
+		//System.out.println(totalDonations);
+		//System.out.println(totalWinningDonations + " " + totalNumWinningDonations);
 		averageWinningDonation = averageWinningDonation / results.size();
 		averageLosingDonation = averageLosingDonation / results.size();
 
