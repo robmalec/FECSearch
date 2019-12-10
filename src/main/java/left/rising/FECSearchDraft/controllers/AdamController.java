@@ -77,33 +77,39 @@ public class AdamController {
 
 		String winner_name = cdr.getCandidateNameFromId(winner_id).get(0);
 		String loser_name = cdr.getCandidateNameFromId(loser_id).get(0);
-		
+
 		List<DBDonation> winnerDonations = new ArrayList<>();
 		List<DBDonation> loserDonations = new ArrayList<>();
 
 		List<winnerCommitteeIds> winner_committee_ids = new ArrayList<>();
-		
+		System.out.println(winner.getName());
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
-			winnerDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id()));
-			//winner_committee_ids.add(new winnerCommitteeIds(c.getCommittee_id()));
+			System.out.println(c.getCandidate_assigned().getName());
+			System.out.println(c.getElection_year() + " " + electionYear);
+			System.out.println(c.getElection_year().equals(electionYear));
+			if (c.getElection_year().equals(electionYear)) {
+				winnerDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
+			}
+			// winner_committee_ids.add(new winnerCommitteeIds(c.getCommittee_id()));
 		}
 		List<loserCommitteeIds> loser_committee_ids = new ArrayList<>();
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(loser)) {
-			loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id()));
-			//loser_committee_ids.add(new loserCommitteeIds(c.getCommittee_id()));
+			System.out.println(c.getCandidate_assigned().getName());
+			if (c.getElection_year().equals(electionYear)) {
+				loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
+			}
+			// loser_committee_ids.add(new loserCommitteeIds(c.getCommittee_id()));
 		}
-/*
-		for (winnerCommitteeIds w : winner_committee_ids) {
-			winnerDonations.addAll(getCandidateDonations(city, state, w.getCommitteeId()));
-			//System.out.println(winnerDonations.size());
-		}
-		
-		System.out.println(loserDonations.size());
-		for (loserCommitteeIds l : loser_committee_ids) {
-			//System.out.println(l.getCommitteeId());
-			loserDonations.addAll(getCandidateDonations(city, state, l.getCommitteeId()));
-			//System.out.println(loserDonations.size());
-		}*/
+		/*
+		 * for (winnerCommitteeIds w : winner_committee_ids) {
+		 * winnerDonations.addAll(getCandidateDonations(city, state,
+		 * w.getCommitteeId())); //System.out.println(winnerDonations.size()); }
+		 * 
+		 * System.out.println(loserDonations.size()); for (loserCommitteeIds l :
+		 * loser_committee_ids) { //System.out.println(l.getCommitteeId());
+		 * loserDonations.addAll(getCandidateDonations(city, state,
+		 * l.getCommitteeId())); //System.out.println(loserDonations.size()); }
+		 */
 		int total_winners = 0;
 		int total_losers = 0;
 		if (winnerDonations.size() > loserDonations.size()) {
@@ -126,7 +132,7 @@ public class AdamController {
 			largest_losing_donation = loserDonations.get(0).getContributionReceiptAmount();
 		} catch (IndexOutOfBoundsException e) {
 		}
-		
+
 		for (DBDonation d : winnerDonations) {
 			winner_total_donations += d.getContributionReceiptAmount();
 			if (d.getContributionReceiptAmount() > largest_winning_donation) {
@@ -147,12 +153,10 @@ public class AdamController {
 				winner_total_donations, loser_total_donations, largest_winning_donation, largest_losing_donation,
 				avg_winning_donation, avg_losing_donation, city, state, electionYear);
 		/*
-		for (loserCommitteeIds l : loser_committee_ids) {
-			l.setLocationSearchResultAssigned(lsr);
-		}
-		for (winnerCommitteeIds w : winner_committee_ids) {
-			w.setLocationSearchResultAssigned(lsr);
-		}*/
+		 * for (loserCommitteeIds l : loser_committee_ids) {
+		 * l.setLocationSearchResultAssigned(lsr); } for (winnerCommitteeIds w :
+		 * winner_committee_ids) { w.setLocationSearchResultAssigned(lsr); }
+		 */
 		return lsr;
 	}
 
@@ -234,40 +238,72 @@ public class AdamController {
 
 	final RateLimiter rateLimiter = RateLimiter.create(2.0);
 
-	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id) {
+	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id,
+			Integer electionYear) {
 		System.out.println(committee_id);
 		List<DBDonation> donations = new ArrayList<>();
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
-		//System.out.println(rateLimiter.acquire());
+		// System.out.println(rateLimiter.acquire());
 		rateLimiter.acquire();
 		respEnt = rt.exchange(
 				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id=" + committee_id
 						+ "&contributor_city=" + city + "&contributor_state=" + state + "&per_page=100",
 				HttpMethod.GET, httpEnt, ScheduleAResults.class);
-		System.out.println("Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages()/2) + " seconds");
+		System.out
+				.println("Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 2) + " seconds");
 		rateLimiter.acquire();
 		try {
-		donations.addAll(respEnt.getBody().getResults());
+			donations.addAll(respEnt.getBody().getResults());
+			ArrayList<DBDonation> toDelete = new ArrayList<>();
+			for (DBDonation d : donations) {
+				System.out.println(d.getFecElectionYear());
+				try {
+					if (Integer.parseInt(d.getFecElectionYear()) != (int) electionYear) {
+						toDelete.add(d);
+						// break;
+					}
+				} catch (NumberFormatException e) {
+
+				}
+			}
+			donations.removeAll(toDelete);
+		} catch (HttpClientErrorException e) {
+
 		}
-		catch(HttpClientErrorException e){
-			
-		}
-		
+
 		try {
 			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
 				// System.out.println(respEnt.getBody().getPagination().getLast_indexes().getLast_index());
 				rateLimiter.acquire();
-				respEnt = rt.exchange(
-						"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
-								+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
-								+ "&per_page=100&last_index="
-								+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
-								+ "&last_contribution_receipt_date="
-								+ respEnt.getBody().getPagination().getLast_indexes()
-										.getLast_contribution_receipt_date(),
-						HttpMethod.GET, httpEnt, ScheduleAResults.class);
+				String url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
+						+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+						+ "&per_page=100&last_index="
+						+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
+						+ "&last_contribution_receipt_date="
+						+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
+				System.out.println(url);
+				respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
+
+				// try {
+				//System.out.println(respEnt.getBody().getResults().get(0).getFecElectionYear());
 				donations.addAll(respEnt.getBody().getResults());
+				ArrayList<DBDonation> toDelete = new ArrayList<>();
+				for (DBDonation d : donations) {
+					System.out.println(d.getFecElectionYear());
+					try {
+						if (Integer.parseInt(d.getFecElectionYear()) != (int) electionYear) {
+							toDelete.add(d);
+							// break;
+						}
+					} catch (NumberFormatException e) {
+
+					}
+				}
+				donations.removeAll(toDelete);
+				// } catch (IndexOutOfBoundsException e) {
+
+				// }
 			}
 		} catch (NullPointerException | HttpClientErrorException e) {
 		}
@@ -292,7 +328,7 @@ public class AdamController {
 			}
 		}
 		for (Integer i : electionYears) {
-			//System.out.println(i);
+			// System.out.println(i);
 			rateLimiter.acquire();
 			if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i) == null) {
 				if (i != 2000 && i != 1976 && i != 1972) {
@@ -300,7 +336,6 @@ public class AdamController {
 					lsr = getLocationSearchResult(city, state, i);
 					rateLimiter.acquire();
 					if (lsr != null) {
-						//System.out.println(lsr.toString());
 						lsrr.save(lsr);
 					}
 					rateLimiter.acquire();
@@ -326,13 +361,25 @@ public class AdamController {
 		String biggestWinnerRecipient = "";
 		double averageWinningDonation = 0.0;
 		double averageLosingDonation = 0.0;
+		ArrayList<String> winnerNames = new ArrayList<>();
+		ArrayList<String> loserNames = new ArrayList<>();
+		ArrayList<String> ties = new ArrayList<>();
 		for (LocationSearchResult l : results) {
 			if (l.getLargestLosingDonation() > largestLosingDonation) {
 				largestLosingDonation = l.getLargestLosingDonation();
 				biggestLoserRecipient = l.getLoserName();
 			}
-			totalWinners += l.getTotalWinners();
-			totalLosers += l.getTotalLosers();
+			if (l.getWinnerTotalDonations() > l.getLoserTotalDonations()) {
+				totalWinners += 1;
+				winnerNames.add(l.getWinnerName() + " (" + l.getElectionYear() + ")");
+			} else if (l.getWinnerTotalDonations() < l.getLoserTotalDonations()) {
+				totalLosers += 1;
+				loserNames.add(l.getLoserName() + " (" + l.getElectionYear() + ")");
+			} else {
+				ties.add(l.getWinnerName() + " vs. " + l.getLoserName() + " (" + l.getElectionYear() + ")");
+			}
+			// totalWinners += l.getTotalWinners();
+			// totalLosers += l.getTotalLosers();
 			if (l.getLoserTotalDonations() > largestTotalLoserDonations) {
 				largestTotalLoserDonations = l.getLoserTotalDonations();
 				largestTotalLoserName = l.getLoserName();
@@ -348,14 +395,18 @@ public class AdamController {
 			averageWinningDonation += l.getAvgWinningDonation();
 			averageLosingDonation += l.getAvgLosingDonation();
 		}
-		//System.out.println(totalDonations);
-		//System.out.println(totalWinningDonations + " " + totalNumWinningDonations);
+		// System.out.println(totalDonations);
+		// System.out.println(totalWinningDonations + " " + totalNumWinningDonations);
 		averageWinningDonation = averageWinningDonation / results.size();
 		averageLosingDonation = averageLosingDonation / results.size();
 
 		String location = city + ", " + state;
 
-		ModelAndView mv = new ModelAndView("location-search-results");
+		ModelAndView mv = new ModelAndView("historical-location-search-results");
+		mv.addObject("results", results);
+		mv.addObject("ties", ties);
+		mv.addObject("winnerNames", winnerNames);
+		mv.addObject("loserNames", loserNames);
 		mv.addObject("location", location);
 		mv.addObject("total_winners", totalWinners);
 		mv.addObject("total_losers", totalLosers);
