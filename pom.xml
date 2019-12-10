@@ -71,11 +71,6 @@
 			<artifactId>guava</artifactId>
 			<version>28.1-jre</version>
 		</dependency>
-		<dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-core</artifactId>
-			<version>3.5.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>
