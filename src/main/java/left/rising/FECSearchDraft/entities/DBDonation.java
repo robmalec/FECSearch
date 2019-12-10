@@ -174,6 +174,66 @@ public class DBDonation {
 		this.transactionId = transaction_id;
 		this.twoYearTransactionPeriod = two_year_transaction_period;
 	}
+	
+	public DBDonation(String candidate_first_name, String candidate_id,
+			String candidate_last_name, String candidate_middle_name, String candidate_name, String candidate_office,
+			String candidate_office_district, String candidate_office_full, String candidate_office_state,
+			String candidate_office_state_full, String candidate_prefix, String candidate_suffix,
+			String committee_id, String committee_name, Double contribution_receipt_amount, Double contributor_aggregate_ytd,
+			String contributor_city, String contributor_employer, String contributor_first_name, String contributor_id,
+			String contributor_last_name, String contributor_middle_name, String contributor_name,
+			String contributor_occupation, String contributor_prefix, String contributor_state,
+			String contributor_street_1, String contributor_street_2, String contributor_suffix, String contributor_zip,
+			String donor_committee_name, String election_type, String election_type_full, String entity_type,
+			String entity_type_desc, String fec_election_type_desc, String fec_election_year, Long file_number,
+			String filing_form, String image_number, String increased_limit, String is_individual, String line_number,
+			String line_number_label, Long link_id, String load_date, Integer report_year, String sub_id,
+			String transaction_id, Integer two_year_transaction_period, String unused_contbr_id) {
+		super();
+		this.candidateFirstName = candidate_first_name;
+		this.candidateId = candidate_id;
+		this.candidateLastName = candidate_last_name;
+		this.candidateMiddleName = candidate_middle_name;
+		this.candidateName = candidate_name;
+		this.candidateOffice = candidate_office;
+		this.candidateOfficeDistrict = candidate_office_district;
+		this.candidateOfficeFull = candidate_office_full;
+		this.candidateOfficeState = candidate_office_state;
+		this.candidateOfficeStateFull = candidate_office_state_full;
+		this.candidatePrefix = candidate_prefix;
+		this.candidateSuffix = candidate_suffix;
+		this.committeeId = committee_id;
+		this.committeeName = committee_name;
+		this.contributionReceiptAmount = contribution_receipt_amount;
+		this.contributorAggregateYtd = contributor_aggregate_ytd;
+		this.contributorCity = contributor_city;
+		this.contributorEmployer = contributor_employer;
+		this.contributorFirstName = contributor_first_name;
+		this.contributorId = contributor_id;
+		this.contributorLastName = contributor_last_name;
+		this.contributorMiddleName = contributor_middle_name;
+		this.contributorName = contributor_name;
+		this.contributorOccupation = contributor_occupation;
+		this.contributorPrefix = contributor_prefix;
+		this.contributorState = contributor_state;
+		this.contributorStreet1 = contributor_street_1;
+		this.contributorStreet2 = contributor_street_2;
+		this.contributorSuffix = contributor_suffix;
+		this.contributorZip = contributor_zip;
+		this.donorCommitteeName = donor_committee_name;
+		this.electionType = election_type;
+		this.electionTypeFull = election_type_full;
+		this.entityType = entity_type;
+		this.entityTypeDesc = entity_type_desc;
+		this.fecElectionTypeDesc = fec_election_type_desc;
+		this.fecElectionYear = fec_election_year;
+		this.isIndividual = is_individual;
+		this.reportYear = report_year;
+		this.subId = sub_id;
+		this.transactionId = transaction_id;
+		this.twoYearTransactionPeriod = two_year_transaction_period;
+	}
+
 
 	public Integer getId() {
 		return id;

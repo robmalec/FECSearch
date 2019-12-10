@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpClientErrorException.UnprocessableEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -64,6 +66,7 @@ public class AdamController {
 	}
 
 	public LocationSearchResult getLocationSearchResult(String city, String state, Integer electionYear) {
+		System.out.println(electionYear);
 		ElResult result = elr.findByElectionYear(electionYear).get(0);
 
 		Integer winner_id = result.getWinnerId();
@@ -74,28 +77,33 @@ public class AdamController {
 
 		String winner_name = cdr.getCandidateNameFromId(winner_id).get(0);
 		String loser_name = cdr.getCandidateNameFromId(loser_id).get(0);
+		
+		List<DBDonation> winnerDonations = new ArrayList<>();
+		List<DBDonation> loserDonations = new ArrayList<>();
 
 		List<winnerCommitteeIds> winner_committee_ids = new ArrayList<>();
+		
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
-			winner_committee_ids.add(new winnerCommitteeIds(c.getCommittee_id()));
+			winnerDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id()));
+			//winner_committee_ids.add(new winnerCommitteeIds(c.getCommittee_id()));
 		}
 		List<loserCommitteeIds> loser_committee_ids = new ArrayList<>();
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(loser)) {
-			loser_committee_ids.add(new loserCommitteeIds(c.getCommittee_id()));
+			loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id()));
+			//loser_committee_ids.add(new loserCommitteeIds(c.getCommittee_id()));
 		}
-
-		List<DBDonation> winnerDonations = new ArrayList<>();
+/*
 		for (winnerCommitteeIds w : winner_committee_ids) {
 			winnerDonations.addAll(getCandidateDonations(city, state, w.getCommitteeId()));
 			//System.out.println(winnerDonations.size());
 		}
-		List<DBDonation> loserDonations = new ArrayList<>();
+		
 		System.out.println(loserDonations.size());
 		for (loserCommitteeIds l : loser_committee_ids) {
 			//System.out.println(l.getCommitteeId());
 			loserDonations.addAll(getCandidateDonations(city, state, l.getCommitteeId()));
 			//System.out.println(loserDonations.size());
-		}
+		}*/
 		int total_winners = 0;
 		int total_losers = 0;
 		if (winnerDonations.size() > loserDonations.size()) {
@@ -138,12 +146,13 @@ public class AdamController {
 				loser_committee_ids, winnerDonations, loserDonations, total_winners, total_losers,
 				winner_total_donations, loser_total_donations, largest_winning_donation, largest_losing_donation,
 				avg_winning_donation, avg_losing_donation, city, state, electionYear);
+		/*
 		for (loserCommitteeIds l : loser_committee_ids) {
 			l.setLocationSearchResultAssigned(lsr);
 		}
 		for (winnerCommitteeIds w : winner_committee_ids) {
 			w.setLocationSearchResultAssigned(lsr);
-		}
+		}*/
 		return lsr;
 	}
 
@@ -226,6 +235,7 @@ public class AdamController {
 	final RateLimiter rateLimiter = RateLimiter.create(2.0);
 
 	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id) {
+		System.out.println(committee_id);
 		List<DBDonation> donations = new ArrayList<>();
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
@@ -237,7 +247,13 @@ public class AdamController {
 				HttpMethod.GET, httpEnt, ScheduleAResults.class);
 		System.out.println("Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages()/2) + " seconds");
 		rateLimiter.acquire();
+		try {
 		donations.addAll(respEnt.getBody().getResults());
+		}
+		catch(HttpClientErrorException e){
+			
+		}
+		
 		try {
 			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
 				// System.out.println(respEnt.getBody().getPagination().getLast_indexes().getLast_index());
@@ -253,7 +269,7 @@ public class AdamController {
 						HttpMethod.GET, httpEnt, ScheduleAResults.class);
 				donations.addAll(respEnt.getBody().getResults());
 			}
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | HttpClientErrorException e) {
 		}
 		if (donations.size() == 0) {
 			DBDonation db = new DBDonation();
