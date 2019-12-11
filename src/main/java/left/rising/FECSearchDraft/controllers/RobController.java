@@ -139,10 +139,10 @@ public class RobController {
 	
 	@RequestMapping("load-state-stats-page")
 	public ModelAndView loadStateStatsPage(String stateCode){
-		ArrayList<String> citySearchQueries = new ArrayList<>();	
-
-		
-		return new ModelAndView("redirect:/nina-state-stats-page");
+		/*
+		 * TODO: Run statewide query and send returned data to a new  ModelAndView
+		 */
+		return new ModelAndView("state-stats-page");
 		
 	}
 }
