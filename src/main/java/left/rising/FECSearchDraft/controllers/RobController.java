@@ -2,11 +2,13 @@ package left.rising.FECSearchDraft.controllers;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
@@ -35,6 +37,8 @@ public class RobController {
 	StateRepo sRepo;
 	
 	List<State> states;
+	
+	RestTemplate rt = new RestTemplate();
 
 	@RequestMapping("/load-el-data")
 	public ModelAndView loadElDataFromCSV() {
@@ -120,14 +124,25 @@ public class RobController {
 		states = sRepo.findAll();
 		
 		String idString = "";
+		String stateCodeString = "";
 		
 		for (State s : states) {
-			idString += (" " + s.getOSMStateId());
+			idString += s.getOSMStateId() + " ";
+			stateCodeString += s.getStateCode() + " ";
 		}
-				
-		view.addObject("states",states);
+		
 		view.addObject("idString", idString);
+		view.addObject("stateCodes", stateCodeString);
 		
 		return view;
+	}
+	
+	@RequestMapping("load-state-stats-page")
+	public ModelAndView loadStateStatsPage(String stateCode){
+		ArrayList<String> citySearchQueries = new ArrayList<>();	
+
+		
+		return new ModelAndView("redirect:/nina-state-stats-page");
+		
 	}
 }
