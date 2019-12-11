@@ -1,6 +1,9 @@
 package left.rising.FECSearchDraft.controllers;
 
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +16,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import left.rising.FECSearchDraft.dbrepos.State;
+import left.rising.FECSearchDraft.dbrepos.StateRepo;
 import left.rising.FECSearchDraft.entities.DonorValue;
 
 @Controller
@@ -20,10 +25,36 @@ public class HomeController {
 	private RestTemplate rt = new RestTemplate();
 	@Value("${fec.key}")
 	String fecKey;
+	
+	@Value("${gmaps.key}")
+	String gMapsKey;
+	
+	@Autowired 
+	StateRepo sRepo;
 
 	@RequestMapping("/")
 	public ModelAndView homePage() {
-		return new ModelAndView("index");
+		ModelAndView view = new ModelAndView("index","apiKey",gMapsKey);
+		
+		//TODO: Come up with a way to calculate the opacity of each state's map overlay
+		//TODO: Replace this variable when the above is done with a string containing the opacity
+		//of each state
+		view.addObject("opacity", 0.9);
+		
+		List<State> states = sRepo.findAll();
+		
+		String idString = "";
+		String stateCodeString = "";
+		
+		for (State s : states) {
+			idString += s.getOSMStateId() + " ";
+			stateCodeString += s.getStateCode() + " ";
+		}
+
+		view.addObject("idString", idString);
+		view.addObject("stateCodes", stateCodeString);
+
+		return view;
 	}
 
 	/*
