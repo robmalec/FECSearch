@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpClientErrorException.UnprocessableEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -66,7 +65,7 @@ public class AdamController {
 	}
 
 	public LocationSearchResult getLocationSearchResult(String city, String state, Integer electionYear) {
-		System.out.println(electionYear);
+		// System.out.println(electionYear);
 		ElResult result = elr.findByElectionYear(electionYear).get(0);
 
 		Integer winner_id = result.getWinnerId();
@@ -82,11 +81,11 @@ public class AdamController {
 		List<DBDonation> loserDonations = new ArrayList<>();
 
 		List<winnerCommitteeIds> winner_committee_ids = new ArrayList<>();
-		System.out.println(winner.getName());
+		// System.out.println(winner.getName());
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
-			System.out.println(c.getCandidate_assigned().getName());
-			System.out.println(c.getElection_year() + " " + electionYear);
-			System.out.println(c.getElection_year().equals(electionYear));
+			// System.out.println(c.getCandidate_assigned().getName());
+			// System.out.println(c.getElection_year() + " " + electionYear);
+			// System.out.println(c.getElection_year().equals(electionYear));
 			if (c.getElection_year().equals(electionYear)) {
 				winnerDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
@@ -94,7 +93,7 @@ public class AdamController {
 		}
 		List<loserCommitteeIds> loser_committee_ids = new ArrayList<>();
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(loser)) {
-			System.out.println(c.getCandidate_assigned().getName());
+			// System.out.println(c.getCandidate_assigned().getName());
 			if (c.getElection_year().equals(electionYear)) {
 				loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
@@ -240,11 +239,10 @@ public class AdamController {
 
 	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id,
 			Integer electionYear) {
-		System.out.println(committee_id);
+		int electionYearInt = electionYear;
 		List<DBDonation> donations = new ArrayList<>();
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
-		// System.out.println(rateLimiter.acquire());
 		rateLimiter.acquire();
 		respEnt = rt.exchange(
 				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id=" + committee_id
@@ -254,20 +252,28 @@ public class AdamController {
 				.println("Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 2) + " seconds");
 		rateLimiter.acquire();
 		try {
-			donations.addAll(respEnt.getBody().getResults());
-			ArrayList<DBDonation> toDelete = new ArrayList<>();
-			for (DBDonation d : donations) {
-				System.out.println(d.getFecElectionYear());
+			List<DBDonation> toAdd = respEnt.getBody().getResults();
+			for (DBDonation d : toAdd) {
 				try {
-					if (Integer.parseInt(d.getFecElectionYear()) != (int) electionYear) {
-						toDelete.add(d);
-						// break;
+					try {
+						if (d.getContributionReceiptDate().contains("" + electionYearInt)) {
+							donations.add(d);
+						} else if (((d.getReportYear() <= electionYearInt)
+								&& (d.getReportYear() > (electionYearInt - 4))) && !d.getEntityType().equals("ORG")) {
+							donations.add(d);
+							if (d.getContributionReceiptAmount() > 10000) {
+								System.out.println("BigDonation - ReportYear: " + d.getReportYear()
+										+ " ElectionYearInt:" + electionYearInt + " " + d.getContributionReceiptDate()
+										+ " " + d.getContributionReceiptAmount());
+							}
+						}
+					} catch (NullPointerException e) {
+
 					}
 				} catch (NumberFormatException e) {
 
 				}
 			}
-			donations.removeAll(toDelete);
 		} catch (HttpClientErrorException e) {
 
 		}
@@ -282,28 +288,33 @@ public class AdamController {
 						+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
 						+ "&last_contribution_receipt_date="
 						+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
-				System.out.println(url);
+				// System.out.println(url);
+				rateLimiter.acquire();
 				respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
 
-				// try {
-				//System.out.println(respEnt.getBody().getResults().get(0).getFecElectionYear());
-				donations.addAll(respEnt.getBody().getResults());
-				ArrayList<DBDonation> toDelete = new ArrayList<>();
-				for (DBDonation d : donations) {
-					System.out.println(d.getFecElectionYear());
+				List<DBDonation> toAdd = respEnt.getBody().getResults();
+				for (DBDonation d : toAdd) {
 					try {
-						if (Integer.parseInt(d.getFecElectionYear()) != (int) electionYear) {
-							toDelete.add(d);
-							// break;
+						try {
+							if (d.getContributionReceiptDate().contains("" + electionYearInt)) {
+								donations.add(d);
+							} else if (((d.getReportYear() <= electionYearInt)
+									&& (d.getReportYear() > (electionYearInt - 4)))
+									&& !d.getEntityType().equals("ORG")) {
+								donations.add(d);
+								if (d.getContributionReceiptAmount() > 10000) {
+									System.out.println("BigDonation - ReportYear: " + d.getReportYear()
+											+ " ElectionYearInt:" + electionYearInt + " "
+											+ d.getContributionReceiptDate() + " " + d.getContributionReceiptAmount());
+								}
+							}
+						} catch (NullPointerException e) {
+
 						}
 					} catch (NumberFormatException e) {
 
 					}
 				}
-				donations.removeAll(toDelete);
-				// } catch (IndexOutOfBoundsException e) {
-
-				// }
 			}
 		} catch (NullPointerException | HttpClientErrorException e) {
 		}
@@ -318,37 +329,10 @@ public class AdamController {
 
 	@RequestMapping("historical-search-results")
 	public ModelAndView historicalSearchResults(String city, String state) {
+		// Declare variables
 		LocationSearchResult lsr = new LocationSearchResult();
 		List<LocationSearchResult> results = new ArrayList<>();
 		List<Integer> electionYears = new ArrayList<>();
-
-		for (ElResult e : elr.findAll()) {
-			if (!electionYears.contains(e.getElectionYear())) {
-				electionYears.add(e.getElectionYear());
-			}
-		}
-		for (Integer i : electionYears) {
-			// System.out.println(i);
-			rateLimiter.acquire();
-			if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i) == null) {
-				if (i != 2000 && i != 1976 && i != 1972) {
-					rateLimiter.acquire();
-					lsr = getLocationSearchResult(city, state, i);
-					rateLimiter.acquire();
-					if (lsr != null) {
-						lsrr.save(lsr);
-					}
-					rateLimiter.acquire();
-					results.add(lsr);
-					rateLimiter.acquire();
-				}
-			} else {
-				if (i != 2000 && i != 1976 && i != 1972) {
-					lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i);
-					results.add(lsr);
-				}
-			}
-		}
 		double largestWinningDonation = 0.0;
 		double largestLosingDonation = 0.0;
 		int totalWinners = 0;
@@ -364,11 +348,79 @@ public class AdamController {
 		ArrayList<String> winnerNames = new ArrayList<>();
 		ArrayList<String> loserNames = new ArrayList<>();
 		ArrayList<String> ties = new ArrayList<>();
+		String location = city + ", " + state;
+		ModelAndView mv = new ModelAndView("historical-location-search-results");
+
+		// Save election years in the election result repo to an array
+		for (ElResult e : elr.findAll()) {
+			if (!electionYears.contains(e.getElectionYear())) {
+				electionYears.add(e.getElectionYear());
+			}
+		}
+
+		// For each election year ...
+		for (Integer i : electionYears) {
+
+			// If the search result database does not already contain a result for the given
+			// city, state, and election year ...
+			if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i) == null) {
+				// And the election year is not one of the following ...
+				if (i != 2000 && i != 1976 && i != 1972) {
+					// Then perform a new search for the city, state, and election year.
+					lsr = getLocationSearchResult(city, state, i);
+					// If the result is not null ...
+					if (lsr != null) {
+						// Then save the result to the database ...
+						lsrr.save(lsr);
+					}
+					// And add the search result to the results array.
+					results.add(lsr);
+				}
+			}
+			// Otherwise, pull the existing search result from the database and add it to
+			// the results array
+			else {
+				if (i != 2000 && i != 1976 && i != 1972) {
+					lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i);
+					results.add(lsr);
+				}
+			}
+		}
+
+		String totalData = "";
+		String electionYearsTbl = "";
+		String avgData = "";
+		// Calculate historical data using all search results for each location
 		for (LocationSearchResult l : results) {
+
+			// Check for largest losing donation and largest total donations to the loser
 			if (l.getLargestLosingDonation() > largestLosingDonation) {
 				largestLosingDonation = l.getLargestLosingDonation();
 				biggestLoserRecipient = l.getLoserName();
 			}
+			if (l.getLoserTotalDonations() > largestTotalLoserDonations) {
+				largestTotalLoserDonations = l.getLoserTotalDonations();
+				largestTotalLoserName = l.getLoserName();
+			}
+
+			// Add average losing donation to be used in calculation after the loop
+			// concludes
+			averageLosingDonation += l.getAvgLosingDonation();
+
+			// Check for largest winning donation and largest total donations to the winner
+			if (l.getWinnerTotalDonations() > largestTotalWinnerDonations) {
+				largestTotalWinnerDonations = l.getWinnerTotalDonations();
+				largestTotalWinnerName = l.getWinnerName();
+			}
+			if (l.getLargestWinningDonation() > largestWinningDonation) {
+				largestWinningDonation = l.getLargestWinningDonation();
+				biggestWinnerRecipient = l.getWinnerName();
+			}
+			// Add average winning donation to be used in calculation after the loop
+			// concludes
+			averageWinningDonation += l.getAvgWinningDonation();
+
+			// Find total number of winners, losers, and ties supported at the location
 			if (l.getWinnerTotalDonations() > l.getLoserTotalDonations()) {
 				totalWinners += 1;
 				winnerNames.add(l.getWinnerName() + " (" + l.getElectionYear() + ")");
@@ -378,31 +430,29 @@ public class AdamController {
 			} else {
 				ties.add(l.getWinnerName() + " vs. " + l.getLoserName() + " (" + l.getElectionYear() + ")");
 			}
-			// totalWinners += l.getTotalWinners();
-			// totalLosers += l.getTotalLosers();
-			if (l.getLoserTotalDonations() > largestTotalLoserDonations) {
-				largestTotalLoserDonations = l.getLoserTotalDonations();
-				largestTotalLoserName = l.getLoserName();
+			// totalData += String.format("%.2f", l.getWinnerTotalDonations()) + ", ";
+			if(cdr.getCandidateDataFromName(l.getWinnerName()).get(0).getAfiliatedParty().toString().equals("DEMOCRAT")) {
+				avgData += Math.round(l.getAvgWinningDonation()) + "," + Math.round(l.getAvgLosingDonation()) + ",";
+				totalData += Math.round(l.getWinnerTotalDonations()) + "," + Math.round(l.getLoserTotalDonations()) + ",";
+				electionYearsTbl += "'" + l.getWinnerName() + " (" + l.getElectionYear() + ")', '" + l.getLoserName() + " (" + l.getElectionYear() + ")', ";
+			} else {
+				avgData += Math.round(l.getAvgLosingDonation()) + "," + Math.round(l.getAvgWinningDonation()) + ",";
+				totalData += Math.round(l.getLoserTotalDonations()) + "," + Math.round(l.getWinnerTotalDonations()) + ",";
+				electionYearsTbl += "'" + l.getLoserName() + " (" + l.getElectionYear() + ")', '" + l.getWinnerName() + " (" + l.getElectionYear() + ")', ";
 			}
-			if (l.getWinnerTotalDonations() > largestTotalWinnerDonations) {
-				largestTotalWinnerDonations = l.getWinnerTotalDonations();
-				largestTotalWinnerName = l.getWinnerName();
-			}
-			if (l.getLargestWinningDonation() > largestWinningDonation) {
-				largestWinningDonation = l.getLargestWinningDonation();
-				biggestWinnerRecipient = l.getWinnerName();
-			}
-			averageWinningDonation += l.getAvgWinningDonation();
-			averageLosingDonation += l.getAvgLosingDonation();
+			
+
 		}
-		// System.out.println(totalDonations);
-		// System.out.println(totalWinningDonations + " " + totalNumWinningDonations);
-		averageWinningDonation = averageWinningDonation / results.size();
-		averageLosingDonation = averageLosingDonation / results.size();
+		System.out.println(electionYearsTbl);
+		// Calculate average winning and losing donations for all election years
+		averageWinningDonation = averageWinningDonation / 9;
+		averageLosingDonation = averageLosingDonation / 9;
 
-		String location = city + ", " + state;
-
-		ModelAndView mv = new ModelAndView("historical-location-search-results");
+		// Add objects to the ModelAndView
+		// results.get(0).getWin
+		mv.addObject("avgData", avgData);
+		mv.addObject("electionYears", electionYearsTbl);
+		mv.addObject("totalData", totalData);
 		mv.addObject("results", results);
 		mv.addObject("ties", ties);
 		mv.addObject("winnerNames", winnerNames);
