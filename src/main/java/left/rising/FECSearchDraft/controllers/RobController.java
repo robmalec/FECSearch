@@ -175,17 +175,13 @@ public class RobController {
 		double totalLoseCandFundsDonated = 0.0;
 		double totalFundsDonated = 0.0;
 
-		CandidateData biggestMoneyWinner = null;
-		double bmwBudget = 0.0;
+		CandFundsPerState bmw = new CandFundsPerState(null,0.0);
 
-		CandidateData biggestMoneyLoser = null;
-		double bmlBudget = 0.0;
+		CandFundsPerState bml = new CandFundsPerState(null,0.0);
 
-		CandidateData smallestMoneyWinner = null;
-		double smwBudget = Double.MAX_VALUE;
+		CandFundsPerState smw = new CandFundsPerState(null, Double.MAX_VALUE);
 
-		CandidateData smallestMoneyLoser = null;
-		double smlBudget = Double.MAX_VALUE;
+		CandFundsPerState sml = new CandFundsPerState(null, Double.MAX_VALUE);
 
 		String url = "";
 
@@ -237,19 +233,19 @@ public class RobController {
 					if (thisCand.getAfiliatedParty() == thisResult.getWinningParty()) {
 						// Code for if committee c donated to a winning candidate this cycle
 						totalWinCandFundsDonated += fundsDonated;
-						if (fundsDonated > bmwBudget) {
-							biggestMoneyWinner = thisCand;
-						} else if (fundsDonated < smwBudget) {
-							smallestMoneyWinner = thisCand;
+						if (fundsDonated > bmw.getFunds()) {
+							bmw = thisCandFunds;
+						} else if (fundsDonated < smw.getFunds()) {
+							smw = thisCandFunds;
 						}
 					} else {
 						// Code for if committee c donated to a losing candidate this cycle
 						totalLoseCandFundsDonated += fundsDonated;
-						if (fundsDonated > bmlBudget) {
-							biggestMoneyLoser = thisCand;
+						if (fundsDonated > bml.getFunds()) {
+							bml = thisCandFunds;
 						}
-						else if (fundsDonated < smlBudget) {
-							smallestMoneyLoser = thisCand;
+						else if (fundsDonated < sml.getFunds()) {
+							sml = thisCandFunds;
 						}
 					}
 				}
@@ -257,17 +253,14 @@ public class RobController {
 		}
 		System.out.println(candFunds);
 
+		mv.addObject("candFundsList", candFunds);
 		mv.addObject("totalWinningFunds", totalWinCandFundsDonated);
 		mv.addObject("totalLosingFunds", totalLoseCandFundsDonated);
 		mv.addObject("totalFunds", totalFundsDonated);
-		mv.addObject("bmw", biggestMoneyWinner);
-		mv.addObject("bmwBudget", bmwBudget);
-		mv.addObject("bml", biggestMoneyLoser);
-		mv.addObject("bmlBudget",bmlBudget);
-		mv.addObject("smw", smallestMoneyWinner);
-		mv.addObject("smwBudget", smwBudget);
-		mv.addObject("sml", smallestMoneyLoser);
-		mv.addObject("smlBudget", smlBudget);
+		mv.addObject("bmw", bmw);
+		mv.addObject("bml", bml);
+		mv.addObject("smw", smw);
+		mv.addObject("sml", sml);
 
 		return mv;
 	}
