@@ -59,32 +59,21 @@ html, body {
 
 
 		</ul>
-
-		<form action="/find-contributor">
-			<div id="firstForm" class="collapse">
-				<label>Search By Candidate</label><br> <label>First
-					Name</label><br> <input type="text" id="contributor_name" style=""><br>
-				<label>Last Name</label><br> <input type="text"
-					id="contributor_name" style=""><br> <label>City</label><br>
-				<input type="text" name="contributor_name"><br> <label>State</label><br>
-				<input type="text" name="contributor_name"><br> <input
-					type="Submit" onclick="showInput();" class="btn btn-dark">
-		</form>
 	</div>
 	<form action="/historical-search-results">
 		<div id="secondForm" class="collapse">
 			<label>Search By Location For All Election Years</label><br> <label>City</label><br>
-			<input type="text" name="city"><br> <label>State</label><br>
-			<input type="text" name="state"><br> <input
+			<input type="text" name="city" required><br> <label>State</label><br>
+			<input type="text" name="state" required><br> <input
 				type="Submit" class="btn btn-dark">
 	</form>
 	</div>
 	<form action="/location-search-results">
 		<div id="thirdForm" class="collapse">
 			<label>Search By Location and Election Year</label><br> <label>City</label><br>
-			<input type="text" name="location_comparison"><br> <label>State</label><br>
-			<input type="text" name="location_comparison"><br> <label>Election
-				Year</label><br> <input type="text" name="location_comparison" required>
+			<input type="text" name="city" required><br> <label>State</label><br>
+			<input type="text" name="state" required><br> <label>Election
+				Year</label><br> <input type="number" name="electionYear" required>
 			<input type="Submit" class="btn btn-dark">
 	</form>
 	<!-- 1980-2016 -->
@@ -92,11 +81,11 @@ html, body {
 	<form action="compare-location-search-results">
 		<div id="fourthForm" class="collapse">
 			<label>Location Comparer</label><br> <label>First City</label><br>
-			<input type="text" name="location_comparison"><br> <label>First
-				State</label><br> <input type="text" name="location_comparison"><br>
+			<input type="text" name="city" required><br> <label>First
+				State</label><br> <input type="text" name="state" required><br>
 			<label>Second City</label><br><input type="text"
-				name="location_comparison"><br><br> <label>Second
-				State</label><br><input type="text" name="location_comparison"><br>
+				name="city" required><br><br> <label>Second
+				State</label><br><input type="text" name="state" required><br>
 			<input type="Submit" class="btn btn-dark">
 	</form>
 	</div>
@@ -104,10 +93,9 @@ html, body {
 		<div id="fifthForm" class="collapse">
 			<label>Biggest Winner</label><br><input type="text" id="biggest_winner"
 				name="biggest_winner"><br> <label>Candidate Name</label><br><input
-				type="text" name="biggest_winner"> <br><label>City</label><br><input
-				type="text" name="biggest_winner"> <br><label>State</label><br> <input
-				type="text" name="biggest_winner"> <br><label>Zip Code</label><br><input
-				type="text" name="biggest_winner" required> <br><input
+				type="text" name="name"> <br><label>City</label><br><input
+				type="text" name="city"> <br><label>State</label><br> <input
+				type="text" name="state"> <br> <br><input
 				type="Submit" class="btn btn-dark">
 	</form>
 	</div>
