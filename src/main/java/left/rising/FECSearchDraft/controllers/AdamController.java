@@ -279,7 +279,7 @@ public class AdamController {
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
 		// System.out.println(rateLimiter.acquire());
-		if (rateLimiter.acquire() == 0) {
+		if (rateLimiter.acquire() < 0) {
 
 			// System.out.println("Started getting first donation pages at: "+new Date());
 			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
@@ -292,7 +292,7 @@ public class AdamController {
 					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
 			System.out.println(
-					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 2) + " seconds");
+					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 8) + " seconds");
 		}
 
 		
@@ -328,8 +328,7 @@ public class AdamController {
 		try {
 			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
 				String url = "";
-				double r = rateLimiter.acquire();
-				if (r == 0) {
+				try {
 					url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
 							+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 							+ "&per_page=100&last_index="
@@ -337,9 +336,9 @@ public class AdamController {
 							+ "&last_contribution_receipt_date="
 							+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
 					respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
-				} else {
-					if (r < 0.25) {
-					System.out.println(rateLimiter.acquire());
+				} catch(HttpClientErrorException e) {
+					System.out.println("Got an error");
+					try {
 					url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2 + "&committee_id="
 							+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 							+ "&per_page=100&last_index="
@@ -347,19 +346,26 @@ public class AdamController {
 							+ "&last_contribution_receipt_date="
 							+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
 					respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
-					}
-					else {
+					} catch(HttpClientErrorException e1) {
+						try {
 						url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
 								+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 								+ "&per_page=100&last_index="
 								+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
 								+ "&last_contribution_receipt_date="
 								+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
-						respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);	
+						respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
+						} catch(HttpClientErrorException e2) {
+							url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2 + "&committee_id="
+									+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+									+ "&per_page=100&last_index="
+									+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
+									+ "&last_contribution_receipt_date="
+									+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
+							respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
+						}
 					}
 				}
-
-				
 				List<DBDonation> toAdd = respEnt.getBody().getResults();
 				
 				for (DBDonation d : toAdd) {

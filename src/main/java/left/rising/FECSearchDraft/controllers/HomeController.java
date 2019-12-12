@@ -45,14 +45,18 @@ public class HomeController {
 		
 		String idString = "";
 		String stateCodeString = "";
+		String opacityString = "";
 		
 		for (State s : states) {
 			idString += s.getOSMStateId() + " ";
 			stateCodeString += s.getStateCode() + " ";
+			opacityString += s.getOpacity() + " ";
+						
 		}
 
 		view.addObject("idString", idString);
 		view.addObject("stateCodes", stateCodeString);
+		view.addObject("opacities", opacityString);
 
 		return view;
 	}
