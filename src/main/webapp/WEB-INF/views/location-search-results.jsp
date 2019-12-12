@@ -78,22 +78,24 @@
 				<p>Donated to ${largest_loser_recipient}</p>
 			</div>
 		</div>
+		<hr>
 		<div class="row">
 			<div class="col-lg-12">
-				<h4>The largest amount of money donated was:</h4>
+				<h3>Total Donations</h3>
 			</div>
 		</div>
+		<hr>
 		<div class="row">
 			<div class="col-lg-4">
+			<h4>To ${largest_total_winner_recipient}</h4>
 				<h6 class="win-lose-total">$${largest_winner_total}</h6>
-				<p>Donated to ${largest_total_winner_recipient}</p>
 			</div>
 			<div class="col-lg-4">
 				<h6>and ...</h6>
 			</div>
 			<div class="col-lg-4">
+			<h4>To ${largest_total_loser_recipient}</h4>
 				<h6 class="win-lose-total">$${largest_loser_total}</h6>
-				<p>Donated to ${largest_total_loser_recipient}</p>
 			</div>
 		</div>
 		<div class="col-lg-12">
