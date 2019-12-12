@@ -42,8 +42,9 @@ html, body {
 				role="button" aria-haspopup="true" aria-expanded="false">Search
 					Options</a>
 				<div class="dropdown-menu">
-					<a class="dropdown-item" data-toggle="collapse"
-						data-target="#firstForm">Candidate</a> <a class="dropdown-item"
+					<!-- <a class="dropdown-item" data-toggle="collapse"
+						data-target="#firstForm">Candidate</a> --> 
+						<a class="dropdown-item"
 						data-toggle="collapse" data-target="#secondForm">Location For
 						All Years</a> <a class="dropdown-item" data-toggle="collapse"
 						data-target="#thirdForm">Location and Election Year</a> <a
@@ -83,33 +84,33 @@ html, body {
 			<label>Location Comparer</label><br> <label>First City</label><br>
 			<input type="text" name="city" required><br> <label>First
 				State</label><br> <input type="text" name="state" required><br>
-			<label>Second City</label><br><input type="text"
-				name="city" required><br><br> <label>Second
-				State</label><br><input type="text" name="state" required><br>
-			<input type="Submit" class="btn btn-dark">
+			<label>Second City</label><br>
+			<input type="text" name="city" required><br>
+			<br> <label>Second State</label><br>
+			<input type="text" name="state" required><br> <input
+				type="Submit" class="btn btn-dark">
 	</form>
 	</div>
 	<form>
 		<div id="fifthForm" class="collapse">
-			<label>Biggest Winner</label><br><input type="text" id="biggest_winner"
-				name="biggest_winner"><br> <label>Candidate Name</label><br><input
-				type="text" name="name"> <br><label>City</label><br><input
-				type="text" name="city"> <br><label>State</label><br> <input
-				type="text" name="state"> <br> <br><input
-				type="Submit" class="btn btn-dark">
+			<label>Biggest Winner</label><br> <label>Candidate Name</label><br>
+			<input type="text" name="name" required> <br>
+			<label>City</label><br>
+			<input type="text" name="city" required> <br>
+			<label>State</label><br> <input type="text" name="state"
+				required> <br> <br>
+			<input type="Submit" class="btn btn-dark">
 	</form>
 	</div>
 	<form>
 		<div id="sixthForm" class="collapse">
-			<label>Biggest Loser</label><br><input type="text" id="biggest_loser"
-				name="biggest_loser"> <br><label>City</label><br><input type="text"
-				name="biggest_loser"><br> <label>Biggest loser</label><br><input
-				type="text" name="biggest_loser"> <br><label>Candidate
-				Name</label> <br><input type="text" name="biggest_loser"><br> <label>City</label><br>
-			<input type="text" name="biggest_loser"> <br><label>State</label><br>
-			<input type="text" name="biggest_loser"><br> <label>Zip
-				Code</label><br><input type="text" name="biggest_loser" required> <br><input
-				type="Submit" class="btn btn-dark">
+			<label>Biggest Loser</label><br>
+			<label>Candidate Name</label> <br>
+			<input type="text" name="biggest_loser" required><br> <label>City</label><br>
+			<input type="text" name="city" required> <br>
+			<label>State</label><br> <input type="text" name="state"
+				required><br>
+			<input type="Submit" class="btn btn-dark">
 	</form>
 	</div>
 	</div>
