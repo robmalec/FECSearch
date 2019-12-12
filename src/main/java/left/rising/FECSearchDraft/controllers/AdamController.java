@@ -65,7 +65,6 @@ public class AdamController {
 	}
 
 	public LocationSearchResult getLocationSearchResult(String city, String state, Integer electionYear) {
-		// System.out.println(electionYear);
 		ElResult result = elr.findByElectionYear(electionYear).get(0);
 
 		Integer winner_id = result.getWinnerId();
@@ -77,19 +76,18 @@ public class AdamController {
 		String winner_name = cdr.getCandidateNameFromId(winner_id).get(0);
 		String loser_name = cdr.getCandidateNameFromId(loser_id).get(0);
 
+		String winnerDonationScatterData = "";
+		String loserDonationScatterData = "";
+
 		List<DBDonation> winnerDonations = new ArrayList<>();
 		List<DBDonation> loserDonations = new ArrayList<>();
 
 		List<winnerCommitteeIds> winner_committee_ids = new ArrayList<>();
 		// System.out.println(winner.getName());
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
-			// System.out.println(c.getCandidate_assigned().getName());
-			// System.out.println(c.getElection_year() + " " + electionYear);
-			// System.out.println(c.getElection_year().equals(electionYear));
 			if (c.getElection_year().equals(electionYear)) {
 				winnerDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
-			// winner_committee_ids.add(new winnerCommitteeIds(c.getCommittee_id()));
 		}
 		List<loserCommitteeIds> loser_committee_ids = new ArrayList<>();
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(loser)) {
@@ -97,18 +95,7 @@ public class AdamController {
 			if (c.getElection_year().equals(electionYear)) {
 				loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
-			// loser_committee_ids.add(new loserCommitteeIds(c.getCommittee_id()));
 		}
-		/*
-		 * for (winnerCommitteeIds w : winner_committee_ids) {
-		 * winnerDonations.addAll(getCandidateDonations(city, state,
-		 * w.getCommitteeId())); //System.out.println(winnerDonations.size()); }
-		 * 
-		 * System.out.println(loserDonations.size()); for (loserCommitteeIds l :
-		 * loser_committee_ids) { //System.out.println(l.getCommitteeId());
-		 * loserDonations.addAll(getCandidateDonations(city, state,
-		 * l.getCommitteeId())); //System.out.println(loserDonations.size()); }
-		 */
 		int total_winners = 0;
 		int total_losers = 0;
 		if (winnerDonations.size() > loserDonations.size()) {
@@ -137,6 +124,15 @@ public class AdamController {
 			if (d.getContributionReceiptAmount() > largest_winning_donation) {
 				largest_winning_donation = d.getContributionReceiptAmount();
 			}
+			if (d.getContributionReceiptAmount() != null && d.getContributionReceiptDate() != null
+					&& d.getContributionReceiptAmount() > 0.0 && winnerDonationScatterData.length() <= 5800) {
+				winnerDonationScatterData += "{x:" + d.getContributionReceiptDate().substring(0, 4)
+						+ d.getContributionReceiptDate().substring(5, 7)
+						+ d.getContributionReceiptDate().substring(8, 10) + ", y:" + d.getContributionReceiptAmount()
+						+ "},";
+
+			}
+
 		}
 
 		for (DBDonation d : loserDonations) {
@@ -144,18 +140,30 @@ public class AdamController {
 			if (d.getContributionReceiptAmount() > largest_losing_donation) {
 				largest_losing_donation = d.getContributionReceiptAmount();
 			}
+			if (d.getContributionReceiptAmount() != null && d.getContributionReceiptDate() != null
+					&& d.getContributionReceiptAmount() > 0.0 && loserDonationScatterData.length() <= 5800) {
+				loserDonationScatterData += "{x:" + d.getContributionReceiptDate().substring(0, 4)
+						+ d.getContributionReceiptDate().substring(5, 7)
+						+ d.getContributionReceiptDate().substring(8, 10) + ", y:" + d.getContributionReceiptAmount()
+						+ "},";
+			}
+
+		}
+		try {
+			winnerDonationScatterData = winnerDonationScatterData.substring(0, winnerDonationScatterData.length() - 1);
+		} catch (StringIndexOutOfBoundsException e) {
+		}
+		try {
+			loserDonationScatterData = loserDonationScatterData.substring(0, loserDonationScatterData.length() - 1);
+		} catch (StringIndexOutOfBoundsException e) {
 		}
 		double avg_winning_donation = winner_total_donations / winnerDonations.size();
 		double avg_losing_donation = loser_total_donations / loserDonations.size();
 		LocationSearchResult lsr = new LocationSearchResult(winner_name, loser_name, winner_committee_ids,
 				loser_committee_ids, winnerDonations, loserDonations, total_winners, total_losers,
 				winner_total_donations, loser_total_donations, largest_winning_donation, largest_losing_donation,
-				avg_winning_donation, avg_losing_donation, city, state, electionYear);
-		/*
-		 * for (loserCommitteeIds l : loser_committee_ids) {
-		 * l.setLocationSearchResultAssigned(lsr); } for (winnerCommitteeIds w :
-		 * winner_committee_ids) { w.setLocationSearchResultAssigned(lsr); }
-		 */
+				avg_winning_donation, avg_losing_donation, city, state, electionYear, winnerDonationScatterData,
+				loserDonationScatterData);
 		return lsr;
 	}
 
@@ -210,6 +218,9 @@ public class AdamController {
 		String location = city + ", " + state;
 
 		ModelAndView mv = new ModelAndView("location-search-results");
+		mv.addObject("results", lsr);
+		mv.addObject("loserDonationData", lsr.getLoserDonationScatterData());
+		mv.addObject("winnerDonationData", lsr.getWinnerDonationScatterData());
 		mv.addObject("location", location);
 		mv.addObject("total_winners", lsr.getTotalWinners());
 		mv.addObject("total_losers", lsr.getTotalLosers());
@@ -431,16 +442,20 @@ public class AdamController {
 				ties.add(l.getWinnerName() + " vs. " + l.getLoserName() + " (" + l.getElectionYear() + ")");
 			}
 			// totalData += String.format("%.2f", l.getWinnerTotalDonations()) + ", ";
-			if(cdr.getCandidateDataFromName(l.getWinnerName()).get(0).getAfiliatedParty().toString().equals("DEMOCRAT")) {
+			if (cdr.getCandidateDataFromName(l.getWinnerName()).get(0).getAfiliatedParty().toString()
+					.equals("DEMOCRAT")) {
 				avgData += Math.round(l.getAvgWinningDonation()) + "," + Math.round(l.getAvgLosingDonation()) + ",";
-				totalData += Math.round(l.getWinnerTotalDonations()) + "," + Math.round(l.getLoserTotalDonations()) + ",";
-				electionYearsTbl += "'" + l.getWinnerName() + " (" + l.getElectionYear() + ")', '" + l.getLoserName() + " (" + l.getElectionYear() + ")', ";
+				totalData += Math.round(l.getWinnerTotalDonations()) + "," + Math.round(l.getLoserTotalDonations())
+						+ ",";
+				electionYearsTbl += "'" + l.getWinnerName() + " (" + l.getElectionYear() + ")', '" + l.getLoserName()
+						+ " (" + l.getElectionYear() + ")', ";
 			} else {
 				avgData += Math.round(l.getAvgLosingDonation()) + "," + Math.round(l.getAvgWinningDonation()) + ",";
-				totalData += Math.round(l.getLoserTotalDonations()) + "," + Math.round(l.getWinnerTotalDonations()) + ",";
-				electionYearsTbl += "'" + l.getLoserName() + " (" + l.getElectionYear() + ")', '" + l.getWinnerName() + " (" + l.getElectionYear() + ")', ";
+				totalData += Math.round(l.getLoserTotalDonations()) + "," + Math.round(l.getWinnerTotalDonations())
+						+ ",";
+				electionYearsTbl += "'" + l.getLoserName() + " (" + l.getElectionYear() + ")', '" + l.getWinnerName()
+						+ " (" + l.getElectionYear() + ")', ";
 			}
-			
 
 		}
 		System.out.println(electionYearsTbl);

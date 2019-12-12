@@ -39,6 +39,25 @@ public class LocationSearchResult {
 	private String city;
 	private String state;
 	private Integer electionYear;
+	private String winnerDonationScatterData;
+	private String loserDonationScatterData;
+	
+	public String getLoserDonationScatterData() {
+		return loserDonationScatterData;
+	}
+
+	public void setLoserDonationScatterData(String loserDonationScatterData) {
+		this.loserDonationScatterData = loserDonationScatterData;
+	}
+
+	public String getWinnerDonationScatterData() {
+		return winnerDonationScatterData;
+	}
+
+	public void setWinnerDonationScatterData(String winnerDonationScatterData) {
+		this.winnerDonationScatterData = winnerDonationScatterData;
+	}
+
 	public LocationSearchResult() {
 		super();
 	}
@@ -47,7 +66,7 @@ public class LocationSearchResult {
 			List<loserCommitteeIds>loserCommitteeIds, List<DBDonation> winnerDonations, List<DBDonation> loserDonations,
 			Integer totalWinners, Integer totalLosers, Double winnerTotalDonations, Double loserTotalDonations,
 			Double largestWinningDonation, Double largestLosingDonation, Double avgWinningDonation,
-			Double avgLosingDonation, String city, String state, Integer electionYear) {
+			Double avgLosingDonation, String city, String state, Integer electionYear, String winnerDonationScatterData, String loserDonationScatterData) {
 		super();
 		this.winnerName = winnerName;
 		this.loserName = loserName;
@@ -66,13 +85,17 @@ public class LocationSearchResult {
 		this.city = city;
 		this.state = state;
 		this.electionYear = electionYear;
+		this.winnerDonationScatterData = winnerDonationScatterData;
+		this.loserDonationScatterData = loserDonationScatterData;
 	}
 
-	public LocationSearchResult(Integer id, String winnerName, String loserName, List<winnerCommitteeIds> winnerCommitteeIds,
-			List<loserCommitteeIds> loserCommitteeIds, List<DBDonation> winnerDonations, List<DBDonation> loserDonations,
-			Integer totalWinners, Integer totalLosers, Double winnerTotalDonations, Double loserTotalDonations,
-			Double largestWinningDonation, Double largestLosingDonation, Double avgWinningDonation,
-			Double avgLosingDonation, String city, String state, Integer electionYear) {
+	public LocationSearchResult(Integer id, String winnerName, String loserName,
+			List<left.rising.FECSearchDraft.entities.winnerCommitteeIds> winnerCommitteeIds,
+			List<left.rising.FECSearchDraft.entities.loserCommitteeIds> loserCommitteeIds,
+			List<DBDonation> winnerDonations, List<DBDonation> loserDonations, Integer totalWinners,
+			Integer totalLosers, Double winnerTotalDonations, Double loserTotalDonations, Double largestWinningDonation,
+			Double largestLosingDonation, Double avgWinningDonation, Double avgLosingDonation, String city,
+			String state, Integer electionYear, String winnerDonationScatterData, String loserDonationScatterData) {
 		super();
 		this.id = id;
 		this.winnerName = winnerName;
@@ -92,6 +115,8 @@ public class LocationSearchResult {
 		this.city = city;
 		this.state = state;
 		this.electionYear = electionYear;
+		this.winnerDonationScatterData = winnerDonationScatterData;
+		this.loserDonationScatterData = loserDonationScatterData;
 	}
 
 	public Integer getId() {

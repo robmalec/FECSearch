@@ -10,6 +10,7 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
+
 <link rel="stylesheet" href="location-result-style.css"
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
@@ -95,7 +96,57 @@
 				<p>Donated to ${largest_total_loser_recipient}</p>
 			</div>
 		</div>
+		<div class="col-lg-12">
+			<canvas id="myChart" width="100%" height="400px"></canvas>
+		</div>
 		<br>
 	</div>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+	<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
+	<script>
+		var ctx = document.getElementById("myChart").getContext('2d');
+
+		// Define the data 
+		var data1 = [${winnerDonationData}];
+		var data2 = [${loserDonationData}];
+		// End Defining data
+		var options = {
+			responsive : true, // Instruct chart js to respond nicely.
+			maintainAspectRatio : false, // Add to prevent default behaviour of full-width/height
+			scales : {
+				xAxes : [ {
+					ticks : {
+						beginAtZero : false,
+						 callback: function(value, index, values) {
+							 console.log(values);
+							 var str = value.toString();
+							 var rtrn = String(str.substring(0,4) + '-' + str.substring(4,6));
+							 console.log(rtrn)
+				                return rtrn;
+				              
+				            }
+						
+					}
+				} ]
+			}
+		};
+
+		// End Defining data
+		var myChart = new Chart(ctx, {
+			type : 'scatter',
+			data : {
+				datasets : [ {
+					label : 'Donations to ${results.getWinnerName()} (Date, Amount)', // Name the series
+					data : data1, // Specify the data values array          
+					backgroundColor : '#3fd715', // Add custom color background (Points and Fill)
+				}, {
+					label : 'Donations to ${results.getLoserName()}  (Date, Amount)', // Name the series
+					data : data2, // Specify the data values array           
+					backgroundColor : '#f70d1a', // Add custom color background (Points and Fill)
+				}]
+			},
+			options : options
+		});
+	</script>
 </body>
 </html>
