@@ -73,8 +73,7 @@ html, body {
 				<label>Last Name</label><br> <input type="text"
 					id="contributor_name" style=""><br> <label>City</label><br>
 				<input type="text" name="contributor_name"><br> <label>State</label><br>
-				<input type="text" name="contributor_name"><br> <label>Zip
-					Code</label><br> <input type="text" name="contributor_state" required><br>
+				<input type="text" name="contributor_name"><br>
 				<input type="Submit" onclick="showInput();" class="btn btn-dark">
 		</form>
 	</div>
