@@ -2,10 +2,10 @@ package left.rising.FECSearchDraft.controllers;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
@@ -35,6 +35,9 @@ public class RobController {
 	
 	@Autowired 
 	StateRepo sRepo;
+	
+	@Value("${gmaps.key}")
+	String gMapsKey;
 	
 	List<State> states;
 	
@@ -116,8 +119,7 @@ public class RobController {
 	
 	@RequestMapping("load-test-map")
 	public ModelAndView loadMap() {
-		String mapAPIKey = "AIzaSyBNBZxsM5lncOL5puCd0OboEiOruXMJrok";
-		ModelAndView view = new ModelAndView("test-map","apiKey",mapAPIKey);
+		ModelAndView view = new ModelAndView("test-map","apiKey",gMapsKey);
 		
 		view.addObject("opacity", 0.9);
 		
