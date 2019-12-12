@@ -269,7 +269,7 @@ public class AdamController {
 		return headers;
 	}
 
-	final RateLimiter rateLimiter = RateLimiter.create(8.0);
+	final RateLimiter rateLimiter = RateLimiter.create(6.0);
 
 	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id,
 			Integer electionYear) {
@@ -278,21 +278,19 @@ public class AdamController {
 		List<DBDonation> donations = new ArrayList<>();
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
-		// System.out.println(rateLimiter.acquire());
 		if (rateLimiter.acquire() < 0) {
 
-			// System.out.println("Started getting first donation pages at: "+new Date());
 			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
 					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
 			System.out.println(
-					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 2) + " seconds");
+					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 4) + " seconds");
 		} else {
 			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2
 					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
 			System.out.println(
-					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 8) + " seconds");
+					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 4) + " seconds");
 		}
 
 		
@@ -328,6 +326,7 @@ public class AdamController {
 		try {
 			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
 				String url = "";
+				rateLimiter.acquire();
 				try {
 					url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
 							+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
@@ -348,6 +347,7 @@ public class AdamController {
 					respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
 					} catch(HttpClientErrorException e1) {
 						try {
+							System.out.println("second error");
 						url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
 								+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 								+ "&per_page=100&last_index="
@@ -356,6 +356,7 @@ public class AdamController {
 								+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
 						respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
 						} catch(HttpClientErrorException e2) {
+							System.out.println("3rd error");
 							url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2 + "&committee_id="
 									+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 									+ "&per_page=100&last_index="
