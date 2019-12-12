@@ -3,6 +3,7 @@ package left.rising.FECSearchDraft.controllers;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import left.rising.FECSearchDraft.dbrepos.ElResult;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
 import left.rising.FECSearchDraft.dbrepos.State;
 import left.rising.FECSearchDraft.dbrepos.StateRepo;
+import left.rising.FECSearchDraft.entities.CandFundsPerState;
 import left.rising.FECSearchDraft.entities.DBDonationResult;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
 import left.rising.FECSearchDraft.entities.StateScheduleAResults;
@@ -162,6 +164,7 @@ public class RobController {
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<StateScheduleAResults> respEnt;
 		ArrayList<StateScheduleAResults> resultList = new ArrayList<>();
+		ArrayList<CandFundsPerState> candFunds = new ArrayList<>();
 
 		List<CandidateCommitteeId> comIDList = canComRepo.findAll();
 		List<ElResult> elResultList = resRepo.findAll();
@@ -207,6 +210,29 @@ public class RobController {
 					double fundsDonated = r.getTotal();
 
 					totalFundsDonated += fundsDonated;
+					
+					CandFundsPerState thisCandFunds = new CandFundsPerState(thisCand, fundsDonated);
+					
+					if ((candFunds.isEmpty()) || (fundsDonated <= candFunds.get(0).getFunds())) {
+						candFunds.add(0,thisCandFunds);
+					}
+					else if (fundsDonated >= candFunds.get(candFunds.size() - 1).getFunds()) {
+						candFunds.add(thisCandFunds);
+					}
+					else {
+						candFunds.add(thisCandFunds);
+						candFunds.sort(new Comparator<CandFundsPerState>() {
+							@Override
+							public int compare(CandFundsPerState lhs, CandFundsPerState rhs) {
+								if (lhs.getFunds() >= rhs.getFunds()) {
+									return 1;
+								}
+								else{
+									return -1;
+								}
+							}							
+						});
+					}
 
 					if (thisCand.getAfiliatedParty() == thisResult.getWinningParty()) {
 						// Code for if committee c donated to a winning candidate this cycle
@@ -229,6 +255,7 @@ public class RobController {
 				}
 			}
 		}
+		System.out.println(candFunds);
 
 		mv.addObject("totalWinningFunds", totalWinCandFundsDonated);
 		mv.addObject("totalLosingFunds", totalLoseCandFundsDonated);
