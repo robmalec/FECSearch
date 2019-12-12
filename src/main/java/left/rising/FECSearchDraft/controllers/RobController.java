@@ -31,6 +31,7 @@ import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
 import left.rising.FECSearchDraft.dbrepos.State;
 import left.rising.FECSearchDraft.dbrepos.StateRepo;
 import left.rising.FECSearchDraft.entities.CandFundsPerState;
+import left.rising.FECSearchDraft.entities.DBDonationResult;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
 import left.rising.FECSearchDraft.entities.StateScheduleAResults;
 
