@@ -3,6 +3,7 @@ package left.rising.FECSearchDraft.entities;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,9 +40,29 @@ public class LocationSearchResult {
 	private String city;
 	private String state;
 	private Integer electionYear;
+	@Column(length=6000)
 	private String winnerDonationScatterData;
+	@Column(length=6000)
 	private String loserDonationScatterData;
+	private Integer numLoserDonations;
+	public Integer getNumLoserDonations() {
+		return numLoserDonations;
+	}
+
+	public void setNumLoserDonations(Integer numLoserDonations) {
+		this.numLoserDonations = numLoserDonations;
+	}
+
+	private Integer numWinnerDonations;
 	
+	public Integer getNumWinnerDonations() {
+		return numWinnerDonations;
+	}
+
+	public void setNumWinnerDonations(Integer numWinnerDonations) {
+		this.numWinnerDonations = numWinnerDonations;
+	}
+
 	public String getLoserDonationScatterData() {
 		return loserDonationScatterData;
 	}
@@ -66,7 +87,7 @@ public class LocationSearchResult {
 			List<loserCommitteeIds>loserCommitteeIds, List<DBDonation> winnerDonations, List<DBDonation> loserDonations,
 			Integer totalWinners, Integer totalLosers, Double winnerTotalDonations, Double loserTotalDonations,
 			Double largestWinningDonation, Double largestLosingDonation, Double avgWinningDonation,
-			Double avgLosingDonation, String city, String state, Integer electionYear, String winnerDonationScatterData, String loserDonationScatterData) {
+			Double avgLosingDonation, String city, String state, Integer electionYear, String winnerDonationScatterData, String loserDonationScatterData, Integer numLoserDonations, Integer numWinnerDonations) {
 		super();
 		this.winnerName = winnerName;
 		this.loserName = loserName;
@@ -87,6 +108,8 @@ public class LocationSearchResult {
 		this.electionYear = electionYear;
 		this.winnerDonationScatterData = winnerDonationScatterData;
 		this.loserDonationScatterData = loserDonationScatterData;
+		this.numLoserDonations = numLoserDonations;
+		this.numWinnerDonations = numWinnerDonations;
 	}
 
 	public LocationSearchResult(Integer id, String winnerName, String loserName,
