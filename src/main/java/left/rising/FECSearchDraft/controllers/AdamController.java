@@ -1,6 +1,7 @@
 package left.rising.FECSearchDraft.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,46 +67,44 @@ public class AdamController {
 
 	public LocationSearchResult getLocationSearchResult(String city, String state, Integer electionYear) {
 		ElResult result = elr.findByElectionYear(electionYear).get(0);
-
 		Integer winner_id = result.getWinnerId();
 		Integer loser_id = result.getLoserId();
-
 		CandidateData winner = cdr.getCandidateDataFromID(winner_id).get(0);
 		CandidateData loser = cdr.getCandidateDataFromID(loser_id).get(0);
-
 		String winner_name = cdr.getCandidateNameFromId(winner_id).get(0);
 		String loser_name = cdr.getCandidateNameFromId(loser_id).get(0);
-
 		String winnerDonationScatterData = "";
 		String loserDonationScatterData = "";
-
 		List<DBDonation> winnerDonations = new ArrayList<>();
 		List<DBDonation> loserDonations = new ArrayList<>();
-
 		List<winnerCommitteeIds> winner_committee_ids = new ArrayList<>();
-		// System.out.println(winner.getName());
+		List<loserCommitteeIds> loser_committee_ids = new ArrayList<>();
+		int total_winners = 0;
+		int total_losers = 0;
+		double winner_total_donations = 0;
+		double loser_total_donations = 0;
+		double largest_winning_donation = 0.0;
+		double largest_losing_donation = 0.0;
+		int winnerIndex = 0;
+		int loserIndex = 0;
+
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
 			if (c.getElection_year().equals(electionYear)) {
 				winnerDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
 		}
-		List<loserCommitteeIds> loser_committee_ids = new ArrayList<>();
+
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(loser)) {
-			// System.out.println(c.getCandidate_assigned().getName());
 			if (c.getElection_year().equals(electionYear)) {
 				loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
 		}
-		int total_winners = 0;
-		int total_losers = 0;
+
 		if (winnerDonations.size() > loserDonations.size()) {
 			total_winners += 1;
 		} else {
 			total_losers += 1;
 		}
-		double winner_total_donations = 0;
-		double loser_total_donations = 0;
-		double largest_winning_donation = 0.0;
 
 		try {
 			largest_winning_donation = winnerDonations.get(0).getContributionReceiptAmount();
@@ -113,57 +112,81 @@ public class AdamController {
 
 		}
 
-		double largest_losing_donation = 0.0;
 		try {
 			largest_losing_donation = loserDonations.get(0).getContributionReceiptAmount();
 		} catch (IndexOutOfBoundsException e) {
 		}
 
-		for (DBDonation d : winnerDonations) {
-			winner_total_donations += d.getContributionReceiptAmount();
-			if (d.getContributionReceiptAmount() > largest_winning_donation) {
-				largest_winning_donation = d.getContributionReceiptAmount();
+		for (winnerIndex = 0; winnerIndex < winnerDonations.size()
+				&& winnerDonationScatterData.length() <= 5500; winnerIndex++) {
+			winner_total_donations += winnerDonations.get(winnerIndex).getContributionReceiptAmount();
+			if (winnerDonations.get(winnerIndex).getContributionReceiptAmount() > largest_winning_donation) {
+				largest_winning_donation = winnerDonations.get(winnerIndex).getContributionReceiptAmount();
 			}
-			if (d.getContributionReceiptAmount() != null && d.getContributionReceiptDate() != null
-					&& d.getContributionReceiptAmount() > 0.0 && winnerDonationScatterData.length() <= 5800) {
-				winnerDonationScatterData += "{x:" + d.getContributionReceiptDate().substring(0, 4)
-						+ d.getContributionReceiptDate().substring(5, 7)
-						+ d.getContributionReceiptDate().substring(8, 10) + ", y:" + d.getContributionReceiptAmount()
-						+ "},";
+			if (winnerDonations.get(winnerIndex).getContributionReceiptAmount() != null
+					&& winnerDonations.get(winnerIndex).getContributionReceiptDate() != null
+					&& winnerDonations.get(winnerIndex).getContributionReceiptAmount() > 0.0
+					&& winnerDonationScatterData.length() <= 5800) {
+				winnerDonationScatterData += "{x:"
+						+ winnerDonations.get(winnerIndex).getContributionReceiptDate().substring(0, 4) + "."
+						+ winnerDonations.get(winnerIndex).getContributionReceiptDate().substring(5, 7)
+						+ winnerDonations.get(winnerIndex).getContributionReceiptDate().substring(8, 10) + ", y:"
+						+ winnerDonations.get(winnerIndex).getContributionReceiptAmount() + "},";
 
+			}
+		}
+
+		for (int i = winnerIndex; i < winnerDonations.size(); i++) {
+			winner_total_donations += winnerDonations.get(i).getContributionReceiptAmount();
+			if (winnerDonations.get(i).getContributionReceiptAmount() > largest_winning_donation) {
+				largest_winning_donation = winnerDonations.get(i).getContributionReceiptAmount();
+			}
+		}
+
+		for (loserIndex = 0; loserIndex < loserDonations.size()
+				&& loserDonationScatterData.length() <= 5500; loserIndex++) {
+			loser_total_donations += loserDonations.get(loserIndex).getContributionReceiptAmount();
+			if (loserDonations.get(loserIndex).getContributionReceiptAmount() > largest_losing_donation) {
+				largest_losing_donation = loserDonations.get(loserIndex).getContributionReceiptAmount();
+			}
+			if (loserDonations.get(loserIndex).getContributionReceiptAmount() != null
+					&& loserDonations.get(loserIndex).getContributionReceiptDate() != null
+					&& loserDonations.get(loserIndex).getContributionReceiptAmount() > 0.0) {
+				loserDonationScatterData += "{x:"
+						+ loserDonations.get(loserIndex).getContributionReceiptDate().substring(0, 4) + "."
+						+ loserDonations.get(loserIndex).getContributionReceiptDate().substring(5, 7)
+						+ loserDonations.get(loserIndex).getContributionReceiptDate().substring(8, 10) + ", y:"
+						+ loserDonations.get(loserIndex).getContributionReceiptAmount() + "},";
 			}
 
 		}
 
-		for (DBDonation d : loserDonations) {
-			loser_total_donations += d.getContributionReceiptAmount();
-			if (d.getContributionReceiptAmount() > largest_losing_donation) {
-				largest_losing_donation = d.getContributionReceiptAmount();
+		for (int i = loserIndex; i < loserDonations.size(); i++) {
+			loser_total_donations += loserDonations.get(i).getContributionReceiptAmount();
+			if (loserDonations.get(i).getContributionReceiptAmount() > largest_losing_donation) {
+				largest_losing_donation = loserDonations.get(i).getContributionReceiptAmount();
 			}
-			if (d.getContributionReceiptAmount() != null && d.getContributionReceiptDate() != null
-					&& d.getContributionReceiptAmount() > 0.0 && loserDonationScatterData.length() <= 5800) {
-				loserDonationScatterData += "{x:" + d.getContributionReceiptDate().substring(0, 4)
-						+ d.getContributionReceiptDate().substring(5, 7)
-						+ d.getContributionReceiptDate().substring(8, 10) + ", y:" + d.getContributionReceiptAmount()
-						+ "},";
-			}
-
 		}
+
 		try {
 			winnerDonationScatterData = winnerDonationScatterData.substring(0, winnerDonationScatterData.length() - 1);
 		} catch (StringIndexOutOfBoundsException e) {
 		}
+
 		try {
 			loserDonationScatterData = loserDonationScatterData.substring(0, loserDonationScatterData.length() - 1);
 		} catch (StringIndexOutOfBoundsException e) {
 		}
+
 		double avg_winning_donation = winner_total_donations / winnerDonations.size();
 		double avg_losing_donation = loser_total_donations / loserDonations.size();
+
 		LocationSearchResult lsr = new LocationSearchResult(winner_name, loser_name, winner_committee_ids,
 				loser_committee_ids, winnerDonations, loserDonations, total_winners, total_losers,
 				winner_total_donations, loser_total_donations, largest_winning_donation, largest_losing_donation,
 				avg_winning_donation, avg_losing_donation, city, state, electionYear, winnerDonationScatterData,
 				loserDonationScatterData);
+
 		return lsr;
 	}
 
@@ -246,25 +269,37 @@ public class AdamController {
 		return headers;
 	}
 
-	final RateLimiter rateLimiter = RateLimiter.create(2.0);
+	final RateLimiter rateLimiter = RateLimiter.create(8.0);
 
 	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id,
 			Integer electionYear) {
+		System.out.println("Started getting donations at: " + new Date());
 		int electionYearInt = electionYear;
 		List<DBDonation> donations = new ArrayList<>();
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
-		rateLimiter.acquire();
-		respEnt = rt.exchange(
-				"http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id=" + committee_id
-						+ "&contributor_city=" + city + "&contributor_state=" + state + "&per_page=100",
-				HttpMethod.GET, httpEnt, ScheduleAResults.class);
-		System.out
-				.println("Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 2) + " seconds");
-		rateLimiter.acquire();
+		// System.out.println(rateLimiter.acquire());
+		if (rateLimiter.acquire() == 0) {
+
+			// System.out.println("Started getting first donation pages at: "+new Date());
+			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
+					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
+			System.out.println(
+					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 2) + " seconds");
+		} else {
+			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2
+					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
+			System.out.println(
+					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 2) + " seconds");
+		}
+
+		
 		try {
 			List<DBDonation> toAdd = respEnt.getBody().getResults();
 			for (DBDonation d : toAdd) {
+
 				try {
 					try {
 						if (d.getContributionReceiptDate().contains("" + electionYearInt)) {
@@ -285,25 +320,48 @@ public class AdamController {
 
 				}
 			}
+
 		} catch (HttpClientErrorException e) {
 
 		}
 
 		try {
 			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
-				// System.out.println(respEnt.getBody().getPagination().getLast_indexes().getLast_index());
-				rateLimiter.acquire();
-				String url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
-						+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
-						+ "&per_page=100&last_index="
-						+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
-						+ "&last_contribution_receipt_date="
-						+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
-				// System.out.println(url);
-				rateLimiter.acquire();
-				respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
+				String url = "";
+				double r = rateLimiter.acquire();
+				if (r == 0) {
+					url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
+							+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+							+ "&per_page=100&last_index="
+							+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
+							+ "&last_contribution_receipt_date="
+							+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
+					respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
+				} else {
+					if (r < 0.25) {
+					System.out.println(rateLimiter.acquire());
+					url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2 + "&committee_id="
+							+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+							+ "&per_page=100&last_index="
+							+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
+							+ "&last_contribution_receipt_date="
+							+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
+					respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
+					}
+					else {
+						url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
+								+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+								+ "&per_page=100&last_index="
+								+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
+								+ "&last_contribution_receipt_date="
+								+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
+						respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);	
+					}
+				}
 
+				
 				List<DBDonation> toAdd = respEnt.getBody().getResults();
+				
 				for (DBDonation d : toAdd) {
 					try {
 						try {
@@ -335,6 +393,7 @@ public class AdamController {
 			donations.add(db);
 			return donations;
 		}
+		System.out.println("Finished getting donations at: " + new Date());
 		return donations;
 	}
 
@@ -441,7 +500,6 @@ public class AdamController {
 			} else {
 				ties.add(l.getWinnerName() + " vs. " + l.getLoserName() + " (" + l.getElectionYear() + ")");
 			}
-			// totalData += String.format("%.2f", l.getWinnerTotalDonations()) + ", ";
 			if (cdr.getCandidateDataFromName(l.getWinnerName()).get(0).getAfiliatedParty().toString()
 					.equals("DEMOCRAT")) {
 				avgData += Math.round(l.getAvgWinningDonation()) + "," + Math.round(l.getAvgLosingDonation()) + ",";
@@ -458,13 +516,11 @@ public class AdamController {
 			}
 
 		}
-		System.out.println(electionYearsTbl);
 		// Calculate average winning and losing donations for all election years
 		averageWinningDonation = averageWinningDonation / 9;
 		averageLosingDonation = averageLosingDonation / 9;
 
 		// Add objects to the ModelAndView
-		// results.get(0).getWin
 		mv.addObject("avgData", avgData);
 		mv.addObject("electionYears", electionYearsTbl);
 		mv.addObject("totalData", totalData);
