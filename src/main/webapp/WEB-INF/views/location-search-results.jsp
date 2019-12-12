@@ -16,6 +16,12 @@
 	crossorigin="anonymous">
 </head>
 <body>
+<ul class="nav nav-tabs bg-dark navbar-dark">
+			<li class="nav-item"><a class="nav-link active" href="#">Active</a>
+			</li>
+			<li class="nav-item"><a class="nav-link" href="#"
+				style="color: white;">Link</a></li>
+		</ul>
 	<div class="container">
 		<br>
 		<div class="row">
