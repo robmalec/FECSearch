@@ -87,6 +87,8 @@ public class AdamController {
 		double largest_losing_donation = 0.0;
 		int winnerIndex = 0;
 		int loserIndex = 0;
+		int numWinnerDonations = 0;
+		int numLoserDonations = 0;
 
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
 			if (c.getElection_year().equals(electionYear)) {
@@ -99,6 +101,8 @@ public class AdamController {
 				loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
 		}
+		numWinnerDonations = winnerDonations.size();
+		numLoserDonations = loserDonations.size();
 
 		if (winnerDonations.size() > loserDonations.size()) {
 			total_winners += 1;
@@ -185,7 +189,7 @@ public class AdamController {
 				loser_committee_ids, winnerDonations, loserDonations, total_winners, total_losers,
 				winner_total_donations, loser_total_donations, largest_winning_donation, largest_losing_donation,
 				avg_winning_donation, avg_losing_donation, city, state, electionYear, winnerDonationScatterData,
-				loserDonationScatterData);
+				loserDonationScatterData, numLoserDonations, numWinnerDonations);
 
 		return lsr;
 	}
@@ -239,8 +243,17 @@ public class AdamController {
 			lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear);
 		}
 		String location = city + ", " + state;
-
+		String majorityDonationName = "";
+		if (lsr.getNumWinnerDonations() > lsr.getNumLoserDonations()) {
+			majorityDonationName = lsr.getWinnerName();
+		}
+		else {
+			majorityDonationName = lsr.getLoserName();
+		}
+		
+		System.out.println("Winnersize: " + lsr.getWinnerDonations().size() + " LoserSize: " + lsr.getLoserDonations().size());
 		ModelAndView mv = new ModelAndView("location-search-results");
+		mv.addObject("majname", majorityDonationName);
 		mv.addObject("results", lsr);
 		mv.addObject("loserDonationData", lsr.getLoserDonationScatterData());
 		mv.addObject("winnerDonationData", lsr.getWinnerDonationScatterData());
