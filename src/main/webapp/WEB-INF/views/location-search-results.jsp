@@ -27,7 +27,7 @@
 		<hr>
 		<div class="row">
 			<div class="col-lg-12 text-center">
-				<h3>The majority of donors in ${location} supported:</h3>
+				<h3>The majority of donations from ${location} went to:</h3>
 			</div>
 		</div>
 		<hr>
