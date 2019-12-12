@@ -118,14 +118,26 @@
 					ticks : {
 						beginAtZero : false,
 						 callback: function(value, index, values) {
-							 console.log(values);
 							 var str = value.toString();
-							 var rtrn = String(str.substring(0,4) + '-' + str.substring(4,6));
-							 console.log(rtrn)
-				                return rtrn;
-				              
+							 var mtn = String(str.substring(5,7));
+							 var day = String(str.substring(7,9));
+							 console.log('Month' + mtn);
+							 console.log('Day' + day);
+							 if (day === '') {
+								 day = String('01');
+							 }
+							 if (mtn === '') {
+								 mtn = String('01');
+							 }
+							 var rtrn = String(str.substring(0,4) + '-' + mtn + '-' + day);
+							 console.log(rtrn);
+								 return rtrn;
+							 
+				/*
+							 else {
+								 return String(str.substring(0,4) + '-12-' + str.substring(7,9));
+							 } */
 				            }
-						
 					}
 				} ]
 			}
