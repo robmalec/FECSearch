@@ -146,63 +146,16 @@ public class RobController {
 
 		String idString = "";
 		String stateCodeString = "";
-		String opacityString = "";
 
 		for (State s : states) {
 			idString += s.getOSMStateId() + " ";
 			stateCodeString += s.getStateCode() + " ";
-			opacityString += s.getOpacity() + " ";
 		}
 
 		view.addObject("idString", idString);
 		view.addObject("stateCodes", stateCodeString);
-		view.addObject("opadcities", opacityString);
 
 		return view;
-	}
-
-	@RequestMapping("generate-state-opacity")
-	public ModelAndView genStateOpacity() {
-		List<CandidateCommitteeId> comIdList = canComRepo.findAll();
-		String url = "";
-		for (State s : sRepo.findAll()) {
-			if (s.getOpacity() != 1.0) {
-				System.out.println(s.getStateName());
-				double thisStateWinningFunds = 0.0;
-				double thisStateTotalFunds = 0.0;
-				for (CandidateCommitteeId c : comIdList) {
-
-					url = "http://api.open.fec.gov/v1/schedules/schedule_a/by_state/?api_key=" + fecKey
-							+ "&committee_id=" + c.getCommittee_id() + "&state=" + s.getStateCode() + "&per_page=100";
-
-					StateScheduleAResults results = rt.getForObject(url, StateScheduleAResults.class);
-
-					for (DBDonationResult r : results.getResults()) {
-						if ((r.getCycle() % 4 == 0) && r.getCycle() < 2020) {
-							rateLimiter.acquire();
-							ElResult thisResult = resRepo.findByElectionYear(r.getCycle()).get(0);
-
-							double fundsDonated = r.getTotal();
-
-							thisStateTotalFunds += fundsDonated;
-							System.out.println("totalFunds: " + thisStateTotalFunds);
-
-							if (c.getCandidate_assigned().getAfiliatedParty() == thisResult.getWinningParty()) {
-								// Code for if committee c donated to a winning candidate this cycle
-								thisStateWinningFunds += fundsDonated;
-							}
-
-							if (thisStateTotalFunds == 0.0) {
-								System.out.println("Divide by zero at: " + s);
-							}
-						}
-					}
-					s.setOpacity(thisStateWinningFunds / thisStateTotalFunds);
-					sRepo.save(s);
-				}
-			}
-		}
-		return new ModelAndView("redirect:/");
 	}
 
 	@RequestMapping("load-state-stats-page")
@@ -222,9 +175,9 @@ public class RobController {
 		double totalLoseCandFundsDonated = 0.0;
 		double totalFundsDonated = 0.0;
 
-		CandFundsPerState bmw = new CandFundsPerState(null, 0.0);
+		CandFundsPerState bmw = new CandFundsPerState(null,0.0);
 
-		CandFundsPerState bml = new CandFundsPerState(null, 0.0);
+		CandFundsPerState bml = new CandFundsPerState(null,0.0);
 
 		CandFundsPerState smw = new CandFundsPerState(null, Double.MAX_VALUE);
 
@@ -253,24 +206,27 @@ public class RobController {
 					double fundsDonated = r.getTotal();
 
 					totalFundsDonated += fundsDonated;
-
+					
 					CandFundsPerState thisCandFunds = new CandFundsPerState(thisCand, fundsDonated);
-
+					
 					if ((candFunds.isEmpty()) || (fundsDonated <= candFunds.get(0).getFunds())) {
-						candFunds.add(0, thisCandFunds);
-					} else if (fundsDonated >= candFunds.get(candFunds.size() - 1).getFunds()) {
+						candFunds.add(0,thisCandFunds);
+					}
+					else if (fundsDonated >= candFunds.get(candFunds.size() - 1).getFunds()) {
 						candFunds.add(thisCandFunds);
-					} else {
+					}
+					else {
 						candFunds.add(thisCandFunds);
 						candFunds.sort(new Comparator<CandFundsPerState>() {
 							@Override
 							public int compare(CandFundsPerState lhs, CandFundsPerState rhs) {
 								if (lhs.getFunds() >= rhs.getFunds()) {
 									return 1;
-								} else {
+								}
+								else{
 									return -1;
 								}
-							}
+							}							
 						});
 					}
 
@@ -287,7 +243,8 @@ public class RobController {
 						totalLoseCandFundsDonated += fundsDonated;
 						if (fundsDonated > bml.getFunds()) {
 							bml = thisCandFunds;
-						} else if (fundsDonated < sml.getFunds()) {
+						}
+						else if (fundsDonated < sml.getFunds()) {
 							sml = thisCandFunds;
 						}
 					}

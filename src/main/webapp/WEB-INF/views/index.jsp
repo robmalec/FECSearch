@@ -29,138 +29,87 @@ html, body {
 
 	<div class="container">
 
-	 <div class="jumbotron jumbotron-fluid">
+		<div class="jumbotron jumbotron-fluid">
 			<div class="container">
 				<h1 class="display-4">Follow the $</h1>
 			</div>
 		</div>
-		
-		<!--
-
-		<div class="tab-content">
-  	<div class="tab-pane active">
-		<ul class="nav nav-tabs">
-			<li class="nav-item"><a class="nav-link active" id="#home-tab" href="#">Home</a>
-			</li>
-			<li class="nav-item dropdown">
-				<a
-				class="nav-link dropdown-toggle" data-toggle="dropdown" id="select-tab" href="#"
-				role="button" aria-haspopup="true" aria-expanded="false" role="tab">Search
-					Options</a>
-				<div class="dropdown-menu">
-					<a class="dropdown-item" href="#contributor_name">Candidate
-						Search</a> <a class="dropdown-item" href="#location_name">Location
-						Search</a> <a class="dropdown-item" href="#location_comparison">Location
-						Comparison</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="#biggest_winner">Biggest Winner</a>
-					<a class="dropdown-item" href="#biggest_loser">Biggest Loser</a>
-				</div>
-		</ul>
-
-		<div class="tab-content" id="myTabContent">
-			<div class="tab-pane fade" id="home" role="tabpanel"
-				aria-labelledby="home-tab"></div>
-			<div class="tab-pane fade show active" id="profile" role="tabpanel"
-				aria-labelledby="select-tab"></div>
-		</div>
-		</div>
-		</div> -->
-
-		<!-- <div class="tab-pane active"> -->
 
 		<ul class="nav nav-tabs">
 
 			<li class="nav-item dropdown"><a
 				class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
-				role="button" aria-haspopup="true" aria-expanded="false">Search Options</a>
+				role="button" aria-haspopup="true" aria-expanded="false">Search
+					Options</a>
 				<div class="dropdown-menu">
 					<a class="dropdown-item" data-toggle="collapse"
-						data-target="#firstForm">Search by Candidate</a> <a class="dropdown-item"
-						data-toggle="collapse" data-target="#secondForm">Search by Location For All Years</a> <a class="dropdown-item" data-toggle="collapse"
+						data-target="#firstForm">Candidate</a> 
+						<a
+						class="dropdown-item" data-toggle="collapse"
+						data-target="#secondForm">Location For All Years</a> 
+						<a
+						class="dropdown-item" data-toggle="collapse"
 						data-target="#thirdForm">Compare Locations</a>
+						<a
+						class="dropdown-item" data-toggle="collapse"
+						data-target="#fourthForm">Location and Election Year</a>
+						<a
+						class="dropdown-item" data-toggle="collapse"
+						data-target="#fifthForm">Biggest Winner</a>
+						<a
+						class="dropdown-item" data-toggle="collapse"
+						data-target="#sixthForm">Biggest Losers</a>
 
 
 				</div></li>
 
 
 		</ul>
-		
-		<form>
-    <div  id="firstForm" class="collapse">
-      <label for="contributor_name">Search by Candidate</label>
-      <input type="text" class="form-control" id="contributor_name" aria-describedby="searchCand">
-      <label>First Name</label><br>
-			<input type="text" id="contributor_name" style=""><br>
-			<label>Last Name</label><br>
-			<input type="text" id="contributor_name" style=""><br> <label>City</label><br>
-			<input type="text" name="contributor_name"><br> <label>State</label><br>
-			<input type="text" name="contributor_name"><br> <label>Zip
-				Code</label><br>
-			<input type="text" name="contributor_state" required><br>
-			<input type="Submit" onclick="showInput();" class="btn btn-dark">
-      <small id="searchCand" class="form-text text-muted"></small>
-    </div>
-    <div  id="secondForm" class="collapse">
-      <label for="location_name">Search by Location</label>
-      <input type="text" class="form-control" id=location_name">
-    </div>
-    <div  id="thirdForm" class="collapse">
-      <input type="text" class="form-check-input" id="location_comparer">
-      <label class="form-check-label" for="exampleCheck1">Check me out</label>
-    </div>
-   
-  </form>
-		
-		<!-- <form action="/find-contributor">
-		<div id="firstForm" class="collpase">
-			<label>Search By Candidate</label><br>
-			<label>First Name</label><br>
-			<input type="text" id="contributor_name" style=""><br>
-			<label>Last Name</label><br>
-			<input type="text" id="contributor_name" style=""><br> <label>City</label><br>
-			<input type="text" name="contributor_name"><br> <label>State</label><br>
-			<input type="text" name="contributor_name"><br> <label>Zip
-				Code</label><br>
-			<input type="text" name="contributor_state" required><br>
-			<input type="Submit" onclick="showInput();" class="btn btn-dark">
+
+		<form action="/find-contributor">
+			<div id="firstForm" class="collapse">
+				<label>Search By Candidate</label><br> <label>First
+					Name</label><br> <input type="text" id="contributor_name" style=""><br>
+				<label>Last Name</label><br> <input type="text"
+					id="contributor_name" style=""><br> <label>City</label><br>
+				<input type="text" name="contributor_name"><br> <label>State</label><br>
+				<input type="text" name="contributor_name"><br>
+				<input type="Submit" onclick="showInput();" class="btn btn-dark">
 		</form>
-		</div>
-		<form action="/historical-search-results">
-		<div id="secondFrom" class="collpase">
-			<label>Search By Location For All Election Years</label><br>
-			<label>City</label><br>
+	</div>
+	<form action="/historical-search-results">
+		<div id="secondForm" class="collapse">
+			<label>Search By Location For All Election Years</label><br> <label>City</label><br>
 			<input type="text" name="city"><br> <label>State</label><br>
 			<input type="text" name="state"><br> <input
 				type="Submit" class="btn btn-dark">
-		</form>
-		</div>
-		<form action="/location-search-results">
-			Search By Location and Election Year
-			1980-2016
-			city, state, election year
-
-		<form action="compare-location-search-results">
-		<div id="thirdForm" class="collpase">
-			<label>Location Comparer</label><br>
-			<label>First City</label><br>
+	</form>
+	</div>
+	<form action="/location-search-results">
+		<div id="thirdForm" class="collapse">
+			<label>Search By Location and Election Year</label><br> <label>City</label><br>
+			<input type="text" name="location_comparison"><br> <label>State</label><br>
 			<input type="text" name="location_comparison"><br>
-			<label>First State</label><br> <input type="text"
-				name="location_comparison"><br>
-			<label>First Zip Code</label><br>
-			<input type="text" name="location_comparison"><br>
-			<label>Second City</label><br>
-			<input type="text" name="location_comparison"><br>
-			<label>Second State</label><br>
-			<input type="text" name="location_comparison"><br>
-			<label>Second Zip Code</label><br>
-			<input type="text" name="location_comparison" required> <input
+			<label>Election Year</label><br> <input type="text"
+				name="location_comparison" required> <input type="Submit"
+				class="btn btn-dark">
+	</form>
+	<!-- 1980-2016 -->
+	</div>
+	<form action="compare-location-search-results">
+		<div id="fourthForm" class="collapse">
+			<label>Location Comparer</label><br> <label>First City</label><br>
+			<input type="text" name="location_comparison"><br> <label>First
+				State</label><br> <input type="text" name="location_comparison"><br>
+			<br> <input type="text" name="location_comparison"><br>
+			<label>Second City</label><br> <input type="text"
+				name="location_comparison"><br> <label>Second
+				State</label><br> <input type="text" name="location_comparison"> <input
 				type="Submit" class="btn btn-dark">
-
-		</form>
-		</div>
-		<form>
-		<div id="firstForm" class="collpase">
+	</form>
+	</div>
+	<form>
+		<div id="fifthForm" class="collapse">
 			<label>Biggest Winner</label><input type="text" id="biggest_winner"
 				name="biggest_winner"> <label>Candidate Name</label><input
 				type="text" name="biggest_winner"> <label>City</label><input
@@ -168,11 +117,10 @@ html, body {
 				type="text" name="biggest_winner"> <label>Zip Code</label><input
 				type="text" name="biggest_winner" required> <input
 				type="Submit" class="btn btn-dark">
-
-		</form>
-		</div>
-		<form>
-		<div id="firstForm" class="collpase">
+	</form>
+	</div>
+	<form>
+		<div id="sixthForm" class="collapse">
 			<label>Biggest Loser</label><input type="text" id="biggest_loser"
 				name="biggest_loser"> <label>City</label><input type="text"
 				name="biggest_loser"> <label>Biggest loser</label><input
@@ -182,19 +130,14 @@ html, body {
 			<input type="text" name="biggest_loser"> <label>Zip
 				Code</label><input type="text" name="biggest_loser" required> <input
 				type="Submit" class="btn btn-dark">
+	</form>
+	</div>
+	</div>
 
-		</form>
-		</div> -->
-		<!-- </div>
-
-
-	</div> -->
-
-
-		<br>
-		<div class="alert alert-primary" role="alert" id="alert"
-			style="display: none">${badSearch}</div>
-		<br>
+	<br>
+	<div class="alert alert-primary" role="alert" id="alert"
+		style="display: none">${badSearch}</div>
+	<br>
 
 	</div>
 	<div id="map"></div>
@@ -212,15 +155,18 @@ html, body {
 		var stateIds = "${idString}";
 		//getting similar string with state codes from EL tag
 		var stateCodes = "${stateCodes}";
-		var stateOpacities = "${opacities}"
+		var stateOpacities = "${opacities}";
 		//splitting these strings up into arrays
 		const idArr = stateIds.split(" ");
 		var stateCodeArr = stateCodes.split(" ");
 		var opacityArr = stateOpacities.split(" ");
+		//Variable for maximum opacity, if we set this to 1.0 it blocks out the entire map underneath the state data polygons
+		const maxOpacity = parseFloat(0.6);
 		//running through every state ID and requesting data on its borders from OpenStreetMap API
 		for (var i = 0; i < idArr.length; i++) {
 			const thisId = idArr[i].toString();
 			const stateCode = stateCodeArr[i].toString();
+			const thisOpacity = parseFloat(opacityArr[i]);
 			var request = new XMLHttpRequest();
 			request
 					.open('GET',
@@ -265,10 +211,10 @@ html, body {
 					var thisPoly = new google.maps.Polygon({
 						paths : polygon,
 						strokeColor : '#FF0000',
-						strokeOpacity : 0.8,
+						strokeOpacity : 1.0,
 						strokeWeight : 1,
 						fillColor : '#FF0000',
-						fillOpacity : opacityArr[a]
+						fillOpacity : (maxOpacity * thisOpacity)
 					});
 					//Adding wrapper variable to map
 					thisPoly.setMap(map);
@@ -278,8 +224,7 @@ html, body {
 									thisPoly,
 									'click',
 									function(event) {
-										alert(stateCode);
-										window.location = "/load-state-stats-page?stateName="
+										window.location = "/load-state-stats-page?stateCode="
 												+ stateCode;
 									});
 					json.features[0].geometry.type = data.geojson.type;
@@ -288,12 +233,6 @@ html, body {
 			}//Ending iteration for each state ID
 			request.send();
 		}
-		map.data.addListener('click', function(event) {
-			console.log(map.data);
-		});
-	}
-	function clickSelection() {
-		alert("Clicked");
 	}
 	</script>
 	<script
