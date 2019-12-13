@@ -57,7 +57,7 @@
 			</div>
 			<div class="col-lg-6 text-center">
 				<h6>Donations to ${largest_total_loser_recipient}</h6>
-				<h4 class="win-lose-total">$${avg_losing_donation}</h64>
+				<h4 class="win-lose-total">$${avg_losing_donation}</h4>
 			</div>
 		</div>
 		<hr>
