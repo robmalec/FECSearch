@@ -214,10 +214,26 @@ public class AdamController {
 
 		String location1 = city1 + ", " + state1;
 		String location2 = city2 + ", " + state2;
+		String lsr1MostDon = "";
+		String lsr2MostDon = "";
+		if (lsr1.getNumWinnerDonations() > lsr1.getNumLoserDonations()) {
+			lsr1MostDon = lsr1.getWinnerName();
+		} else {
+			lsr1MostDon = lsr1.getLoserName();
+		}
+		if (lsr2.getNumWinnerDonations() > lsr2.getNumLoserDonations()) {
+			lsr2MostDon = lsr2.getWinnerName();
+		} else {
+			lsr2MostDon = lsr2.getLoserName();
+		}
 
 		ModelAndView mv = new ModelAndView("compare-location-search-results");
+		mv.addObject("location1result", lsr1);
+		mv.addObject("location2result", lsr2);
 		mv.addObject("location1", location1);
 		mv.addObject("location2", location2);
+		mv.addObject("location1MostDon", lsr1MostDon);
+		mv.addObject("location2MostDon", lsr2MostDon);
 		mv.addObject("location1_winners", lsr1.getTotalWinners());
 		mv.addObject("location2_winners", lsr2.getTotalWinners());
 		mv.addObject("avg_winning_donation_location1", String.format("%.2f", lsr1.getAvgWinningDonation()));
@@ -246,12 +262,12 @@ public class AdamController {
 		String majorityDonationName = "";
 		if (lsr.getNumWinnerDonations() > lsr.getNumLoserDonations()) {
 			majorityDonationName = lsr.getWinnerName();
-		}
-		else {
+		} else {
 			majorityDonationName = lsr.getLoserName();
 		}
-		
-		System.out.println("Winnersize: " + lsr.getWinnerDonations().size() + " LoserSize: " + lsr.getLoserDonations().size());
+
+		System.out.println(
+				"Winnersize: " + lsr.getWinnerDonations().size() + " LoserSize: " + lsr.getLoserDonations().size());
 		ModelAndView mv = new ModelAndView("location-search-results");
 		mv.addObject("majname", majorityDonationName);
 		mv.addObject("results", lsr);
@@ -282,7 +298,8 @@ public class AdamController {
 		return headers;
 	}
 
-	final RateLimiter rateLimiter = RateLimiter.create(6.0);
+	final RateLimiter rateLimiter = RateLimiter.create(5.0);
+	final RateLimiter rateLimiter2 = RateLimiter.create(3.0);
 
 	public List<DBDonation> getCandidateDonations(String city, String state, String committee_id,
 			Integer electionYear) {
@@ -291,26 +308,34 @@ public class AdamController {
 		List<DBDonation> donations = new ArrayList<>();
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 		ResponseEntity<ScheduleAResults> respEnt;
-		if (rateLimiter.acquire() < 0) {
+		rateLimiter.acquire();
+		try {
 
 			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
 					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
 			System.out.println(
-					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 4) + " seconds");
-		} else {
-			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2
-					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
-					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
-			System.out.println(
-					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 4) + " seconds");
+					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 5) + " seconds");
+		} catch (HttpClientErrorException e) {
+			//try {
+				respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2
+						+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+						+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
+				System.out.println(
+						"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 5) + " seconds");
+			//} catch (HttpClientErrorException ee) {
+				/*
+				respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
+						+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+						+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
+				System.out.println(
+						"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 4) + " seconds");
+			}*/
 		}
-
-		
+		int pages = respEnt.getBody().getPagination().getPages();
+		List<DBDonation> toAdd = respEnt.getBody().getResults();
 		try {
-			List<DBDonation> toAdd = respEnt.getBody().getResults();
 			for (DBDonation d : toAdd) {
-
 				try {
 					try {
 						if (d.getContributionReceiptDate().contains("" + electionYearInt)) {
@@ -318,11 +343,6 @@ public class AdamController {
 						} else if (((d.getReportYear() <= electionYearInt)
 								&& (d.getReportYear() > (electionYearInt - 4))) && !d.getEntityType().equals("ORG")) {
 							donations.add(d);
-							if (d.getContributionReceiptAmount() > 10000) {
-								System.out.println("BigDonation - ReportYear: " + d.getReportYear()
-										+ " ElectionYearInt:" + electionYearInt + " " + d.getContributionReceiptDate()
-										+ " " + d.getContributionReceiptAmount());
-							}
 						}
 					} catch (NullPointerException e) {
 
@@ -331,9 +351,7 @@ public class AdamController {
 
 				}
 			}
-
 		} catch (HttpClientErrorException e) {
-
 		}
 
 		try {
@@ -341,6 +359,7 @@ public class AdamController {
 				String url = "";
 				rateLimiter.acquire();
 				try {
+					
 					url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
 							+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 							+ "&per_page=100&last_index="
@@ -348,40 +367,44 @@ public class AdamController {
 							+ "&last_contribution_receipt_date="
 							+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
 					respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
-				} catch(HttpClientErrorException e) {
-					System.out.println("Got an error");
+					System.out.println("No error on first key");
+				} catch (HttpClientErrorException e) {
+					System.out.println("Got an error on first key");
 					try {
-					url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2 + "&committee_id="
-							+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
-							+ "&per_page=100&last_index="
-							+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
-							+ "&last_contribution_receipt_date="
-							+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
-					respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
-					} catch(HttpClientErrorException e1) {
-						try {
-							System.out.println("second error");
-						url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey + "&committee_id="
+						rateLimiter2.acquire();
+						url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2 + "&committee_id="
 								+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
 								+ "&per_page=100&last_index="
 								+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
-								+ "&last_contribution_receipt_date="
-								+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
+								+ "&last_contribution_receipt_date=" + respEnt.getBody().getPagination()
+										.getLast_indexes().getLast_contribution_receipt_date();
 						respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
-						} catch(HttpClientErrorException e2) {
-							System.out.println("3rd error");
-							url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2 + "&committee_id="
-									+ committee_id + "&contributor_city=" + city + "&contributor_state=" + state
-									+ "&per_page=100&last_index="
+					} catch (HttpClientErrorException e1) {
+						try {
+							System.out.println("second error");
+							url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
+									+ "&committee_id=" + committee_id + "&contributor_city=" + city
+									+ "&contributor_state=" + state + "&per_page=100&last_index="
 									+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
-									+ "&last_contribution_receipt_date="
-									+ respEnt.getBody().getPagination().getLast_indexes().getLast_contribution_receipt_date();
+									+ "&last_contribution_receipt_date=" + respEnt.getBody().getPagination()
+											.getLast_indexes().getLast_contribution_receipt_date();
+							respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
+						} catch (HttpClientErrorException e2) {
+							System.out.println("3rd error");
+							url = "http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2
+									+ "&committee_id=" + committee_id + "&contributor_city=" + city
+									+ "&contributor_state=" + state + "&per_page=100&last_index="
+									+ respEnt.getBody().getPagination().getLast_indexes().getLast_index()
+									+ "&last_contribution_receipt_date=" + respEnt.getBody().getPagination()
+											.getLast_indexes().getLast_contribution_receipt_date();
 							respEnt = rt.exchange(url, HttpMethod.GET, httpEnt, ScheduleAResults.class);
 						}
 					}
 				}
-				List<DBDonation> toAdd = respEnt.getBody().getResults();
-				
+				System.out.println("Pages remaining: " + pages);
+				pages--;
+				toAdd = respEnt.getBody().getResults();
+
 				for (DBDonation d : toAdd) {
 					try {
 						try {
@@ -398,14 +421,13 @@ public class AdamController {
 								}
 							}
 						} catch (NullPointerException e) {
-
 						}
 					} catch (NumberFormatException e) {
-
 					}
 				}
 			}
 		} catch (NullPointerException | HttpClientErrorException e) {
+
 		}
 		if (donations.size() == 0) {
 			DBDonation db = new DBDonation();
