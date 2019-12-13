@@ -207,13 +207,13 @@
 					data : data1, // Specify the data values array          
 					backgroundColor : '${winnerColor1}', // Add custom color background (Points and Fill)
 				}, {
-					label : 'Donations to ${location1result.getWinnerName()} from ${location1} (Date, Amount)', // Name the series
+					label : 'Donations to ${location1result.getLoserName()} from ${location1} (Date, Amount)', // Name the series
 					data : data2, // Specify the data values array           
-					backgroundColor : '${winnerColor2}', // Add custom color background (Points and Fill)
-				}, {
-					label : 'Donations to ${location2result.getLoserName()} from ${location2} (Date, Amount)', // Name the series
-					data : data3, // Specify the data values array           
 					backgroundColor : '${loserColor1}', // Add custom color background (Points and Fill)
+				}, {
+					label : 'Donations to ${location2result.getWinnerName()} from ${location2} (Date, Amount)', // Name the series
+					data : data3, // Specify the data values array           
+					backgroundColor : '${winnerColor2}', // Add custom color background (Points and Fill)
 				}, {
 					label : 'Donations to ${location2result.getLoserName()} from ${location2} (Date, Amount)', // Name the series
 					data : data4, // Specify the data values array           
