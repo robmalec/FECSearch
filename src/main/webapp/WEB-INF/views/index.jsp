@@ -44,7 +44,7 @@ html, body {
 				<div class="dropdown-menu">
 					<!-- <a class="dropdown-item" data-toggle="collapse"
 						data-target="#firstForm">Candidate</a> --> 
-						<a class="dropdown-item"
+						 <a class="dropdown-item"
 						data-toggle="collapse" data-target="#secondForm">Location For
 						All Years</a> <a class="dropdown-item" data-toggle="collapse"
 						data-target="#thirdForm">Location and Election Year</a> <a
@@ -82,12 +82,14 @@ html, body {
 	<form action="compare-location-search-results">
 		<div id="fourthForm" class="collapse">
 			<label>Location Comparer</label><br> <label>First City</label><br>
-			<input type="text" name="city" required><br> <label>First
-				State</label><br> <input type="text" name="state" required><br>
+			<input type="text" name="city1" required><br> <label>First
+				State</label><br> <input type="text" name="state1" required><br>
 			<label>Second City</label><br>
-			<input type="text" name="city" required><br>
+			<input type="text" name="city2" required><br>
 			<br> <label>Second State</label><br>
-			<input type="text" name="state" required><br> <input
+			<input type="text" name="state2" required><br> 
+			<label>Election Year</label><br>
+			<input type="text" name="electionYear" required><br><input
 				type="Submit" class="btn btn-dark">
 	</form>
 	</div>
