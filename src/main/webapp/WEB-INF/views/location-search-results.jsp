@@ -56,7 +56,7 @@
 				<h4 class="win-lose-total">$${avg_winning_donation}</h4>
 			</div>
 			<div class="col-lg-6 text-center">
-				<h6>Donations to ${largest_total_loser_recipient}</h6>
+				<h6>To ${largest_total_loser_recipient}</h6>
 				<h4 class="win-lose-total">$${avg_losing_donation}</h4>
 			</div>
 		</div>
@@ -149,11 +149,11 @@
 				datasets : [ {
 					label : 'Donations to ${results.getWinnerName()} (Date, Amount)', // Name the series
 					data : data1, // Specify the data values array          
-					backgroundColor : '#3fd715', // Add custom color background (Points and Fill)
+					backgroundColor : '${winnerColor}', // Add custom color background (Points and Fill)
 				}, {
 					label : 'Donations to ${results.getLoserName()}  (Date, Amount)', // Name the series
 					data : data2, // Specify the data values array           
-					backgroundColor : '#f70d1a', // Add custom color background (Points and Fill)
+					backgroundColor : '${loserColor}', // Add custom color background (Points and Fill)
 				}]
 			},
 			options : options
