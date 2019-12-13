@@ -226,8 +226,20 @@ public class AdamController {
 		} else {
 			lsr2MostDon = lsr2.getLoserName();
 		}
-
+		
 		ModelAndView mv = new ModelAndView("compare-location-search-results");
+		if (elr.findByElectionYear(electionYear).get(0).getWinningParty().equals("DEMOCRAT")) {
+			mv.addObject("winnerColor1", "#0071cd");
+			mv.addObject("winnerColor2", "#add8e6");
+			mv.addObject("loserColor1", "#de0000");
+			mv.addObject("loserColor2", "#ffc0cb");
+		}
+		else {
+			mv.addObject("winnerColor1", "#de0000");
+			mv.addObject("winnerColor2", "#ffc0cb");
+			mv.addObject("loserColor1", "#0071cd");
+			mv.addObject("loserColor2", "#add8e6");
+		}
 		mv.addObject("location1result", lsr1);
 		mv.addObject("location2result", lsr2);
 		mv.addObject("location1", location1);
