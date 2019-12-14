@@ -174,7 +174,7 @@ html, body {
 					}
 					//Iterates once for every array in this state's data.geojson.coordinates
 					for (var a = 0; a < data.geojson.coordinates.length; a++) {
-						//don't ask.......
+						//Checking to see if coords is in the form of a direct list of latlng points, or if the latlng points are nested within a second array
 						var coords = data.geojson.coordinates[a];
 						if (coords.length == 1) {
 							coords = coords[0];
@@ -191,10 +191,10 @@ html, body {
 						//Adding polygon to wrapper variable to be added to Google Maps along with styling
 						var thisPoly = new google.maps.Polygon({
 							paths : polygon,
-							strokeColor : '#FF0000',
-							strokeOpacity : 1.0,
+							strokeColor : 'ff00fb',
+							strokeOpacity : (maxOpacity * thisOpacity),
 							strokeWeight : 1,
-							fillColor : '#FF0000',
+							fillColor : '#ff00fb',
 							fillOpacity : (maxOpacity * thisOpacity)
 						});
 						//Adding wrapper variable to map

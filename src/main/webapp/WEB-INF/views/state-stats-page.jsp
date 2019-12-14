@@ -14,14 +14,20 @@
 </head>
 <body>
 	<h1>Info for ${stateName }</h1>
+	<h2>Total funds raised</h2><br>
+	${totalFunds }
+	<h2>Total winning funds raised</h2><br>
+	${totalWinningFunds }
+	<h2>Total losing funds raised</h2><br>
+	${totalLosingFunds }
 	<h2>Biggest money winner candidate:</h2><br>
-	${bmw.getCandidate().getName() } with $${bmw.getFunds() }
+	${bmw.getName() } with $${bmwBudget}
 	<h2>Biggest money loser candidate:</h2><br>
-	${bml.getCandidate().getName() } with $${bml.getFunds() }
+	${bml.getName() } with $${bmlBudget}
 	<h2>Smallest money winner candidate:</h2><br>
-	${smw.getCandidate().getName() } with $${smw.getFunds() }
+	${smw.getName() } with $${smwBudget}
 	<h2>Smallest money loser candidate:</h2><br>
-	${sml.getCandidate().getName() } with $${sml.getFunds() }
+	${sml.getName() } with $${sml.Budget}
 	<h2>Presidential candidates by fundraising numbers</h2><br>
 	<table>
 		<tr>
@@ -29,7 +35,7 @@
 		</tr>
 		<c:forEach var="cand" items="${candFundsList }">
 			<tr>
-				<td>${cand.getCandidate().getName() }</td><td>$${cand.getFunds()}</td>
+				<td>${cand[0]}</td><td>$${cand[1]}</td>
 			</tr>
 		</c:forEach>
 	</table>
