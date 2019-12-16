@@ -11,129 +11,239 @@
 /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
 #map {
-	height: 100%;
+	height: 300px;
+	width: 100%;
+	outline: solid 4pt;
+}
+
+#left {
+	border-right: solid 2pt;
+}
+
+#pagetitle {
+	border-bottom: solid 2pt;
+}
+
+#navhead {
+	text-decoration: none !important;
+	color: white !important;
 }
 /* Optional: Makes the sample page fill the window. */
 html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
+	/*  background-image: url(https://slack-imgs.com/?c=1&o1=ro&url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1447727214830-cbcbf097b52c%3Fixlib%3Drb-1.2.1%26q%3D80%26fm%3Djpg%26crop%3Dentropy%26cs%3Dtinysrgb%26w%3D1080%26fit%3Dmax);
+background-size: cover;*/
 }
 </style>
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+<link
+	href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/litera/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-pLgJ8jZ4aoPja/9zBSujjzs7QbkTKvKw1+zfKuumQF9U+TH3xv09UUsRI52fS+A6"
 	crossorigin="anonymous">
 
 </head>
 <body>
-
-	<div class="container">
-
-		<div class="jumbotron jumbotron-fluid">
-			<div class="container">
-				<h1 class="display-4">Follow the $</h1>
+	<div class="container" id="container">
+		<br>
+		<div class="row">
+			<div class="col-lg-12 text-center" id="pagetitle">
+				<h1>Follow the $</h1>
+				<br>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-lg-6" id="left">
+				<br>
+				<div class="page-header">
+					<h3>Search Donations by City</h3>
+				</div>
+				<h6>Select one of the search options from the dropdown below to
+					find information about donations from individual cities.</h6>
+				<br>
+				<ul class="nav btn btn-dark">
 
- 		<ul class="nav nav-tabs">
-
-			<li class="nav-item dropdown"><a
-				class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
-				role="button" aria-haspopup="true" aria-expanded="false">Search
-					Options</a>
-				<div class="dropdown-menu">
-					<!-- <a class="dropdown-item" data-toggle="collapse"
-						data-target="#firstForm">Candidate</a> --> 
-						 <a class="dropdown-item"
-						data-toggle="collapse" data-target="#secondForm">Location For
-						All Years</a> <a class="dropdown-item" data-toggle="collapse"
-						data-target="#thirdForm">Location and Election Year</a> <a
-						class="dropdown-item" data-toggle="collapse"
-						data-target="#fourthForm">Compare Locations</a> <a
-						class="dropdown-item" data-toggle="collapse"
-						data-target="#fifthForm">Biggest Winner</a> <a
-						class="dropdown-item" data-toggle="collapse"
-						data-target="#sixthForm">Biggest Losers</a>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+						role="button" aria-haspopup="true" aria-expanded="false"
+						id="navhead">Search Options</a>
+						<div class="dropdown-menu">
+							<!-- <a class="dropdown-item" data-toggle="collapse"
+						data-target="#firstForm">Candidate</a> -->
+							<a class="dropdown-item" data-toggle="collapse"
+								data-target="#secondForm">For All Elections</a> <a
+								class="dropdown-item" data-toggle="collapse"
+								data-target="#thirdForm">For Individual Elections</a> <a
+								class="dropdown-item" data-toggle="collapse"
+								data-target="#fourthForm">Compare Cities for Individual
+								Elections</a><!--  <a class="dropdown-item" data-toggle="collapse"
+								data-target="#fifthForm">Biggest Winner</a> <a
+								class="dropdown-item" data-toggle="collapse"
+								data-target="#sixthForm">Biggest Losers</a>--> 
 
 
-				</div></li>
+						</div></li>
 
 
-		</ul>
-	</div>
-	<form action="/historical-search-results">
-		<div id="secondForm" class="collapse">
-			<label>Search By Location For All Election Years</label><br> <label>City</label><br>
-			<input type="text" name="city" required><br> <label>State</label><br>
-			<input type="text" name="state" required><br> <input
-				type="Submit" class="btn btn-dark">
-	</form>
-	</div>
-	<form action="/location-search-results">
-		<div id="thirdForm" class="collapse">
-			<label>Search By Location and Election Year</label><br> <label>City</label><br>
-			<input type="text" name="city" required><br> <label>State</label><br>
-			<input type="text" name="state" required><br> <label>Election
-				Year</label><br> <input type="number" name="electionYear" required>
-			<input type="Submit" class="btn btn-dark">
-	</form>
-	<!-- 1980-2016 -->
-	</div>
-	<form action="compare-location-search-results">
-		<div id="fourthForm" class="collapse">
-			<label>Location Comparer</label><br> <label>First City</label><br>
-			<input type="text" name="city1" required><br> <label>First
-				State</label><br> <input type="text" name="state1" required><br>
-			<label>Second City</label><br>
-			<input type="text" name="city2" required><br>
-			<br> <label>Second State</label><br>
-			<input type="text" name="state2" required><br> 
-			<label>Election Year</label><br>
-			<input type="text" name="electionYear" required><br><input
-				type="Submit" class="btn btn-dark">
-	</form>
-	</div>
-	<form>
-		<div id="fifthForm" class="collapse">
-			<label>Biggest Winner</label><br> <label>Candidate Name</label><br>
-			<input type="text" name="name" required> <br>
-			<label>City</label><br>
-			<input type="text" name="city" required> <br>
-			<label>State</label><br> <input type="text" name="state"
-				required> <br> <br>
-			<input type="Submit" class="btn btn-dark">
-	</form>
-	</div>
-	<form>
-		<div id="sixthForm" class="collapse">
-			<label>Biggest Loser</label><br>
-			<label>Candidate Name</label> <br>
-			<input type="text" name="biggest_loser" required><br> <label>City</label><br>
-			<input type="text" name="city" required> <br>
-			<label>State</label><br> <input type="text" name="state"
-				required><br>
-			<input type="Submit" class="btn btn-dark">
-	</form>
-	</div>
-	</div>
+				</ul>
+				<div class="row">
+					<div class="col-lg-12">
+						<br>
+						<form action="/historical-search-results">
+							<div id="secondForm" class="collapse card card-body">
+								<h5>Search for All Elections</h5>
+								<hr>
+								<div class="form-group">
+									<label for="form1city">City</label><input type="text"
+										name="city" required id="form1city" class="form-control">
+								</div>
+								<div class="form-group">
+									<label for="form1state">State</label>
+								</div>
+								<div class="form-group">
+									<input type="text" name="state" required id="form1state"
+										class="form-control">
+								</div>
+								<input type="submit" class="btn btn-dark">
+							</div>
 
-	<br>
-	<div class="alert alert-primary" role="alert" id="alert"
-		style="display: none">${badSearch}</div>
-	<br>
+						</form>
+						<br>
+						<form action="/location-search-results">
+							<div id="thirdForm" class="collapse card card-body">
+								<h5>Search by Individual Elections</h5>
+								<hr>
+								<div class="form-group">
+									<label for="form2city">City</label><input type="text"
+										name="city" required class="form-control" id="form2city">
+								</div>
+								<div class="form-group">
+									<label for="form2state">State</label><input type="text"
+										name="state" required class="form-control" id="form2state">
+								</div>
+								<div class="form-group">
+									<label for="form2electionYear">Election Year</label>
+								</div>
+								<div class="form-group">
+									<input type="number" name="electionYear" required
+										class="form-control" id="form2electionYear">
+								</div>
+								<input type="Submit" class="btn btn-dark">
+							</div>
+						</form>
+						<form action="compare-location-search-results">
+							<div id="fourthForm" class="collapse card card-body">
+								<h5>Compare Cities for Individual Elections</h5>
+								<hr>
+								<div class="form-row">
+									<div class="col">
+										<div class="form-group">
+											<label for="form3city1">First City</label><input type="text"
+												name="city1" required class="form-control" id="form3city1">
+										</div>
+										<div class="form-group">
+											<label for="form3state1">First State</label><input
+												type="text" name="state1" required class="form-control"
+												id="form3state1">
+										</div>
+									</div>
+									<div class="col">
+										<div class="form-group">
+											<label for="form3city2">Second City</label> <input
+												type="text" name="city2" class="form-control" required
+												id="form3city2">
+										</div>
+										<div class="form-group">
+											<label for="form3state2">Second State</label> <input
+												class="form-control" type="text" name="state2" required
+												id="form3state2">
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col">
+										<div class="form-group">
+											<label for="form3electionYear">Election Year</label><input
+												class="form-control" type="text" name="electionYear"
+												required id="form3electionYear">
+										</div>
+									</div>
+								</div>
+								<input type="Submit" class="btn btn-dark">
+							</div>
+						</form>
+						<!-- 
+						<form>
+							<div id="fifthForm" class="collapse">
+								<label>Biggest Winner</label><br> <label>Candidate
+									Name</label><br> <input type="text" name="name" required>
+								<br> <label>City</label><br> <input type="text"
+									name="city" required> <br> <label>State</label><br>
+								<input type="text" name="state" required> <br> <br>
+								<input type="Submit" class="btn btn-dark">
+							</div>
+						</form>
 
+						<form>
+							<div id="sixthForm" class="collapse">
+								<label>Biggest Loser</label><br> <label>Candidate
+									Name</label> <br> <input type="text" name="biggest_loser" required><br>
+								<label>City</label><br> <input type="text" name="city"
+									required> <br> <label>State</label><br> <input
+									type="text" name="state" required><br> <input
+									type="Submit" class="btn btn-dark">
+							</div>
+						</form> -->
+						<br>
+					</div>
+				</div>
+			</div>
+
+
+
+			<!-- 1980-2016 -->
+
+
+
+
+
+
+			<div class="col-lg-6">
+				<div class="row">
+					<div class="col-lg-12">
+						<br>
+						<div class="page-header">
+							<h3>Search Donations by State</h3>
+						</div>
+						<h6>Click on any state below to see information about
+							donations from that state for every presidential election from
+							1980-2016.</h6>
+						<br>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-12">
+						<!--  Map placeholder -->
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div id="map"></div>
+	<div class="col-lg-6"></div>
+
+
+
 	<script>
 		var map;
 		function initMap() {
 			map = new google.maps.Map(document.getElementById('map'), {
 				center : {
-					lat : 44.96,
-					lng : -103.76
+					lat : 40.1748,
+					lng : -101.0130
 				},
-				zoom : 5
+				zoom : 4
 			});
 			//getting massive string containing all state IDs from EL tag
 			var stateIds = "${idString}";
@@ -149,12 +259,14 @@ html, body {
 			//running through every state ID and requesting data on its borders from OpenStreetMap API
 			for (var i = 0; i < idArr.length; i++) {
 				const thisId = idArr[i].toString();
+				console.log(thisId);
 				const stateCode = stateCodeArr[i].toString();
 				const thisOpacity = parseFloat(opacityArr[i]);
 				var request = new XMLHttpRequest();
 				request
-						.open('GET',
-								'https://nominatim.openstreetmap.org/reverse?format=json&osm_id='
+						.open(
+								'GET',
+								'https://nominatim.openstreetmap.org/reverse?user_agent=FollowTheMoney&email=adamdepollo@gmail.com&format=json&osm_id='
 										+ thisId
 										+ '&osm_type=R&polygon_geojson=1.json',
 								true);
@@ -222,11 +334,6 @@ html, body {
 	<script
 		src="https://maps.googleapis.com/maps/api/js?key=${apiKey }&callback=initMap"
 		async defer></script>
-	<script>
-		if (document.getElementById('alert').innerHTML !== "") {
-			document.getElementById('alert').removeAttribute("style");
-		}
-	</script>
 
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
