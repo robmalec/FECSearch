@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Index</title>
+
 <style>
 /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -35,7 +36,7 @@ html, body {
 			</div>
 		</div>
 
-		<ul class="nav nav-tabs">
+ 		<ul class="nav nav-tabs">
 
 			<li class="nav-item dropdown"><a
 				class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"

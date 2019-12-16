@@ -1,0 +1,13 @@
+#jumbotron jumbotron-fluid vertical-center {    /* create a full-height inline block pseudo=element */
+  content: " ";
+  display: inline-block;
+  vertical-align: middle;    /* vertical alignment of the inline element */
+  height: 100%;
+  color: red;
+}
+
+.dropdown-menu {
+    width: 100%;
+    text-align:center;
+}
+
