@@ -32,6 +32,7 @@ import left.rising.FECSearchDraft.dbrepos.PrimaryStateSearch;
 import left.rising.FECSearchDraft.dbrepos.SearchResultRepo;
 import left.rising.FECSearchDraft.entities.DBDonationResult;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
+import left.rising.FECSearchDraft.entities.ScheduleAResults;
 import left.rising.FECSearchDraft.entities.StateScheduleAResults;
 
 @Controller
@@ -50,6 +51,9 @@ public class PrimaryController {
 	
 	@Autowired
 	PrimarySearchRepo psr;
+	
+	@Autowired
+	AdamController ac = new AdamController();
 
 	private RestTemplate rt = new RestTemplate();
 
@@ -101,7 +105,8 @@ public class PrimaryController {
 	public ModelAndView primaryStateResults() {
 		ArrayList<CandidateData> candidates = new ArrayList<>();
 		HashMap<String, ArrayList<PrimaryStateSearch>> results = new HashMap<>();
-		for (int i = 19; i <= 53; i++) {
+		//for (int i = 19; i <= 53; i++) {
+		for (int i = 19; i <= 24; i++) {
 			candidates.add(cdr.getCandidateDataFromID(i).get(0));
 		}
 		System.out.println(candidates.get(0).getName());
@@ -122,11 +127,16 @@ public class PrimaryController {
 			}
 		}
 		
-		for (PrimaryStateSearch p: psr.findAll()) {
-			
-		}
 		ModelAndView mv = new ModelAndView("primary-state-results", "results", results);
+		
 		return mv;
+	}
+	
+	@RequestMapping("primary-location-search")
+	public ModelAndView primaryLocationSearch(String city, String state, String candidateName) {
+		String id = ccr.findByCandidateAssigned(cdr.getCandidateDataFromName(candidateName).get(0)).get(0).getCommittee_id();
+		ArrayList<DBDonation> donations = ac.getCandidateDonations(city, state, id, 2020);
+		return null;
 	}
 
 	public HttpHeaders getHeaders() {

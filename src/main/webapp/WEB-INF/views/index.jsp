@@ -20,7 +20,7 @@
 	border-right: solid 2pt;
 }
 
-#pagetitle {
+.pagetitle {
 	border-bottom: solid 2pt;
 }
 
@@ -48,9 +48,14 @@ background-size: cover;*/
 	<div class="container" id="container">
 		<br>
 		<div class="row">
-			<div class="col-lg-12 text-center" id="pagetitle">
+			<div class="col-lg-12 text-center pagetitle">
 				<h1>Follow the $</h1>
 				<br>
+			</div>
+			<div class="pagetitle">
+			<br>
+				<h6>Welcome to <strong>Follow the $</strong>, a campaign finance web application. Choose one of the search options below to find information about political donations.</h6>
+			<br>
 			</div>
 		</div>
 		<div class="row">
@@ -59,7 +64,7 @@ background-size: cover;*/
 				<div class="page-header">
 					<h3>Search Donations by City</h3>
 				</div>
-				<h6>Select one of the search options from the dropdown below to
+				<h6>Select one of the search options from the drop-down below to
 					find information about donations from individual cities.</h6>
 				<br>
 				<ul class="nav btn btn-dark">
