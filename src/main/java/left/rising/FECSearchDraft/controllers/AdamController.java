@@ -61,6 +61,11 @@ public class AdamController {
 		return new ModelAndView("test-search");
 	}
 
+	@RequestMapping("/confirm-page")
+	public ModelAndView confirm() {
+		return new ModelAndView("confirm-page");
+	}
+
 	@RequestMapping("/test-search-historical")
 	public ModelAndView testSearchHistorical() {
 		return new ModelAndView("test-search-historical");
@@ -106,11 +111,11 @@ public class AdamController {
 				loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
 		}
-		
+
 		// Gather the total number of winner and loser donations
 		numWinnerDonations = winnerDonations.size();
 		numLoserDonations = loserDonations.size();
-		
+
 		// Record whether the majority of donations from the location went to the
 		// winning or losing candidate
 		if (numWinnerDonations > numLoserDonations) {
@@ -129,7 +134,7 @@ public class AdamController {
 			largest_losing_donation = loserDonations.get(0).getContributionReceiptAmount();
 		} catch (IndexOutOfBoundsException e) {
 		}
-		
+
 		// Begin traversing through the array of winnerDonations to record information
 		// about the donations. If winnerDonationScatterData exceeds 5500 characters,
 		// break the loop.
@@ -194,7 +199,7 @@ public class AdamController {
 			while (loseRand.contains(randomInteger2) && loseRand.size() < loserDonations.size() - 1) {
 				randomInteger2 = (int) (((double) loserDonations.size() - 1.0) * Math.random());
 			}
-			
+
 			if (loserDonations.get(loserIndex).getContributionReceiptAmount() != null
 					&& loserDonations.get(loserIndex).getContributionReceiptDate() != null
 					&& loserDonations.get(loserIndex).getContributionReceiptAmount() > 0.0) {
@@ -207,14 +212,14 @@ public class AdamController {
 			loseRand.add(randomInteger2);
 
 		}
-		
+
 		for (int i = loserIndex; i < loserDonations.size(); i++) {
 			loser_total_donations += loserDonations.get(i).getContributionReceiptAmount();
 			if (loserDonations.get(i).getContributionReceiptAmount() > largest_losing_donation) {
 				largest_losing_donation = loserDonations.get(i).getContributionReceiptAmount();
 			}
 		}
-	
+
 		// Remove a comma from the end of the winner and loser scatter data strings.
 		// Catches index out of bound in the event the string was empty.
 		try {
@@ -306,10 +311,107 @@ public class AdamController {
 		return mv;
 	}
 
+	public int checkPages(String city, String state, int electionYear, String committee_id) {
+		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
+		ResponseEntity<ScheduleAResults> respEnt;
+		rateLimiter.acquire();
+		try {
+
+			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey
+					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
+			System.out.println(
+					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 5) + " seconds");
+		} catch (HttpClientErrorException e) {
+			// try {
+			respEnt = rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" + fecKey2
+					+ "&committee_id=" + committee_id + "&contributor_city=" + city + "&contributor_state=" + state
+					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
+			System.out.println(
+					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 5) + " seconds");
+		}
+		int pages = respEnt.getBody().getPagination().getPages();
+		return pages;
+	}
+
 	@RequestMapping("location-search-results")
 	public ModelAndView locationSearchResults(String city, String state, int electionYear) {
 		LocationSearchResult lsr = new LocationSearchResult();
 		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear) == null) {
+			int pages = checkPages(
+					city, state, electionYear, ccr
+					.findByCandidateAssigned(
+							cdr.getCandidateDataFromID(
+									elr.findByElectionYear(electionYear).get(0).getWinnerId()).get(
+											0))
+					.get(0).getCommittee_id());
+			if (pages >50) {
+				ModelAndView confirm = new ModelAndView("confirm-page");
+				confirm.addObject("city", city);
+				confirm.addObject("state", state);
+				confirm.addObject("electionYear", electionYear);
+				confirm.addObject("estimate", pages);
+				return confirm;
+			}
+			int pages2 = checkPages(city, state, electionYear, ccr.findByCandidateAssigned(
+					cdr.getCandidateDataFromID(elr.findByElectionYear(electionYear).get(0).getLoserId()).get(0))
+					.get(0).getCommittee_id());
+			if (pages2 > 50) {
+				ModelAndView confirm = new ModelAndView("confirm-page");
+				confirm.addObject("city", city);
+				confirm.addObject("state", state);
+				confirm.addObject("electionYear", electionYear);
+				confirm.addObject("estimate", pages + pages2);
+				return confirm;
+			}
+				
+			lsr = getLocationSearchResult(city, state, electionYear);
+			lsrr.save(lsr);
+		} else {
+			lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear);
+		}
+		String location = city + ", " + state;
+		String majorityDonationName = "";
+		if (lsr.getNumWinnerDonations() > lsr.getNumLoserDonations()) {
+			majorityDonationName = lsr.getWinnerName();
+		} else {
+			majorityDonationName = lsr.getLoserName();
+		}
+
+		System.out.println(
+				"Winnersize: " + lsr.getWinnerDonations().size() + " LoserSize: " + lsr.getLoserDonations().size());
+		ModelAndView mv = new ModelAndView("location-search-results");
+		if (elr.findByElectionYear(electionYear).get(0).getWinningParty().equals(PoliticalParty.DEMOCRAT)) {
+			mv.addObject("winnerColor", "#0071cd");
+			mv.addObject("loserColor", "#de0000");
+		} else {
+			mv.addObject("winnerColor", "#de0000");
+			mv.addObject("loserColor", "#0071cd");
+		}
+		mv.addObject("majname", majorityDonationName);
+		mv.addObject("results", lsr);
+		mv.addObject("loserDonationData", lsr.getLoserDonationScatterData());
+		mv.addObject("winnerDonationData", lsr.getWinnerDonationScatterData());
+		mv.addObject("location", location);
+		mv.addObject("total_winners", lsr.getTotalWinners());
+		mv.addObject("total_losers", lsr.getTotalLosers());
+		mv.addObject("avg_winning_donation", String.format("%.2f", lsr.getAvgWinningDonation()));
+		mv.addObject("avg_losing_donation", String.format("%.2f", lsr.getAvgLosingDonation()));
+		mv.addObject("largest_winning_donation", String.format("%.2f", lsr.getLargestWinningDonation()));
+		mv.addObject("largest_losing_donation", String.format("%.2f", lsr.getLargestLosingDonation()));
+		mv.addObject("largest_winner_recipient", lsr.getWinnerName());
+		mv.addObject("largest_loser_recipient", lsr.getLoserName());
+		mv.addObject("largest_winner_total", String.format("%.2f", lsr.getWinnerTotalDonations()));
+		mv.addObject("largest_loser_total", String.format("%.2f", lsr.getLoserTotalDonations()));
+		mv.addObject("largest_total_winner_recipient", lsr.getWinnerName());
+		mv.addObject("largest_total_loser_recipient", lsr.getLoserName());
+		return mv;
+	}
+	
+	@RequestMapping("confirmed-location-search-results")
+	public ModelAndView confirmedLocationSearchResults(String city, String state, int electionYear, boolean b) {
+		LocationSearchResult lsr = new LocationSearchResult();
+		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear) == null) {			
 			lsr = getLocationSearchResult(city, state, electionYear);
 			lsrr.save(lsr);
 		} else {
@@ -412,7 +514,7 @@ public class AdamController {
 		String url = "";
 		try {
 			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
-				
+
 				rateLimiter.acquire();
 				try {
 
@@ -482,7 +584,7 @@ public class AdamController {
 			if (e.getClass() == NullPointerException.class) {
 			} else {
 			}
-			
+
 		}
 		if (donations.size() == 0) {
 			DBDonation db = new DBDonation();
@@ -524,7 +626,7 @@ public class AdamController {
 				electionYears.add(e.getElectionYear());
 			}
 		}
-System.out.println(electionYears.toString());
+		System.out.println(electionYears.toString());
 		// For each election year ...
 		try {
 			for (Integer i : electionYears) {
