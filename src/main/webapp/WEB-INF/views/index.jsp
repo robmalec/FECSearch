@@ -225,12 +225,13 @@ background-size: cover;*/
 				<div class="row">
 					<div class="col-lg-12">
 						<!--  Map placeholder -->
+						<div id="map"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div id="map"></div>
+	
 	<div class="col-lg-6"></div>
 
 
