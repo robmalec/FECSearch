@@ -266,7 +266,7 @@ background-size: cover;*/
 				request
 						.open(
 								'GET',
-								'https://nominatim.openstreetmap.org/reverse?user_agent=FollowTheMoney&email=adamdepollo@gmail.com&format=json&osm_id='
+								'https://nominatim.openstreetmap.org/reverse?format=json&osm_id='
 										+ thisId
 										+ '&osm_type=R&polygon_geojson=1.json',
 								true);
