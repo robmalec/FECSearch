@@ -106,11 +106,11 @@ public class AdamController {
 				loserDonations.addAll(getCandidateDonations(city, state, c.getCommittee_id(), electionYear));
 			}
 		}
-
+		
 		// Gather the total number of winner and loser donations
 		numWinnerDonations = winnerDonations.size();
 		numLoserDonations = loserDonations.size();
-
+		
 		// Record whether the majority of donations from the location went to the
 		// winning or losing candidate
 		if (numWinnerDonations > numLoserDonations) {
@@ -129,7 +129,7 @@ public class AdamController {
 			largest_losing_donation = loserDonations.get(0).getContributionReceiptAmount();
 		} catch (IndexOutOfBoundsException e) {
 		}
-
+		
 		// Begin traversing through the array of winnerDonations to record information
 		// about the donations. If winnerDonationScatterData exceeds 5500 characters,
 		// break the loop.
@@ -150,12 +150,11 @@ public class AdamController {
 
 			// If the index location has already been generated, then generate a new random
 			// index
-			while (winRand.contains(randomInteger)) {
+			while (winRand.contains(randomInteger) && winRand.size() < winnerDonations.size() - 1) {
 				randomInteger = (int) (((double) winnerDonations.size() - 1.0) * Math.random());
 			}
 			// If not, save it to the winRand list
 			winRand.add(randomInteger);
-
 			// Create a string using the receipt date and amount of the randomly selected
 			// donation and add it to the winnerDonationScatterData string. This string will
 			// ultimately be used to populate a scatter chart displaying donations to the
@@ -172,7 +171,8 @@ public class AdamController {
 			}
 		}
 
-		// If the previous loop was broken before reaching the end of the winnerDonations
+		// If the previous loop was broken before reaching the end of the
+		// winnerDonations
 		// array, then continue traversing through the array to record donation data.
 		// However, the data will no longer be added to the scatter chart displayed in
 		// the view.
@@ -183,18 +183,18 @@ public class AdamController {
 			}
 		}
 
-		//Perform the same tasks for the loser donations
+		// Perform the same tasks for the loser donations
 		for (loserIndex = 0; loserIndex < loserDonations.size()
 				&& loserDonationScatterData.length() <= 5500; loserIndex++) {
 			loser_total_donations += loserDonations.get(loserIndex).getContributionReceiptAmount();
 			if (loserDonations.get(loserIndex).getContributionReceiptAmount() > largest_losing_donation) {
 				largest_losing_donation = loserDonations.get(loserIndex).getContributionReceiptAmount();
 			}
-			int randomInteger = (int) (((double) loserDonations.size() - 1.0) * Math.random());
-			while (loseRand.contains(randomInteger)) {
-				randomInteger = (int) (((double) loserDonations.size() - 1.0) * Math.random());
+			int randomInteger2 = (int) (((double) loserDonations.size() - 1.0) * Math.random());
+			while (loseRand.contains(randomInteger2) && loseRand.size() < loserDonations.size() - 1) {
+				randomInteger2 = (int) (((double) loserDonations.size() - 1.0) * Math.random());
 			}
-			loseRand.add(randomInteger);
+			
 			if (loserDonations.get(loserIndex).getContributionReceiptAmount() != null
 					&& loserDonations.get(loserIndex).getContributionReceiptDate() != null
 					&& loserDonations.get(loserIndex).getContributionReceiptAmount() > 0.0) {
@@ -204,30 +204,32 @@ public class AdamController {
 						+ loserDonations.get(loserIndex).getContributionReceiptDate().substring(8, 10) + ", y:"
 						+ loserDonations.get(loserIndex).getContributionReceiptAmount() + "},";
 			}
+			loseRand.add(randomInteger2);
 
 		}
+		
 		for (int i = loserIndex; i < loserDonations.size(); i++) {
 			loser_total_donations += loserDonations.get(i).getContributionReceiptAmount();
 			if (loserDonations.get(i).getContributionReceiptAmount() > largest_losing_donation) {
 				largest_losing_donation = loserDonations.get(i).getContributionReceiptAmount();
 			}
 		}
-
-		//Remove a comma from the end of the winner and loser scatter data strings. Catches index out of bound in the event the string was empty.
+	
+		// Remove a comma from the end of the winner and loser scatter data strings.
+		// Catches index out of bound in the event the string was empty.
 		try {
 			winnerDonationScatterData = winnerDonationScatterData.substring(0, winnerDonationScatterData.length() - 1);
-		} catch (StringIndexOutOfBoundsException e) {
+		} catch (Exception e) {
 		}
 		try {
 			loserDonationScatterData = loserDonationScatterData.substring(0, loserDonationScatterData.length() - 1);
-		} catch (StringIndexOutOfBoundsException e) {
+		} catch (Exception e) {
 		}
 
-		//Calculate average winning and losing donations
+		// Calculate average winning and losing donations
 		double avg_winning_donation = winner_total_donations / winnerDonations.size();
 		double avg_losing_donation = loser_total_donations / loserDonations.size();
-
-		//Construct a LocationSearchResult object using the data gathered and return it
+		// Construct a LocationSearchResult object using the data gathered and return it
 		LocationSearchResult lsr = new LocationSearchResult(winner_name, loser_name, winner_committee_ids,
 				loser_committee_ids, winnerDonations, loserDonations, total_winners, total_losers,
 				winner_total_donations, loser_total_donations, largest_winning_donation, largest_losing_donation,
@@ -246,7 +248,7 @@ public class AdamController {
 		String location2 = city2 + ", " + state2;
 		String lsr1MostDon = "";
 		String lsr2MostDon = "";
-		
+
 		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city1, state1, electionYear) == null) {
 			lsr1 = getLocationSearchResult(city1, state1, electionYear);
 			lsrr.save(lsr1);
@@ -385,15 +387,6 @@ public class AdamController {
 					+ "&per_page=100", HttpMethod.GET, httpEnt, ScheduleAResults.class);
 			System.out.println(
 					"Estimated Time remaining:" + (respEnt.getBody().getPagination().getPages() / 5) + " seconds");
-			// } catch (HttpClientErrorException ee) {
-			/*
-			 * respEnt =
-			 * rt.exchange("http://api.open.fec.gov/v1/schedules/schedule_a/?api_key=" +
-			 * fecKey + "&committee_id=" + committee_id + "&contributor_city=" + city +
-			 * "&contributor_state=" + state + "&per_page=100", HttpMethod.GET, httpEnt,
-			 * ScheduleAResults.class); System.out.println( "Estimated Time remaining:" +
-			 * (respEnt.getBody().getPagination().getPages() / 4) + " seconds"); }
-			 */
 		}
 		int pages = respEnt.getBody().getPagination().getPages();
 		List<DBDonation> toAdd = respEnt.getBody().getResults();
@@ -416,10 +409,10 @@ public class AdamController {
 			}
 		} catch (HttpClientErrorException e) {
 		}
-
+		String url = "";
 		try {
 			while (respEnt.getBody().getPagination().getLast_indexes().getLast_index() != null) {
-				String url = "";
+				
 				rateLimiter.acquire();
 				try {
 
@@ -470,27 +463,26 @@ public class AdamController {
 
 				for (DBDonation d : toAdd) {
 					try {
-						try {
-							if (d.getContributionReceiptDate().contains("" + electionYearInt)) {
-								donations.add(d);
-							} else if (((d.getReportYear() <= electionYearInt)
-									&& (d.getReportYear() > (electionYearInt - 4)))
-									&& !d.getEntityType().equals("ORG")) {
-								donations.add(d);
-								if (d.getContributionReceiptAmount() > 10000) {
-									System.out.println("BigDonation - ReportYear: " + d.getReportYear()
-											+ " ElectionYearInt:" + electionYearInt + " "
-											+ d.getContributionReceiptDate() + " " + d.getContributionReceiptAmount());
-								}
+						if (d.getContributionReceiptDate().contains("" + electionYearInt)) {
+							donations.add(d);
+						} else if (((d.getReportYear() <= electionYearInt)
+								&& (d.getReportYear() > (electionYearInt - 4))) && !d.getEntityType().equals("ORG")) {
+							donations.add(d);
+							if (d.getContributionReceiptAmount() > 10000) {
+								System.out.println("BigDonation - ReportYear: " + d.getReportYear()
+										+ " ElectionYearInt:" + electionYearInt + " " + d.getContributionReceiptDate()
+										+ " " + d.getContributionReceiptAmount());
 							}
-						} catch (NullPointerException e) {
 						}
 					} catch (NumberFormatException e) {
 					}
 				}
 			}
 		} catch (NullPointerException | HttpClientErrorException e) {
-
+			if (e.getClass() == NullPointerException.class) {
+			} else {
+			}
+			
 		}
 		if (donations.size() == 0) {
 			DBDonation db = new DBDonation();
@@ -532,34 +524,39 @@ public class AdamController {
 				electionYears.add(e.getElectionYear());
 			}
 		}
-
+System.out.println(electionYears.toString());
 		// For each election year ...
-		for (Integer i : electionYears) {
+		try {
+			for (Integer i : electionYears) {
 
-			// If the search result database does not already contain a result for the given
-			// city, state, and election year ...
-			if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i) == null) {
-				// And the election year is not one of the following ...
-				if (i != 2000 && i != 1976 && i != 1972) {
-					// Then perform a new search for the city, state, and election year.
-					lsr = getLocationSearchResult(city, state, i);
-					// If the result is not null ...
-					if (lsr != null) {
-						// Then save the result to the database ...
-						lsrr.save(lsr);
+				// If the search result database does not already contain a result for the given
+				// city, state, and election year ...
+				if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i) == null) {
+					// And the election year is not one of the following ...
+					if (i != 2000 && i != 1976 && i != 1972 && i != 2020) {
+						// Then perform a new search for the city, state, and election year.
+						lsr = getLocationSearchResult(city, state, i);
+						// If the result is not null ...
+						if (lsr != null) {
+							// Then save the result to the database ...
+							lsrr.save(lsr);
+						}
+						// And add the search result to the results array.
+						results.add(lsr);
 					}
-					// And add the search result to the results array.
-					results.add(lsr);
+				}
+				// Otherwise, pull the existing search result from the database and add it to
+				// the results array
+				else {
+					if (i != 2000 && i != 1976 && i != 1972 && i != 2020) {
+						lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i);
+						results.add(lsr);
+					}
 				}
 			}
-			// Otherwise, pull the existing search result from the database and add it to
-			// the results array
-			else {
-				if (i != 2000 && i != 1976 && i != 1972) {
-					lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, i);
-					results.add(lsr);
-				}
-			}
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
 		String totalData = "";
