@@ -50,16 +50,19 @@ background-size: cover;*/
 		<div class="row">
 			<div class="col-lg-12 text-center pagetitle">
 				<h1>Follow the $</h1>
-				<br>
-				<br>
-				
+				<br> <br>
+
 			</div>
 			<div class="pagetitle">
-			<br>
-			
-				<h6>Welcome to <strong>Follow the $</strong>, a campaign finance web application. Choose one of the search options below to find information about political donations.</h6>
+				<br>
 
-			<br>
+				<h6>
+					Welcome to <strong>Follow the $</strong>, a campaign finance web
+					application. Choose one of the search options below to find
+					information about political donations.
+				</h6>
+
+				<br>
 			</div>
 		</div>
 		<div class="row">
@@ -69,10 +72,9 @@ background-size: cover;*/
 					<h3>Search Donations by City</h3>
 					<br>
 				</div>
-				<h6>Select one of the search options from the drop-down below to
-					find information about donations from individual cities.</h6>
-				<br>
-				<br>
+				<h6>Select one of the search options from the drop-down below
+					to find information about donations from individual cities.</h6>
+				<br> <br>
 				<ul class="nav btn btn-dark">
 
 					<li class="nav-item dropdown"><a
@@ -88,10 +90,11 @@ background-size: cover;*/
 								data-target="#thirdForm">For Individual Elections</a> <a
 								class="dropdown-item" data-toggle="collapse"
 								data-target="#fourthForm">Compare Cities for Individual
-								Elections</a><!--  <a class="dropdown-item" data-toggle="collapse"
+								Elections</a>
+							<!--  <a class="dropdown-item" data-toggle="collapse"
 								data-target="#fifthForm">Biggest Winner</a> <a
 								class="dropdown-item" data-toggle="collapse"
-								data-target="#sixthForm">Biggest Losers</a>--> 
+								data-target="#sixthForm">Biggest Losers</a>-->
 
 
 						</div></li>
@@ -105,21 +108,83 @@ background-size: cover;*/
 							<div id="secondForm" class="collapse card card-body">
 								<h5>Search for All Elections</h5>
 								<hr>
-								<div class="form-group">
+								<div class="form-group" cities order-alpha>
 									<label for="form1city">City</label><input type="text"
 										name="city" required id="form1city" class="form-control">
-								</div>
-								<div class="form-group">
-									<label for="form1state">State</label>
-								</div>
-								<div class="form-group">
-									<input type="text" name="state" required id="form1state"
-										class="form-control">
-								</div>
-								<input type="submit" class="btn btn-dark">
-							</div>
 
+								</div>
+								<div class="form-group">
+
+									<label for="form1state">State</label> <select
+										class="form-control" id="form1state">
+
+										<option value="AL">Alabama</option>
+										<option value="AK">Alaska</option>
+										<option value="AZ">Arizona</option>
+										<option value="AR">Arkansas</option>
+										<option value="CA">California</option>
+										<option value="CO">Colorado</option>
+										<option value="CT">Connecticut</option>
+										<option value="DE">Delaware</option>
+										<option value="DC">District Of Columbia</option>
+										<option value="FL">Florida</option>
+										<option value="GA">Georgia</option>
+										<option value="HI">Hawaii</option>
+										<option value="ID">Idaho</option>
+										<option value="IL">Illinois</option>
+										<option value="IN">Indiana</option>
+										<option value="IA">Iowa</option>
+										<option value="KS">Kansas</option>
+										<option value="KY">Kentucky</option>
+										<option value="LA">Louisiana</option>
+										<option value="ME">Maine</option>
+										<option value="MD">Maryland</option>
+										<option value="MA">Massachusetts</option>
+										<option value="MI">Michigan</option>
+										<option value="MN">Minnesota</option>
+										<option value="MS">Mississippi</option>
+										<option value="MO">Missouri</option>
+										<option value="MT">Montana</option>
+										<option value="NE">Nebraska</option>
+										<option value="NV">Nevada</option>
+										<option value="NH">New Hampshire</option>
+										<option value="NJ">New Jersey</option>
+										<option value="NM">New Mexico</option>
+										<option value="NY">New York</option>
+										<option value="NC">North Carolina</option>
+										<option value="ND">North Dakota</option>
+										<option value="OH">Ohio</option>
+										<option value="OK">Oklahoma</option>
+										<option value="OR">Oregon</option>
+										<option value="PA">Pennsylvania</option>
+										<option value="RI">Rhode Island</option>
+										<option value="SC">South Carolina</option>
+										<option value="SD">South Dakota</option>
+										<option value="TN">Tennessee</option>
+										<option value="TX">Texas</option>
+										<option value="UT">Utah</option>
+										<option value="VT">Vermont</option>
+										<option value="VA">Virginia</option>
+										<option value="WA">Washington</option>
+										<option value="WV">West Virginia</option>
+										<option value="WI">Wisconsin</option>
+										<option value="WY">Wyoming</option>
+										<option value="GU">Guam</option>
+										<option value="AA">Armed Forces Americas</option>
+										<option value="AS">American Samoa</option>
+										<option value="AE">Armed Forces Europe</option>
+										<option value="AP">Armed Forces Pacific</option>
+										<option value="ZZ">Foreign Countries</option>
+										<option value="MP">Northern Mariana Islands</option>
+										<option value="PR">Puerto Rico</option>
+										<option value="VI">Virgin Islands</option>
+
+									</select>
+								</div>
+							</div>
 						</form>
+
+
 						<br>
 						<form action="/location-search-results">
 							<div id="thirdForm" class="collapse card card-body">
@@ -130,15 +195,87 @@ background-size: cover;*/
 										name="city" required class="form-control" id="form2city">
 								</div>
 								<div class="form-group">
-									<label for="form2state">State</label><input type="text"
-										name="state" required class="form-control" id="form2state">
+
+									<label for="form2state">State</label> <select
+										class="form-control" id="form2state">
+
+										<option value="AL">Alabama</option>
+										<option value="AK">Alaska</option>
+										<option value="AZ">Arizona</option>
+										<option value="AR">Arkansas</option>
+										<option value="CA">California</option>
+										<option value="CO">Colorado</option>
+										<option value="CT">Connecticut</option>
+										<option value="DE">Delaware</option>
+										<option value="DC">District Of Columbia</option>
+										<option value="FL">Florida</option>
+										<option value="GA">Georgia</option>
+										<option value="HI">Hawaii</option>
+										<option value="ID">Idaho</option>
+										<option value="IL">Illinois</option>
+										<option value="IN">Indiana</option>
+										<option value="IA">Iowa</option>
+										<option value="KS">Kansas</option>
+										<option value="KY">Kentucky</option>
+										<option value="LA">Louisiana</option>
+										<option value="ME">Maine</option>
+										<option value="MD">Maryland</option>
+										<option value="MA">Massachusetts</option>
+										<option value="MI">Michigan</option>
+										<option value="MN">Minnesota</option>
+										<option value="MS">Mississippi</option>
+										<option value="MO">Missouri</option>
+										<option value="MT">Montana</option>
+										<option value="NE">Nebraska</option>
+										<option value="NV">Nevada</option>
+										<option value="NH">New Hampshire</option>
+										<option value="NJ">New Jersey</option>
+										<option value="NM">New Mexico</option>
+										<option value="NY">New York</option>
+										<option value="NC">North Carolina</option>
+										<option value="ND">North Dakota</option>
+										<option value="OH">Ohio</option>
+										<option value="OK">Oklahoma</option>
+										<option value="OR">Oregon</option>
+										<option value="PA">Pennsylvania</option>
+										<option value="RI">Rhode Island</option>
+										<option value="SC">South Carolina</option>
+										<option value="SD">South Dakota</option>
+										<option value="TN">Tennessee</option>
+										<option value="TX">Texas</option>
+										<option value="UT">Utah</option>
+										<option value="VT">Vermont</option>
+										<option value="VA">Virginia</option>
+										<option value="WA">Washington</option>
+										<option value="WV">West Virginia</option>
+										<option value="WI">Wisconsin</option>
+										<option value="WY">Wyoming</option>
+										<option value="GU">Guam</option>
+										<option value="AA">Armed Forces Americas</option>
+										<option value="AS">American Samoa</option>
+										<option value="AE">Armed Forces Europe</option>
+										<option value="AP">Armed Forces Pacific</option>
+										<option value="ZZ">Foreign Countries</option>
+										<option value="MP">Northern Mariana Islands</option>
+										<option value="PR">Puerto Rico</option>
+										<option value="VI">Virgin Islands</option>
+									</select>
 								</div>
+
 								<div class="form-group">
-									<label for="form2electionYear">Election Year</label>
-								</div>
-								<div class="form-group">
-									<input type="number" name="electionYear" required
-										class="form-control" id="form2electionYear">
+
+									<label for="electionYear">Election Year</label> <select
+										class="form-control" id="electionYear">
+
+										<option>1980</option>
+										<option>1984</option>
+										<option>1988</option>
+										<option>1992</option>
+										<option>1996</option>
+										<option>2004</option>
+										<option>2008</option>
+										<option>2016</option>
+									</select>
 								</div>
 								<input type="Submit" class="btn btn-dark">
 							</div>
@@ -154,9 +291,72 @@ background-size: cover;*/
 												name="city1" required class="form-control" id="form3city1">
 										</div>
 										<div class="form-group">
-											<label for="form3state1">First State</label><input
-												type="text" name="state1" required class="form-control"
-												id="form3state1">
+
+											<label for="form3state1">State</label> <select
+												class="form-control" id="form3state1">
+
+												<option value="AL">Alabama</option>
+												<option value="AK">Alaska</option>
+												<option value="AZ">Arizona</option>
+												<option value="AR">Arkansas</option>
+												<option value="CA">California</option>
+												<option value="CO">Colorado</option>
+												<option value="CT">Connecticut</option>
+												<option value="DE">Delaware</option>
+												<option value="DC">District Of Columbia</option>
+												<option value="FL">Florida</option>
+												<option value="GA">Georgia</option>
+												<option value="HI">Hawaii</option>
+												<option value="ID">Idaho</option>
+												<option value="IL">Illinois</option>
+												<option value="IN">Indiana</option>
+												<option value="IA">Iowa</option>
+												<option value="KS">Kansas</option>
+												<option value="KY">Kentucky</option>
+												<option value="LA">Louisiana</option>
+												<option value="ME">Maine</option>
+												<option value="MD">Maryland</option>
+												<option value="MA">Massachusetts</option>
+												<option value="MI">Michigan</option>
+												<option value="MN">Minnesota</option>
+												<option value="MS">Mississippi</option>
+												<option value="MO">Missouri</option>
+												<option value="MT">Montana</option>
+												<option value="NE">Nebraska</option>
+												<option value="NV">Nevada</option>
+												<option value="NH">New Hampshire</option>
+												<option value="NJ">New Jersey</option>
+												<option value="NM">New Mexico</option>
+												<option value="NY">New York</option>
+												<option value="NC">North Carolina</option>
+												<option value="ND">North Dakota</option>
+												<option value="OH">Ohio</option>
+												<option value="OK">Oklahoma</option>
+												<option value="OR">Oregon</option>
+												<option value="PA">Pennsylvania</option>
+												<option value="RI">Rhode Island</option>
+												<option value="SC">South Carolina</option>
+												<option value="SD">South Dakota</option>
+												<option value="TN">Tennessee</option>
+												<option value="TX">Texas</option>
+												<option value="UT">Utah</option>
+												<option value="VT">Vermont</option>
+												<option value="VA">Virginia</option>
+												<option value="WA">Washington</option>
+												<option value="WV">West Virginia</option>
+												<option value="WI">Wisconsin</option>
+												<option value="WY">Wyoming</option>
+												<option value="GU">Guam</option>
+												<option value="AA">Armed Forces Americas</option>
+												<option value="AS">American Samoa</option>
+												<option value="AE">Armed Forces Europe</option>
+												<option value="AP">Armed Forces Pacific</option>
+												<option value="ZZ">Foreign Countries</option>
+												<option value="MP">Northern Mariana Islands</option>
+												<option value="PR">Puerto Rico</option>
+												<option value="VI">Virgin Islands</option>
+
+											</select>
 										</div>
 									</div>
 									<div class="col">
@@ -166,18 +366,90 @@ background-size: cover;*/
 												id="form3city2">
 										</div>
 										<div class="form-group">
-											<label for="form3state2">Second State</label> <input
-												class="form-control" type="text" name="state2" required
-												id="form3state2">
+
+											<label for="form3state2">State</label> <select
+												class="form-control" id="form3state2">
+
+												<option value="AL">Alabama</option>
+												<option value="AK">Alaska</option>
+												<option value="AZ">Arizona</option>
+												<option value="AR">Arkansas</option>
+												<option value="CA">California</option>
+												<option value="CO">Colorado</option>
+												<option value="CT">Connecticut</option>
+												<option value="DE">Delaware</option>
+												<option value="DC">District Of Columbia</option>
+												<option value="FL">Florida</option>
+												<option value="GA">Georgia</option>
+												<option value="HI">Hawaii</option>
+												<option value="ID">Idaho</option>
+												<option value="IL">Illinois</option>
+												<option value="IN">Indiana</option>
+												<option value="IA">Iowa</option>
+												<option value="KS">Kansas</option>
+												<option value="KY">Kentucky</option>
+												<option value="LA">Louisiana</option>
+												<option value="ME">Maine</option>
+												<option value="MD">Maryland</option>
+												<option value="MA">Massachusetts</option>
+												<option value="MI">Michigan</option>
+												<option value="MN">Minnesota</option>
+												<option value="MS">Mississippi</option>
+												<option value="MO">Missouri</option>
+												<option value="MT">Montana</option>
+												<option value="NE">Nebraska</option>
+												<option value="NV">Nevada</option>
+												<option value="NH">New Hampshire</option>
+												<option value="NJ">New Jersey</option>
+												<option value="NM">New Mexico</option>
+												<option value="NY">New York</option>
+												<option value="NC">North Carolina</option>
+												<option value="ND">North Dakota</option>
+												<option value="OH">Ohio</option>
+												<option value="OK">Oklahoma</option>
+												<option value="OR">Oregon</option>
+												<option value="PA">Pennsylvania</option>
+												<option value="RI">Rhode Island</option>
+												<option value="SC">South Carolina</option>
+												<option value="SD">South Dakota</option>
+												<option value="TN">Tennessee</option>
+												<option value="TX">Texas</option>
+												<option value="UT">Utah</option>
+												<option value="VT">Vermont</option>
+												<option value="VA">Virginia</option>
+												<option value="WA">Washington</option>
+												<option value="WV">West Virginia</option>
+												<option value="WI">Wisconsin</option>
+												<option value="WY">Wyoming</option>
+												<option value="GU">Guam</option>
+												<option value="AA">Armed Forces Americas</option>
+												<option value="AS">American Samoa</option>
+												<option value="AE">Armed Forces Europe</option>
+												<option value="AP">Armed Forces Pacific</option>
+												<option value="ZZ">Foreign Countries</option>
+												<option value="MP">Northern Mariana Islands</option>
+												<option value="PR">Puerto Rico</option>
+												<option value="VI">Virgin Islands</option>
+											</select>
 										</div>
 									</div>
 								</div>
 								<div class="form-row">
 									<div class="col">
 										<div class="form-group">
-											<label for="form3electionYear">Election Year</label><input
-												class="form-control" type="text" name="electionYear"
-												required id="form3electionYear">
+
+											<label for="form3electionYear">Election Year</label> <select
+												class="form-control" id="form3electionYear">
+
+												<option>1980</option>
+												<option>1984</option>
+												<option>1988</option>
+												<option>1992</option>
+												<option>1996</option>
+												<option>2004</option>
+												<option>2008</option>
+												<option>2016</option>
+											</select>
 										</div>
 									</div>
 								</div>
@@ -243,7 +515,7 @@ background-size: cover;*/
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="col-lg-6"></div>
 
 
@@ -277,8 +549,7 @@ background-size: cover;*/
 				const thisOpacity = parseFloat(opacityArr[i]);
 				var request = new XMLHttpRequest();
 				request
-						.open(
-								'GET',
+						.open('GET',
 								'https://nominatim.openstreetmap.org/reverse?format=json&osm_id='
 										+ thisId
 										+ '&osm_type=R&polygon_geojson=1.json',
