@@ -37,7 +37,7 @@
 			    location_border: 2,
 			    location_hover_border: 2.5,
 			    all_locations_inactive: "no",
-			    all_locations_hidden: "no",
+			    all_locations_hidden: "yes",
 			    
 					//Label defaults
 					label_color: "#ffffff",
@@ -509,8 +509,8 @@
 			<div class="col-lg-12">
 				<h4>
 					Hover over any of the states and U.S. territories in the map below
-					to see details about the top fundraiser among the 2020 Democratic
-					primary candidates.<br>
+					to see details about the top fundraiser among the 2020
+					primary candidates (including Democrats, Republicans, and several other candidates).<br>
 					<br>Scroll down below the map to explore more detailed
 					information for each state and territory.
 				</h4>
