@@ -12,4 +12,8 @@ public class NinaController {
 		return new ModelAndView("index", "testing", test);
 	}
 	
+//	@RequestMapping("about") 
+//	public ModelAndView() {
+//		return new ModelAndView();
+//	}
 }

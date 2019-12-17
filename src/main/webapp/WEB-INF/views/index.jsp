@@ -50,8 +50,8 @@ background-size: cover;*/
 
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="#">Home</a></li>
-				<li class="breadcrumb-item active" aria-current="page"><a href="#">About</a></li>
+				<li class="breadcrumb-item active" aria-current="page"><a href="#">Home</a></li>
+				<li class="breadcrumb-item"><a href="http://localhost:8080/about">About</a></li>
 			</ol>
 		</nav>
 		<br>
