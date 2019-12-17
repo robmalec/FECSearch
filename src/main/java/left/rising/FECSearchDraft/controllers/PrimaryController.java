@@ -3,6 +3,8 @@ package left.rising.FECSearchDraft.controllers;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +28,6 @@ import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
 import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
 import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
-import left.rising.FECSearchDraft.dbrepos.ElResult;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
 import left.rising.FECSearchDraft.dbrepos.PrimarySearchRepo;
 import left.rising.FECSearchDraft.dbrepos.PrimaryStateSearch;
@@ -36,8 +37,6 @@ import left.rising.FECSearchDraft.entities.DBDonationResult;
 import left.rising.FECSearchDraft.entities.LocationSearchResult;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
 import left.rising.FECSearchDraft.entities.StateScheduleAResults;
-import left.rising.FECSearchDraft.entities.loserCommitteeIds;
-import left.rising.FECSearchDraft.entities.winnerCommitteeIds;
 
 @Controller
 public class PrimaryController {
@@ -56,8 +55,8 @@ public class PrimaryController {
 	@Autowired
 	PrimarySearchRepo psr;
 
-	@Autowired
-	AdamController ac = new AdamController();
+	// @Autowired
+	// CitySearchController ac = new AdamController();
 
 	private RestTemplate rt = new RestTemplate();
 
@@ -72,14 +71,23 @@ public class PrimaryController {
 	private String[] stateCodes = { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL",
 			"IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
 			"NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI",
-			"WY" };
+			"WY", "GU", "AA", "AS", "AE", "AP", "ZZ", "MP", "PR", "VI" };
+	private String[] stateNames = { "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+			"Delaware", "Washington, D.C.", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
+			"Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachussetts", "Michigan", "Minnesota",
+			"Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+			"New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+			"South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+			"West Virginia", "Wisconsin", "Wyoming", "Guam", "Armed Forces Americas", "American Samoa",
+			"Armed Forces Europe", "Armed Forces Pacific", "Foreign Countries", "Northern Mariana Islands",
+			"Puerto Rico", "Virgin Islands" };
 
 	public PrimaryStateSearch getStateSearchResult(CandidateData c, String stateCode) {
 		String url = "";
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 
 		if (ccr.findByCandidateAssigned(c).get(0).getElection_year() == 2020) {
-			System.out.println("Started finding for: " + c.getName() + ", " + stateCode);
+			// System.out.println("Started finding for: " + c.getName() + ", " + stateCode);
 			ResponseEntity<StateScheduleAResults> respEnt = null;
 			try {
 				url = "http://api.open.fec.gov/v1/schedules/schedule_a/by_state/?api_key=" + fecKey + "&committee_id="
@@ -100,7 +108,7 @@ public class PrimaryController {
 			for (DBDonationResult d : stateResults) {
 				stateTot += d.getTotal();
 			}
-			System.out.println("Finished finding for: " + c.getName());
+			// System.out.println("Finished finding for: " + c.getName());
 			return new PrimaryStateSearch(c, stateTot, stateCode);
 		}
 		return null;
@@ -109,46 +117,79 @@ public class PrimaryController {
 	@RequestMapping("primary-states")
 	public ModelAndView primaryStateResults() {
 		ArrayList<CandidateData> candidates = new ArrayList<>();
-		HashMap<String, ArrayList<PrimaryStateSearch>> results = new HashMap<>();
 		// for (int i = 19; i <= 53; i++) {
-		for (int i = 19; i <= 24; i++) {
+		for (int i = 19; i <= 53; i++) {
 			candidates.add(cdr.getCandidateDataFromID(i).get(0));
 		}
-		System.out.println(candidates.get(0).getName());
+		// System.out.println(candidates.get(0).getName());
 		for (CandidateData d : candidates) {
 			for (String s : stateCodes) {
-				if (!results.containsKey(s)) {
-					results.put(s, new ArrayList<>());
-				}
-				System.out.println(d.getName() + " " + s);
 				if (psr.findByIdAndState(d, s) == null) {
 					PrimaryStateSearch stateSearch = getStateSearchResult(d, s);
 					psr.save(stateSearch);
-					results.get(s).add(getStateSearchResult(d, s));
-				} else {
-					results.get(s).add(psr.findByIdAndState(d, s));
 				}
-
 			}
 		}
 
-		ModelAndView mv = new ModelAndView("primary-state-results", "results", results);
+		System.out.println(stateCodes.length + " " + stateNames.length);
+		HashMap<String, PrimaryStateSearch> topRaisers = new HashMap<>();
+		HashMap<String, Double> candFundTot = new HashMap<>();
+		for (String s : stateCodes) {
+			List<PrimaryStateSearch> search = psr.findByState(s);
+			PrimaryStateSearch top = search.get(0);
+			for (PrimaryStateSearch s1 : search) {
+				if (s1.getFunds() > top.getFunds()) {
+					top = s1;
+				}
+				if (!candFundTot.containsKey(s1.getCandidate().getName())) {
+					candFundTot.put(s1.getCandidate().getName(), s1.getFunds());
+				} else {
+					candFundTot.replace(s1.getCandidate().getName(),
+							(candFundTot.get(s1.getCandidate().getName()) + s1.getFunds()));
+				}
+			}
+			topRaisers.put(s, top);
+		}
+		String stateInfo = "";
+		int i = 0;
+		for (String s : stateCodes) {
+			double percent = (new BigDecimal(topRaisers.get(s).getFunds()).divide(
+					new BigDecimal(candFundTot.get(topRaisers.get(s).getCandidate().getName())), 4,
+					RoundingMode.HALF_UP)).doubleValue() * 100;
+
+			String description = "\"<div class=\\\"text-left\\\" style=\\\"border-top: solid 2pt;\\\"><strong>Top Fundraiser:</strong> "
+					+ topRaisers.get(s).getCandidate().getName()
+					+ "</div><div class=\\\"text-left\\\"><strong>Funds Raised Here:</strong> $"
+					+ String.format("%,.2f", topRaisers.get(s).getFunds())
+					+ "</div><div class=\\\"text-left\\\"><strong>% of Candidate's Total Funds:</strong> "
+					+ String.format("%.2f", percent) + "%</div>\"";
+
+			stateInfo += s + ": {name:\"" + stateNames[i] + "\", description: " + description
+					+ ",color:\"default\",hover_color:\"default\",url:\"default\", hide: 'no'},";
+
+			i++;
+		}
+		stateInfo = stateInfo.substring(0, stateInfo.length() - 1);
+		ModelAndView mv = new ModelAndView("primary-state-results", "results", stateInfo);
+		mv.addObject("thing", "thing");
 
 		return mv;
 	}
 
-	@RequestMapping("primary-location-search")
-	public ModelAndView primaryLocationSearch(String city, String state, String candidateName) {
-		String id = ccr.findByCandidateAssigned(cdr.getCandidateDataFromName(candidateName).get(0)).get(0)
-				.getCommittee_id();
-		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, 2020) == null) {
-
-		}
-		List<DBDonation> donations = ac.getCandidateDonations(city, state, id, 2020);
-
-		return null;
-	}
-
+	/*
+	 * @RequestMapping("primary-location-search") public ModelAndView
+	 * primaryLocationSearch(String city, String state, String candidateName) {
+	 * String id =
+	 * ccr.findByCandidateAssigned(cdr.getCandidateDataFromName(candidateName).get(0
+	 * )).get(0) .getCommittee_id(); if
+	 * (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, 2020) ==
+	 * null) {
+	 * 
+	 * } // List<DBDonation> donations = ac.getCandidateDonations(city, state, id,
+	 * 2020);
+	 * 
+	 * return null; }
+	 */
 	public HttpHeaders getHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.USER_AGENT, "testing");
@@ -224,7 +265,8 @@ public class PrimaryController {
 
 		// Populate the donations array with all donations to the candidate from the
 		// selected location
-		donations.addAll(ac.getCandidateDonations(city, state, committeeId, electionYear));
+		// donations.addAll(ac.getCandidateDonations(city, state, committeeId,
+		// electionYear));
 
 		// Gather the total number of winner and loser donations
 		numDonations = donations.size();
@@ -299,6 +341,6 @@ public class PrimaryController {
 		// Make new object
 		// Construct a LocationSearchResult object using the data gathered and return it
 
-		return lsr;
+		return null;
 	}
 }

@@ -1,5 +1,7 @@
 package left.rising.FECSearchDraft.dbrepos;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,6 +11,6 @@ public interface PrimarySearchRepo extends JpaRepository<PrimaryStateSearch, Int
 	PrimaryStateSearch findByIdAndState(@Param("iCandidateId") CandidateData candidate, @Param("iState") String state);
 	
 	@Query("SELECT p FROM PrimaryStateSearch p WHERE p.state=:iState")
-	PrimaryStateSearch findByState(@Param("iState") String state);
+	List<PrimaryStateSearch> findByState(@Param("iState") String state);
 	
 }
