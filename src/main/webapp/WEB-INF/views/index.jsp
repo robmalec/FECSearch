@@ -51,10 +51,14 @@ background-size: cover;*/
 			<div class="col-lg-12 text-center pagetitle">
 				<h1>Follow the $</h1>
 				<br>
+				<br>
+				
 			</div>
 			<div class="pagetitle">
 			<br>
+			
 				<h6>Welcome to <strong>Follow the $</strong>, a campaign finance web application. Choose one of the search options below to find information about political donations.</h6>
+
 			<br>
 			</div>
 		</div>
@@ -63,9 +67,11 @@ background-size: cover;*/
 				<br>
 				<div class="page-header">
 					<h3>Search Donations by City</h3>
+					<br>
 				</div>
 				<h6>Select one of the search options from the drop-down below to
 					find information about donations from individual cities.</h6>
+				<br>
 				<br>
 				<ul class="nav btn btn-dark">
 
@@ -220,6 +226,7 @@ background-size: cover;*/
 						<br>
 						<div class="page-header">
 							<h3>Search Donations by State</h3>
+							<br>
 						</div>
 						<h6>Click on any state below to see information about
 							donations from that state for every presidential election from
