@@ -8,7 +8,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,15 +37,19 @@ import left.rising.FECSearchDraft.entities.DBDonation;
 import left.rising.FECSearchDraft.entities.DBDonationResult;
 import left.rising.FECSearchDraft.entities.LocationSearchResult;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
+import left.rising.FECSearchDraft.entities.PrimaryCandidateLocationSearchInfo;
 import left.rising.FECSearchDraft.entities.PrimaryLocationSearchResult;
 import left.rising.FECSearchDraft.entities.StateScheduleAResults;
 
 @Controller
 public class PrimaryController {
-	
+
 	@Autowired
 	PrimaryLocationSearchResultRepo plsrr;
-	
+
+	// @Autowired
+	// PrimaryCandidateLocationSearchInfoRepo pclsir;
+
 	@Autowired
 	ElResultRepo elr;
 
@@ -88,18 +91,18 @@ public class PrimaryController {
 			"West Virginia", "Wisconsin", "Wyoming", "Guam", "Armed Forces Americas", "American Samoa",
 			"Armed Forces Europe", "Armed Forces Pacific", "Foreign Countries", "Northern Mariana Islands",
 			"Puerto Rico", "Virgin Islands" };
-	
+
 	@RequestMapping("test1")
 	public ModelAndView test1() {
-//		Map<String, Double> candidateTotalSumDonations = new HashMap<>();
-//		candidateTotalSumDonations.put("test1", 0.0);
-//		PrimaryLocationSearchResult plsr = new PrimaryLocationSearchResult("primaryCandidateName", candidateTotalSumDonations,
-//				new HashMap<String, Integer>(), new HashMap<String, Double>(),
-//				new HashMap<String, Double>(), new HashMap<String, Double>(),
-//				new HashMap<String, Double>(), new HashMap<String, String>(),
-//				new BigDecimal(0), "topFundraiser", "worstFundraiser", "city", "state");
-//			plsrr.save(plsr);
-			System.out.println(plsrr.findAll().get(0).getCandidateTotalSumDonations().toString());
+		String s = "citystate";
+		List<PrimaryCandidateLocationSearchInfo> info = new ArrayList<>();
+		info.add(new PrimaryCandidateLocationSearchInfo("candidateName", "city", "state", 0, 0, 0, 0, 0));
+		PrimaryLocationSearchResult plsr = new PrimaryLocationSearchResult(info, new BigDecimal(0), "topFundraiser",
+				"worstFundraiser", "city", "state");
+		plsr.getPrimaryCandidateLocationSearchData().get(0).setPlsr(plsr);
+		plsrr.save(plsr);
+		PrimaryLocationSearchResult plup = plsrr.findAll().get(0);
+		System.out.println(plup.getPrimaryCandidateLocationSearchData().get(0).getCandidateName());
 		return null;
 	}
 
