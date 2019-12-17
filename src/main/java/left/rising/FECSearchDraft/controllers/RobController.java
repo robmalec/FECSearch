@@ -180,7 +180,7 @@ public class RobController {
 		fecKeys.add(fecKey4);
 
 		ModelAndView mv = new ModelAndView("state-stats-page");
-		List<CandFundsPerState> fundsFromThisState = new ArrayList<>(); //cfpsRepo.findByStateCode(stateCode);
+		List<CandFundsPerState> fundsFromThisState = cfpsRepo.findByStateCode(stateCode);
 
 		// Testing: printing committee IDs and their associated candidates
 		for (CandidateCommitteeId c : canComRepo.findAll()) {
@@ -277,10 +277,8 @@ public class RobController {
 			}
 			
 			// Finally saving everything to the DB
-			System.out.println("Contents of fundsFromThisState");
 			for (CandFundsPerState c : fundsFromThisState) {
-				System.out.println(c);
-				//cfpsRepo.save(c);
+				cfpsRepo.save(c);
 			}
 		}
 
@@ -300,9 +298,6 @@ public class RobController {
 			thisCandFunds = c.getFunds();
 			totalFunds += thisCandFunds;
 			String thisCandName = getCandidateData(c.getCandId()).getName();
-			if (thisCandName.equals("Walter Mondale")) {
-				int pig = 0;
-			}
 
 			ElResult result = getResultOfYear(c.getYear());
 

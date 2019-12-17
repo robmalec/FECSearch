@@ -92,20 +92,6 @@ public class PrimaryController {
 			"Armed Forces Europe", "Armed Forces Pacific", "Foreign Countries", "Northern Mariana Islands",
 			"Puerto Rico", "Virgin Islands" };
 
-	@RequestMapping("test1")
-	public ModelAndView test1() {
-		String s = "citystate";
-		List<PrimaryCandidateLocationSearchInfo> info = new ArrayList<>();
-		info.add(new PrimaryCandidateLocationSearchInfo("candidateName", "city", "state", 0, 0, 0, 0, 0));
-		PrimaryLocationSearchResult plsr = new PrimaryLocationSearchResult(info, new BigDecimal(0), "topFundraiser",
-				"worstFundraiser", "city", "state");
-		plsr.getPrimaryCandidateLocationSearchData().get(0).setPlsr(plsr);
-		plsrr.save(plsr);
-		PrimaryLocationSearchResult plup = plsrr.findAll().get(0);
-		System.out.println(plup.getPrimaryCandidateLocationSearchData().get(0).getCandidateName());
-		return null;
-	}
-
 	public PrimaryStateSearch getStateSearchResult(CandidateData c, String stateCode) {
 		String url = "";
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
@@ -200,14 +186,32 @@ public class PrimaryController {
 		return mv;
 	}
 
+	public PrimaryCandidateLocationSearchInfo getPrimaryLocationSearchResult(String city, String state,
+			CandidateData candidate) {
+		return null;
+	}
+
 	@RequestMapping("primary-location-search")
 	public ModelAndView primaryLocationSearch(String city, String state, String candidateName) {
-		String id = ccr.findByCandidateAssigned(cdr.getCandidateDataFromName(candidateName).get(0)).get(0)
-				.getCommittee_id();
-		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, 2020) == null) {
-
+		PrimaryLocationSearchResult plsr = new PrimaryLocationSearchResult();
+		ArrayList<CandidateData> candidates = new ArrayList<>();
+		List<PrimaryCandidateLocationSearchInfo> searches = new ArrayList<>();
+		if (plsrr.findByCityAndState(city, state) == null) {
+			// for (int i = 19; i <= 53; i++) {
+			for (int i = 19; i <= 53; i++) {
+				candidates.add(cdr.getCandidateDataFromID(i).get(0));
+			}
+			// System.out.println(candidates.get(0).getName());
+			for (CandidateData d : candidates) {
+				PrimaryCandidateLocationSearchInfo stateSearch = getPrimaryLocationSearchResult(city, state, d);
+				searches.add(stateSearch);
+			}
+			plsr = new PrimaryLocationSearchResult();
 		}
-		List<DBDonation> donations = csc.getCandidateDonations(city, state, id, 2020);
+
+		else {
+			// plsr = plsrr.findByCityAndState(city, state);
+		}
 
 		return null;
 	}
