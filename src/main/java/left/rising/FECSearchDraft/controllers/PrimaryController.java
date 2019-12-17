@@ -8,6 +8,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
 import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
+import left.rising.FECSearchDraft.dbrepos.PrimaryLocationSearchResultRepo;
 import left.rising.FECSearchDraft.dbrepos.PrimarySearchRepo;
 import left.rising.FECSearchDraft.dbrepos.PrimaryStateSearch;
 import left.rising.FECSearchDraft.dbrepos.SearchResultRepo;
@@ -36,10 +38,15 @@ import left.rising.FECSearchDraft.entities.DBDonation;
 import left.rising.FECSearchDraft.entities.DBDonationResult;
 import left.rising.FECSearchDraft.entities.LocationSearchResult;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
+import left.rising.FECSearchDraft.entities.PrimaryLocationSearchResult;
 import left.rising.FECSearchDraft.entities.StateScheduleAResults;
 
 @Controller
 public class PrimaryController {
+	
+	@Autowired
+	PrimaryLocationSearchResultRepo plsrr;
+	
 	@Autowired
 	ElResultRepo elr;
 
@@ -55,8 +62,8 @@ public class PrimaryController {
 	@Autowired
 	PrimarySearchRepo psr;
 
-	// @Autowired
-	// CitySearchController ac = new AdamController();
+	@Autowired
+	CitySearchController csc = new CitySearchController();
 
 	private RestTemplate rt = new RestTemplate();
 
@@ -81,6 +88,20 @@ public class PrimaryController {
 			"West Virginia", "Wisconsin", "Wyoming", "Guam", "Armed Forces Americas", "American Samoa",
 			"Armed Forces Europe", "Armed Forces Pacific", "Foreign Countries", "Northern Mariana Islands",
 			"Puerto Rico", "Virgin Islands" };
+	
+	@RequestMapping("test1")
+	public ModelAndView test1() {
+//		Map<String, Double> candidateTotalSumDonations = new HashMap<>();
+//		candidateTotalSumDonations.put("test1", 0.0);
+//		PrimaryLocationSearchResult plsr = new PrimaryLocationSearchResult("primaryCandidateName", candidateTotalSumDonations,
+//				new HashMap<String, Integer>(), new HashMap<String, Double>(),
+//				new HashMap<String, Double>(), new HashMap<String, Double>(),
+//				new HashMap<String, Double>(), new HashMap<String, String>(),
+//				new BigDecimal(0), "topFundraiser", "worstFundraiser", "city", "state");
+//			plsrr.save(plsr);
+			System.out.println(plsrr.findAll().get(0).getCandidateTotalSumDonations().toString());
+		return null;
+	}
 
 	public PrimaryStateSearch getStateSearchResult(CandidateData c, String stateCode) {
 		String url = "";
@@ -176,20 +197,18 @@ public class PrimaryController {
 		return mv;
 	}
 
-	/*
-	 * @RequestMapping("primary-location-search") public ModelAndView
-	 * primaryLocationSearch(String city, String state, String candidateName) {
-	 * String id =
-	 * ccr.findByCandidateAssigned(cdr.getCandidateDataFromName(candidateName).get(0
-	 * )).get(0) .getCommittee_id(); if
-	 * (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, 2020) ==
-	 * null) {
-	 * 
-	 * } // List<DBDonation> donations = ac.getCandidateDonations(city, state, id,
-	 * 2020);
-	 * 
-	 * return null; }
-	 */
+	@RequestMapping("primary-location-search")
+	public ModelAndView primaryLocationSearch(String city, String state, String candidateName) {
+		String id = ccr.findByCandidateAssigned(cdr.getCandidateDataFromName(candidateName).get(0)).get(0)
+				.getCommittee_id();
+		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, 2020) == null) {
+
+		}
+		List<DBDonation> donations = csc.getCandidateDonations(city, state, id, 2020);
+
+		return null;
+	}
+
 	public HttpHeaders getHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.USER_AGENT, "testing");
