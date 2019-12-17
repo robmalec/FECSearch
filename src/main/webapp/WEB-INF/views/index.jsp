@@ -198,7 +198,7 @@ background-size: cover;*/
 								<div class="form-group">
 
 									<label for="form2state">State</label> <select
-										class="form-control" id="form2state">
+										name="state" class="form-control" id="form2state">
 
 										<option value="AL">Alabama</option>
 										<option value="AK">Alaska</option>
@@ -266,7 +266,7 @@ background-size: cover;*/
 								<div class="form-group">
 
 									<label for="electionYear">Election Year</label> <select
-										class="form-control" id="electionYear">
+										class="form-control" name="electionYear" id="electionYear">
 
 										<option>1980</option>
 										<option>1984</option>
@@ -294,7 +294,7 @@ background-size: cover;*/
 										<div class="form-group">
 
 											<label for="form3state1">State</label> <select
-												class="form-control" id="form3state1">
+												class="form-control" name="state1" id="form3state1">
 
 												<option value="AL">Alabama</option>
 												<option value="AK">Alaska</option>
@@ -369,7 +369,7 @@ background-size: cover;*/
 										<div class="form-group">
 
 											<label for="form3state2">State</label> <select
-												class="form-control" id="form3state2">
+												class="form-control" name="state2" id="form3state2">
 
 												<option value="AL">Alabama</option>
 												<option value="AK">Alaska</option>
@@ -440,7 +440,7 @@ background-size: cover;*/
 										<div class="form-group">
 
 											<label for="form3electionYear">Election Year</label> <select
-												class="form-control" id="form3electionYear">
+												class="form-control" name="electionYear" id="form3electionYear">
 
 												<option>1980</option>
 												<option>1984</option>
@@ -487,10 +487,6 @@ background-size: cover;*/
 
 
 			<!-- 1980-2016 -->
-
-
-
-
 
 
 			<div class="col-lg-6">
