@@ -108,7 +108,7 @@ background-size: cover;*/
 							<div id="secondForm" class="collapse card card-body">
 								<h5>Search for All Elections</h5>
 								<hr>
-								<div class="form-group" cities order-alpha>
+								<div class="form-group">
 									<label for="form1city">City</label><input type="text"
 										name="city" required id="form1city" class="form-control">
 
@@ -178,12 +178,13 @@ background-size: cover;*/
 										<option value="MP">Northern Mariana Islands</option>
 										<option value="PR">Puerto Rico</option>
 										<option value="VI">Virgin Islands</option>
-
 									</select>
+									<br>
+									<input type="Submit" class="btn btn-dark">
 								</div>
 							</div>
-						</form>
 
+						</form>
 
 						<br>
 						<form action="/location-search-results">
