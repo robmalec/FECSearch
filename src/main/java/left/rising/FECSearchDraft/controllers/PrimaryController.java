@@ -23,12 +23,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.sun.istack.NotNull;
 
 import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
 import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
 import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
+import left.rising.FECSearchDraft.dbrepos.PrimaryCandidateLocationSearchInfoRepo;
 import left.rising.FECSearchDraft.dbrepos.PrimaryLocationSearchResultRepo;
 import left.rising.FECSearchDraft.dbrepos.PrimarySearchRepo;
 import left.rising.FECSearchDraft.dbrepos.PrimaryStateSearch;
@@ -47,8 +49,8 @@ public class PrimaryController {
 	@Autowired
 	PrimaryLocationSearchResultRepo plsrr;
 
-	// @Autowired
-	// PrimaryCandidateLocationSearchInfoRepo pclsir;
+	@Autowired
+	PrimaryCandidateLocationSearchInfoRepo pclsir;
 
 	@Autowired
 	ElResultRepo elr;
@@ -188,6 +190,28 @@ public class PrimaryController {
 
 	public PrimaryCandidateLocationSearchInfo getPrimaryLocationSearchResult(String city, String state,
 			CandidateData candidate) {
+		if (pclsir.findByCandidateNameAndCityAndState(candidate.getName(), city, state) != null) {
+			return pclsir.findByCandidateNameAndCityAndState(candidate.getName(), city, state);
+		}
+		double totalSumDonations = 0;
+
+		double totalNumDonations = 0;
+
+		double avgDonation = 0;
+
+		double largestDonation = 0;
+
+		double percentDonationsForState = 0;
+		List<DBDonation> donations = csc.getCandidateDonations(city, state,
+				ccr.findByCandidateAssigned(candidate).get(0).getCommittee_id(), 2020);
+		totalNumDonations = donations.size();
+		for (DBDonation d : donations) {
+			totalSumDonations += d.getContributionReceiptAmount();
+			if (d.getContributionReceiptAmount() > largestDonation) {
+				largestDonation = d.getContributionReceiptAmount();
+			}
+		}
+		
 		return null;
 	}
 
@@ -212,7 +236,7 @@ public class PrimaryController {
 		else {
 			// plsr = plsrr.findByCityAndState(city, state);
 		}
-
+		;
 		return null;
 	}
 
