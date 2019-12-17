@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import left.rising.FECSearchDraft.dbrepos.CandidateData;
-import left.rising.FECSearchDraft.dbrepos.PerStateCandData;
 
 @Entity
 public class CandFundsPerState {
@@ -15,58 +14,77 @@ public class CandFundsPerState {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) //
 	private Integer id;
 	
-	@ManyToOne
-	private PerStateCandData linkedState;
+	private String stateCode;
 	private int candId;
+	private int year;
 	private double funds;
+	
 	public CandFundsPerState() {}
-	public CandFundsPerState(int candId, double funds) {
+
+	public CandFundsPerState(String stateCode, int candId, int year, double funds) {
 		super();
+		this.stateCode = stateCode;
 		this.candId = candId;
+		this.year = year;
 		this.funds = funds;
 	}
-	public CandFundsPerState(PerStateCandData linkedState, CandidateData candidate, double funds) {
-		super();
-		this.linkedState = linkedState;
-		this.candId = candId;
-		this.funds = funds;
-	}
-	public CandFundsPerState(Integer id, PerStateCandData linkedState, CandidateData candidate, double funds) {
+
+	public CandFundsPerState(Integer id, String stateCode, int candId, int year, double funds) {
 		super();
 		this.id = id;
-		this.linkedState = linkedState;
+		this.stateCode = stateCode;
 		this.candId = candId;
+		this.year = year;
 		this.funds = funds;
 	}
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public PerStateCandData getLinkedState() {
-		return linkedState;
+
+	public String getStateCode() {
+		return stateCode;
 	}
-	public void setLinkedState(PerStateCandData linkedState) {
-		this.linkedState = linkedState;
+
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
 	}
+
 	public int getCandId() {
 		return candId;
 	}
-	public void setCandId(CandidateData candidate) {
+
+	public void setCandId(int candId) {
 		this.candId = candId;
 	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
 	public double getFunds() {
 		return funds;
 	}
+
 	public void setFunds(double funds) {
 		this.funds = funds;
 	}
 	
+	public void addFunds(double amount) {
+		funds += amount;
+	}
+
 	@Override
 	public String toString() {
-		return "CandFundsPerState [id=" + id + ", linkedState=" + linkedState + ", candId=" + candId + ", funds="
-				+ funds + "]";
+		return "CandFundsPerState [id=" + id + ", stateCode=" + stateCode + ", candId=" + candId + ", year=" + year
+				+ ", funds=" + funds + "]";
 	}
-	
 }
