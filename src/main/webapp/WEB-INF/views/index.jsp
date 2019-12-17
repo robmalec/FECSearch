@@ -523,9 +523,9 @@ background-size: cover;*/
 			map = new google.maps.Map(document.getElementById('map'), {
 				center : {
 					lat : 40.1748,
-					lng : -101.0130
+					lng : -115.0130
 				},
-				zoom : 4
+				zoom : 3
 			});
 			//getting massive string containing all state IDs from EL tag
 			var stateIds = "${idString}";
