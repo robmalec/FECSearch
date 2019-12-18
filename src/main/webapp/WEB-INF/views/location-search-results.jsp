@@ -6,13 +6,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Location Search Results</title>
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-	crossorigin="anonymous">
-
-<link rel="stylesheet" href="location-result-style.css"
-	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+<link
+	href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/litera/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-pLgJ8jZ4aoPja/9zBSujjzs7QbkTKvKw1+zfKuumQF9U+TH3xv09UUsRI52fS+A6"
 	crossorigin="anonymous">
 </head>
 <body>
@@ -23,6 +20,65 @@
 				style="color: white;">Link</a></li>
 		</ul>
 	<div class="container">
+	<br>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-12 text-center">
+				<h1>${location}</h1>
+				<br>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-lg-12 text-center" style="border-bottom: 2pt solid;">
+				<h3>In ${results.getElectionYear()}, the largest number of contributions went to:</h3>
+				<br>
+			</div>
+		</div>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-4 text-center align-self-center">
+				<div class="row">
+					<div class="col-lg-12">
+					<br>
+						<h4>${majname}</h4>
+						<img alt="" src="${urls.get(majname)}" style="max-height: 200px;"> <br>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-lg-12">
+						<h6>
+							Donations from ${city} accounted for <strong>${String.format("%.1f", majDonPercentForState * 100)}%</strong>
+							of the funds ${majname} raised in this state, and <strong>${String.format("%.1f", majDonPercentAllStates * 100)}%</strong>
+							of their total funds raised nationwide.
+						</h6>
+						<br>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-8" style="border-left: solid 2pt;">
+				<br>
+				<div class="row">
+					<div class="col-lg-4 text-center">
+						<h6>Total Donations:</h6>
+						<p>$${totWinDon}</p>
+					</div>
+					<div class="col-lg-4 text-center">
+						<h6>Largest Donation:</h6>
+						<p>$${bigWinDon}</p>
+					</div>
+					<div class="col-lg-4 text-center">
+						<h6>Average Donation:</h6>
+						<p>$${avgWinDon}</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-12">
+						<canvas id="myChart" style="max-width:100%; max-height:300px;"></canvas>
+						<br>
+					</div>
+				</div>
+			</div>
+		</div>
 		<br>
 		<div class="row">
 			<div class="col-lg-12 text-center">

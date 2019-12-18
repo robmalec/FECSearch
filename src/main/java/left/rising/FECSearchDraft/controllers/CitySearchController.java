@@ -407,23 +407,95 @@ public class CitySearchController {
 			mv.addObject("winnerColor", "#de0000");
 			mv.addObject("loserColor", "#0071cd");
 		}
+		// For the recipient of the largest total donations, calculate the percentage of
+		// donations from the given state that came from this city
+		double stateTot = 0;
+		List<CandFundsPerState> thisStateFunds = new ArrayList<>();
+
+		thisStateFunds.addAll(cfps.findByStateCode(state));
+		for (CandFundsPerState c : thisStateFunds) {
+			if (cdr.getCandidateDataFromID(c.getCandId()).get(0).getName()
+					.equals(cdr.getCandidateDataFromName(majorityDonationName).get(0).getName())
+					&& c.getYear() == lsr.getElectionYear()) {
+				stateTot = c.getFunds();
+			}
+		}
+
+		double percentState = 0;
+		double totWinDon = 0;
+		double avgWinDon = 0;
+		double bigWinDon = 0;
+		double totLoseDon = 0;
+		double avgLoseDon = 0;
+		double bigLoseDon = 0;
+		String losName = "";
+		try {
+			if (lsr.getWinnerName().equals(majorityDonationName)) {
+				percentState = (new BigDecimal(lsr.getWinnerTotalDonations()).divide(new BigDecimal(stateTot), 4,
+						RoundingMode.HALF_UP)).doubleValue();
+				totWinDon = lsr.getWinnerTotalDonations();
+				avgWinDon = lsr.getAvgWinningDonation();
+				bigWinDon = lsr.getLargestWinningDonation();
+				totLoseDon = lsr.getLoserTotalDonations();
+				avgLoseDon = lsr.getAvgLosingDonation();
+				bigLoseDon = lsr.getLargestLosingDonation();
+				losName = lsr.getLoserName();
+			} else {
+				percentState = (new BigDecimal(lsr.getLoserTotalDonations()).divide(new BigDecimal(stateTot), 4,
+						RoundingMode.HALF_UP)).doubleValue();
+				totWinDon = lsr.getLoserTotalDonations();
+				avgWinDon = lsr.getAvgLosingDonation();
+				bigWinDon = lsr.getLargestLosingDonation();
+				totLoseDon = lsr.getWinnerTotalDonations();
+				avgLoseDon = lsr.getAvgWinningDonation();
+				bigLoseDon = lsr.getLargestWinningDonation();
+				losName = lsr.getWinnerName();
+			}
+
+		} catch (ArithmeticException e) {
+			percentState = 0;
+		}
+
+		// For the recipient of the largest total donations, calculate the percentage of
+		// donations all states that came from this city
+		double allStateTot = 0;
+		List<CandFundsPerState> allStateFunds = new ArrayList<>();
+		allStateFunds.addAll(cfps.findAll());
+		for (CandFundsPerState c : allStateFunds) {
+			if (cdr.getCandidateDataFromID(c.getCandId()).get(0) == cdr.getCandidateDataFromName(majorityDonationName)
+					.get(0) && c.getYear() == lsr.getElectionYear()) {
+				allStateTot += c.getFunds();
+			}
+		}
+
+		double percentAllStates = 0;
+		try {
+			if (lsr.getWinnerName().equals(majorityDonationName)) {
+				percentAllStates = (new BigDecimal(lsr.getWinnerTotalDonations()).divide(new BigDecimal(allStateTot), 4,
+						RoundingMode.HALF_UP)).doubleValue();
+			} else {
+				percentAllStates = (new BigDecimal(lsr.getLoserTotalDonations()).divide(new BigDecimal(allStateTot), 4,
+						RoundingMode.HALF_UP)).doubleValue();
+			}
+		} catch (ArithmeticException e) {
+			percentAllStates = 0;
+		}
+		mv.addObject("totLoseDon", String.format("%,.2f", totLoseDon));
+		mv.addObject("avgLoseDon", String.format("%,.2f", avgLoseDon));
+		mv.addObject("bigLoseDon", String.format("%,.2f", bigLoseDon));
+		mv.addObject("totWinDon", String.format("%,.2f", totWinDon));
+		mv.addObject("avgWinDon", String.format("%,.2f", avgWinDon));
+		mv.addObject("bigWinDon", String.format("%,.2f", bigWinDon));
+		mv.addObject("majDonPercentForState", percentState);
+		mv.addObject("majDonPercentAllStates", percentAllStates);
+		mv.addObject("urls", getImgUrls());
 		mv.addObject("majname", majorityDonationName);
+		mv.addObject("losName", losName);
 		mv.addObject("results", lsr);
 		mv.addObject("loserDonationData", lsr.getLoserDonationScatterData());
 		mv.addObject("winnerDonationData", lsr.getWinnerDonationScatterData());
 		mv.addObject("location", location);
-		mv.addObject("total_winners", lsr.getTotalWinners());
-		mv.addObject("total_losers", lsr.getTotalLosers());
-		mv.addObject("avg_winning_donation", String.format("%,.2f", lsr.getAvgWinningDonation()));
-		mv.addObject("avg_losing_donation", String.format("%,.2f", lsr.getAvgLosingDonation()));
-		mv.addObject("largest_winning_donation", String.format("%,.2f", lsr.getLargestWinningDonation()));
-		mv.addObject("largest_losing_donation", String.format("%,.2f", lsr.getLargestLosingDonation()));
-		mv.addObject("largest_winner_recipient", lsr.getWinnerName());
-		mv.addObject("largest_loser_recipient", lsr.getLoserName());
-		mv.addObject("largest_winner_total", String.format("%,.2f", lsr.getWinnerTotalDonations()));
-		mv.addObject("largest_loser_total", String.format("%,.2f", lsr.getLoserTotalDonations()));
-		mv.addObject("largest_total_winner_recipient", lsr.getWinnerName());
-		mv.addObject("largest_total_loser_recipient", lsr.getLoserName());
+		mv.addObject("city", city);
 		return mv;
 	}
 
@@ -454,6 +526,62 @@ public class CitySearchController {
 			mv.addObject("winnerColor", "#de0000");
 			mv.addObject("loserColor", "#0071cd");
 		}
+
+		// For the recipient of the largest total donations, calculate the percentage of
+		// donations from the given state that came from this city
+		double stateTot = 0;
+		List<CandFundsPerState> thisStateFunds = new ArrayList<>();
+
+		thisStateFunds.addAll(cfps.findByStateCode(state));
+		for (CandFundsPerState c : thisStateFunds) {
+			if (cdr.getCandidateDataFromID(c.getCandId()).get(0).getName()
+					.equals(cdr.getCandidateDataFromName(majorityDonationName).get(0).getName())
+					&& c.getYear() == lsr.getElectionYear()) {
+				stateTot = c.getFunds();
+			}
+		}
+
+		double percentState = 0;
+		try {
+			if (lsr.getWinnerName().equals(majorityDonationName)) {
+				percentState = (new BigDecimal(lsr.getWinnerTotalDonations()).divide(new BigDecimal(stateTot), 4,
+						RoundingMode.HALF_UP)).doubleValue();
+			} else {
+				percentState = (new BigDecimal(lsr.getLoserTotalDonations()).divide(new BigDecimal(stateTot), 4,
+						RoundingMode.HALF_UP)).doubleValue();
+			}
+
+		} catch (ArithmeticException e) {
+			percentState = 0;
+		}
+
+		// For the recipient of the largest total donations, calculate the percentage of
+		// donations all states that came from this city
+		double allStateTot = 0;
+		List<CandFundsPerState> allStateFunds = new ArrayList<>();
+		allStateFunds.addAll(cfps.findAll());
+		for (CandFundsPerState c : allStateFunds) {
+			if (cdr.getCandidateDataFromID(c.getCandId()).get(0) == cdr.getCandidateDataFromName(majorityDonationName)
+					.get(0) && c.getYear() == lsr.getElectionYear()) {
+				allStateTot += c.getFunds();
+			}
+		}
+
+		double percentAllStates = 0;
+		try {
+			if (lsr.getWinnerName().equals(majorityDonationName)) {
+				percentAllStates = (new BigDecimal(lsr.getWinnerTotalDonations()).divide(new BigDecimal(allStateTot), 4,
+						RoundingMode.HALF_UP)).doubleValue();
+			} else {
+				percentAllStates = (new BigDecimal(lsr.getLoserTotalDonations()).divide(new BigDecimal(allStateTot), 4,
+						RoundingMode.HALF_UP)).doubleValue();
+			}
+		} catch (ArithmeticException e) {
+			percentAllStates = 0;
+		}
+		System.out.println(percentAllStates);
+		mv.addObject("majDonPercentForState", percentState);
+		mv.addObject("majDonPercentAllStates", percentAllStates);
 		mv.addObject("majname", majorityDonationName);
 		mv.addObject("results", lsr);
 		mv.addObject("loserDonationData", lsr.getLoserDonationScatterData());
@@ -747,21 +875,21 @@ public class CitySearchController {
 			case DEMOCRAT:
 				if (l.getAvgWinningDonation() > l.getAvgLosingDonation()) {
 					timesDemHigherAvg += 1;
-				} else if (l.getAvgWinningDonation() < l.getAvgLosingDonation()){
+				} else if (l.getAvgWinningDonation() < l.getAvgLosingDonation()) {
 					timesRepHigherAvg += 1;
 				}
 				break;
 			case REPUBLICAN:
 				if (l.getAvgWinningDonation() > l.getAvgLosingDonation()) {
 					timesRepHigherAvg += 1;
-				} else if (l.getAvgWinningDonation() < l.getAvgLosingDonation()){
+				} else if (l.getAvgWinningDonation() < l.getAvgLosingDonation()) {
 					timesDemHigherAvg += 1;
 				}
 				break;
 			default:
 				break;
 			}
-			
+
 			// Find total number of winners, losers, and ties supported at the location
 			if (l.getWinnerTotalDonations() > l.getLoserTotalDonations()) {
 				totalWinners += 1;
@@ -833,12 +961,15 @@ public class CitySearchController {
 
 		String partyHigherAvg = "";
 		if (timesDemHigherAvg > timesRepHigherAvg) {
-			partyHigherAvg = "Democratic candidates have typically received larger donations from " + city + " than Republican candidates.";
-		} else if (timesDemHigherAvg < timesRepHigherAvg){
-			partyHigherAvg = "Republican candidates have typically received larger donations from " + city + " than Democratic candidates.";
+			partyHigherAvg = "Democratic candidates have typically received larger donations from " + city
+					+ " than Republican candidates.";
+		} else if (timesDemHigherAvg < timesRepHigherAvg) {
+			partyHigherAvg = "Republican candidates have typically received larger donations from " + city
+					+ " than Democratic candidates.";
 		} else {
-			partyHigherAvg = "The average donations from " + city + " are typically balanced between the two parties - no one party has had higher average donations more frequently than the other party.";
-			
+			partyHigherAvg = "The average donations from " + city
+					+ " are typically balanced between the two parties - no one party has had higher average donations more frequently than the other party.";
+
 		}
 		// Calculate average winning and losing donations for all election years
 		averageWinningDonation = averageWinningDonation / 9;
