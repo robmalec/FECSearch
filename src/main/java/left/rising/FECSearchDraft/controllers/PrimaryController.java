@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +25,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.sun.istack.NotNull;
 
 import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
 import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
@@ -37,10 +38,8 @@ import left.rising.FECSearchDraft.dbrepos.PrimaryStateSearch;
 import left.rising.FECSearchDraft.dbrepos.SearchResultRepo;
 import left.rising.FECSearchDraft.entities.DBDonation;
 import left.rising.FECSearchDraft.entities.DBDonationResult;
-import left.rising.FECSearchDraft.entities.LocationSearchResult;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
 import left.rising.FECSearchDraft.entities.PrimaryCandidateLocationSearchInfo;
-import left.rising.FECSearchDraft.entities.PrimaryLocationSearchResult;
 import left.rising.FECSearchDraft.entities.StateScheduleAResults;
 
 @Controller
@@ -97,7 +96,7 @@ public class PrimaryController {
 	public PrimaryStateSearch getStateSearchResult(CandidateData c, String stateCode) {
 		String url = "";
 		HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
-
+		System.out.println(c.getName());
 		if (ccr.findByCandidateAssigned(c).get(0).getElection_year() == 2020) {
 			// System.out.println("Started finding for: " + c.getName() + ", " + stateCode);
 			ResponseEntity<StateScheduleAResults> respEnt = null;
@@ -129,8 +128,7 @@ public class PrimaryController {
 	@RequestMapping("primary-states")
 	public ModelAndView primaryStateResults() {
 		ArrayList<CandidateData> candidates = new ArrayList<>();
-		// for (int i = 19; i <= 53; i++) {
-		for (int i = 19; i <= 53; i++) {
+		for (int i = 19; i <= 52; i++) {
 			candidates.add(cdr.getCandidateDataFromID(i).get(0));
 		}
 		// System.out.println(candidates.get(0).getName());
@@ -193,6 +191,7 @@ public class PrimaryController {
 		if (pclsir.findByCandidateNameAndCityAndState(candidate.getName(), city, state) != null) {
 			return pclsir.findByCandidateNameAndCityAndState(candidate.getName(), city, state);
 		}
+		System.out.println(candidate.getName());
 		double totalSumDonations = 0;
 
 		double totalNumDonations = 0;
@@ -202,42 +201,148 @@ public class PrimaryController {
 		double largestDonation = 0;
 
 		double percentDonationsForState = 0;
+
+		double percentTotalDonations = 0;
+		String donationScatterData = "";
+		int index;
+		ArrayList<Integer> rand = new ArrayList<>();
 		List<DBDonation> donations = csc.getCandidateDonations(city, state,
 				ccr.findByCandidateAssigned(candidate).get(0).getCommittee_id(), 2020);
 		totalNumDonations = donations.size();
-		for (DBDonation d : donations) {
-			totalSumDonations += d.getContributionReceiptAmount();
-			if (d.getContributionReceiptAmount() > largestDonation) {
-				largestDonation = d.getContributionReceiptAmount();
+		System.out.println(totalNumDonations);
+		for (index = 0; index < donations.size() && donationScatterData.length() <= 5500; index++) {
+
+			totalSumDonations += donations.get(index).getContributionReceiptAmount();
+			if (donations.get(index).getContributionReceiptAmount() > largestDonation) {
+				largestDonation = donations.get(index).getContributionReceiptAmount();
+			}
+			int randomInteger = (int) (((double) donations.size() - 1.0) * Math.random());
+
+			// If the index location has already been generated, then generate a new random
+			// index
+			while (rand.contains(randomInteger) && rand.size() < donations.size() - 1) {
+				randomInteger = (int) (((double) donations.size() - 1.0) * Math.random());
+			}
+			// If not, save it to the winRand list
+			rand.add(randomInteger);
+			if (donations.get(randomInteger).getContributionReceiptAmount() != null
+					&& donations.get(randomInteger).getContributionReceiptDate() != null
+					&& donations.get(randomInteger).getContributionReceiptAmount() > 0.0
+					&& donationScatterData.length() <= 5500) {
+				donationScatterData += "{x:" + donations.get(randomInteger).getContributionReceiptDate().substring(0, 4)
+						+ "." + donations.get(randomInteger).getContributionReceiptDate().substring(5, 7)
+						+ donations.get(randomInteger).getContributionReceiptDate().substring(8, 10) + ", y:"
+						+ donations.get(randomInteger).getContributionReceiptAmount() + "},";
 			}
 		}
-		
-		return null;
+		for (int i = index; i < donations.size(); i++) {
+			totalSumDonations += donations.get(index).getContributionReceiptAmount();
+			if (donations.get(index).getContributionReceiptAmount() > largestDonation) {
+				largestDonation = donations.get(index).getContributionReceiptAmount();
+			}
+		}
+		avgDonation = totalSumDonations / totalNumDonations;
+		System.out.println(totalSumDonations);
+		try {
+			percentDonationsForState = (new BigDecimal(totalSumDonations)
+					.divide(new BigDecimal(psr.findByIdAndState(candidate, state).getFunds()), 4, RoundingMode.HALF_UP))
+							.doubleValue()
+					* 100;
+		} catch (ArithmeticException e) {
+			percentDonationsForState = 0.0;
+		}
+		double totalDonations = 0;
+		for (String s : stateCodes) {
+			if (s.equals("RI")) {
+				System.out.println("RI at point 0: " + psr.findByState(s).get(0).getFunds());
+				System.out.println("Cand " + psr.findByIdAndState(candidate, s).getCandidate().getName());
+			}
+			totalDonations += psr.findByIdAndState(candidate, s).getFunds();
+		}
+		System.out.println(totalDonations);
+		try {
+			percentTotalDonations = (new BigDecimal(totalSumDonations).divide(new BigDecimal(totalDonations), 4,
+					RoundingMode.HALF_UP)).doubleValue() * 100;
+		} catch (ArithmeticException e) {
+			percentTotalDonations = 0;
+		}
+		PrimaryCandidateLocationSearchInfo pclsi = new PrimaryCandidateLocationSearchInfo(candidate.getName(), city,
+				state, totalSumDonations, totalNumDonations, avgDonation, largestDonation, percentDonationsForState,
+				percentTotalDonations, donationScatterData);
+		pclsir.save(pclsi);
+		return pclsi;
 	}
 
 	@RequestMapping("primary-location-search")
-	public ModelAndView primaryLocationSearch(String city, String state, String candidateName) {
-		PrimaryLocationSearchResult plsr = new PrimaryLocationSearchResult();
+	public ModelAndView primaryLocationSearch(String city, String state) {
 		ArrayList<CandidateData> candidates = new ArrayList<>();
 		List<PrimaryCandidateLocationSearchInfo> searches = new ArrayList<>();
-		if (plsrr.findByCityAndState(city, state) == null) {
-			// for (int i = 19; i <= 53; i++) {
-			for (int i = 19; i <= 53; i++) {
-				candidates.add(cdr.getCandidateDataFromID(i).get(0));
-			}
-			// System.out.println(candidates.get(0).getName());
-			for (CandidateData d : candidates) {
-				PrimaryCandidateLocationSearchInfo stateSearch = getPrimaryLocationSearchResult(city, state, d);
-				searches.add(stateSearch);
-			}
-			plsr = new PrimaryLocationSearchResult();
+		double avgDonTot = 0;
+		double avgDon = 0;
+		double totDon = 0;
+		PrimaryCandidateLocationSearchInfo winner = new PrimaryCandidateLocationSearchInfo();
+		for (int i = 19; i <= 52; i++) {
+			candidates.add(cdr.getCandidateDataFromID(i).get(0));
 		}
-
-		else {
-			// plsr = plsrr.findByCityAndState(city, state);
+		// System.out.println(candidates.get(0).getName());
+		for (CandidateData d : candidates) {
+			PrimaryCandidateLocationSearchInfo stateSearch = getPrimaryLocationSearchResult(city, state, d);
+			searches.add(stateSearch);
 		}
-		;
-		return null;
+		HashMap<String, String> urls = new HashMap<>();
+		HashMap<String, String> colors = new HashMap<>();
+		HashMap<String, String> parties = new HashMap<>();
+		for (PrimaryCandidateLocationSearchInfo p : searches) {
+			avgDonTot += (int) p.getAvgDonation();
+			totDon += p.getTotalSumDonations();
+			if ((int) p.getTotalNumDonations() > winner.getTotalNumDonations()) {
+				winner = p;
+			}
+			String url = "";
+			for (int i = 0; i < p.getCandidateName().split(" ").length; i++) {
+				url += p.getCandidateName().split(" ")[i];
+			}
+			urls.put(p.getCandidateName(), "Candidate_Photos/" + url + ".jpg");
+			switch (cdr.getCandidateDataFromName(p.getCandidateName()).get(0).getAfiliatedParty()) {
+			case REPUBLICAN:
+				colors.put(p.getCandidateName(), "#de0000");
+				parties.put(p.getCandidateName(), "Republican");
+				break;
+			case DEMOCRAT:
+				colors.put(p.getCandidateName(), "#0071cd");
+				parties.put(p.getCandidateName(), "Democrat");
+				break;
+			case LIBERTARIAN:
+				colors.put(p.getCandidateName(), "#f9d334");
+				parties.put(p.getCandidateName(), "Libertarian");
+				break;
+			case GREEN:
+				colors.put(p.getCandidateName(), "#17aa5c");
+				parties.put(p.getCandidateName(), "Green Party");
+				break;
+			case INDEPENDENT:
+				colors.put(p.getCandidateName(), "#ff10c8");
+				parties.put(p.getCandidateName(), "Independent");
+				break;
+			}
+		}
+		System.out.println(parties.get("Bernie Sanders"));
+		avgDon = avgDonTot / searches.size();
+		ModelAndView mv = new ModelAndView("primary-location-search-results");
+		mv.addObject("parties", parties);
+		mv.addObject("colors", colors);
+		mv.addObject("totDon", String.format("%,.2f", totDon));
+		mv.addObject("totWinDon", String.format("%,.2f", winner.getTotalSumDonations()));
+		mv.addObject("bigWinDon", String.format("%,.2f", winner.getLargestDonation()));
+		mv.addObject("avgDon", String.format("%,.2f", avgDon));
+		mv.addObject("avgWinDon", String.format("%,.2f", winner.getAvgDonation()));
+		mv.addObject("majname", winner.getCandidateName());
+		mv.addObject("result", searches);
+		mv.addObject("location", searches.get(0).getCity() + ", " + searches.get(0).getState());
+		mv.addObject("urls", urls);
+		mv.addObject("scatDat", winner.getDonationScatterData());
+		mv.addObject("winner", winner);
+		return mv;
 	}
 
 	public HttpHeaders getHeaders() {
@@ -302,95 +407,4 @@ public class PrimaryController {
 		return new ModelAndView("index");
 	}
 
-	public LocationSearchResult getLocationSearchResult(String city, String state, Integer electionYear,
-			String committeeId) {
-		// Declare variables
-		String donationScatterData = "";
-		double numDonations = 0;
-		double largestSingleDonation = 0.0;
-		int index = 0;
-		int totalSumDonations = 0;
-		ArrayList<Integer> rand = new ArrayList<>();
-		ArrayList<DBDonation> donations = new ArrayList<>();
-
-		// Populate the donations array with all donations to the candidate from the
-		// selected location
-		// donations.addAll(ac.getCandidateDonations(city, state, committeeId,
-		// electionYear));
-
-		// Gather the total number of winner and loser donations
-		numDonations = donations.size();
-
-		// Set an initial value for the largest winning and losing donations
-		try {
-			largestSingleDonation = donations.get(0).getContributionReceiptAmount();
-		} catch (IndexOutOfBoundsException e) {
-
-		}
-
-		// Begin traversing through the array of donations to record information
-		// about the donations. If donationScatterData exceeds 5500 characters,
-		// break the loop.
-		for (index = 0; index < donations.size() && donationScatterData.length() <= 5500; index++) {
-
-			// Add donation amount to winner_total_donations
-			totalSumDonations += donations.get(index).getContributionReceiptAmount();
-
-			// If the donation is larger than the previously recorded largest individual
-			// donation, save it to largest_winning_donation
-			if (donations.get(index).getContributionReceiptAmount() > largestSingleDonation) {
-				largestSingleDonation = donations.get(index).getContributionReceiptAmount();
-			}
-
-			// Generate a random array index from winnerDonations
-			int randomInteger = (int) (((double) donations.size() - 1.0) * Math.random());
-
-			// If the index location has already been generated, then generate a new random
-			// index
-			while (rand.contains(randomInteger) && rand.size() < donations.size() - 1) {
-				randomInteger = (int) (((double) donations.size() - 1.0) * Math.random());
-			}
-			// If not, save it to the winRand list
-			rand.add(randomInteger);
-			// Create a string using the receipt date and amount of the randomly selected
-			// donation and add it to the winnerDonationScatterData string. This string will
-			// ultimately be used to populate a scatter chart displaying donations to the
-			// winning candidate (it corresponds to the data object used by chartjs).
-			if (donations.get(randomInteger).getContributionReceiptAmount() != null
-					&& donations.get(randomInteger).getContributionReceiptDate() != null
-					&& donations.get(randomInteger).getContributionReceiptAmount() > 0.0
-					&& donationScatterData.length() <= 5800) {
-				donationScatterData += "{x:" + donations.get(randomInteger).getContributionReceiptDate().substring(0, 4)
-						+ "." + donations.get(randomInteger).getContributionReceiptDate().substring(5, 7)
-						+ donations.get(randomInteger).getContributionReceiptDate().substring(8, 10) + ", y:"
-						+ donations.get(randomInteger).getContributionReceiptAmount() + "},";
-			}
-		}
-
-		// If the previous loop was broken before reaching the end of the
-		// winnerDonations
-		// array, then continue traversing through the array to record donation data.
-		// However, the data will no longer be added to the scatter chart displayed in
-		// the view.
-		for (int i = index; i < donations.size(); i++) {
-			totalSumDonations += donations.get(i).getContributionReceiptAmount();
-			if (donations.get(i).getContributionReceiptAmount() > largestSingleDonation) {
-				largestSingleDonation = donations.get(i).getContributionReceiptAmount();
-			}
-		}
-
-		// Remove a comma from the end of the winner and loser scatter data strings.
-		// Catches index out of bound in the event the string was empty.
-		try {
-			donationScatterData = donationScatterData.substring(0, donationScatterData.length() - 1);
-		} catch (Exception e) {
-		}
-
-		// Calculate average winning and losing donations
-		double avg_winning_donation = totalSumDonations / donations.size();
-		// Make new object
-		// Construct a LocationSearchResult object using the data gathered and return it
-
-		return null;
-	}
 }
