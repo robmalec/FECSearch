@@ -119,7 +119,6 @@ public class CitySearchController {
 		int bigWinElectionYear = 0;
 		ArrayList<Integer> winRand = new ArrayList<>();
 		ArrayList<Integer> loseRand = new ArrayList<>();
-
 		// Populate the winnerDonations and loserDonations arrays with all donations to
 		// the winning and losing candidates from the selected location
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
@@ -133,6 +132,35 @@ public class CitySearchController {
 			}
 		}
 
+System.out.println("Windonsize " + winnerDonations.size());
+System.out.println("Losdonsize " + loserDonations.size());
+		ArrayList<DBDonation> winToRemove = new ArrayList<>();
+		ArrayList<DBDonation> loseToRemove = new ArrayList<>();
+		if (winnerDonations.size() > 1) {
+			for (DBDonation d : winnerDonations) {
+				if (d.getContributionReceiptAmount() != 0.0) {
+					winToRemove.add(d);
+				}
+			}
+			
+			if (winToRemove.size() != 0) {
+				winnerDonations = winToRemove;
+			}
+		}
+		if (loserDonations.size() > 1) {
+			for (DBDonation d : loserDonations) {
+				if (d.getContributionReceiptAmount() != 0.0) {
+					loseToRemove.add(d);
+				}
+			}
+			if (loseToRemove.size() != 0) {
+				loserDonations = loseToRemove;
+			}
+		}
+
+		
+		System.out.println("Windonsize " + winnerDonations.size());
+		System.out.println("Losdonsize " + loserDonations.size());
 		// Gather the total number of winner and loser donations
 		numWinnerDonations = winnerDonations.size();
 		numLoserDonations = loserDonations.size();
@@ -159,8 +187,7 @@ public class CitySearchController {
 		// Begin traversing through the array of winnerDonations to record information
 		// about the donations. If winnerDonationScatterData exceeds 5500 characters,
 		// break the loop.
-		for (winnerIndex = 0; winnerIndex < winnerDonations.size()
-				&& winnerDonationScatterData.length() <= 5500; winnerIndex++) {
+		for (winnerIndex = 0; winnerIndex < winnerDonations.size(); winnerIndex++) {
 
 			// Add donation amount to winner_total_donations
 			winner_total_donations += winnerDonations.get(winnerIndex).getContributionReceiptAmount();
@@ -188,7 +215,7 @@ public class CitySearchController {
 			if (winnerDonations.get(randomInteger).getContributionReceiptAmount() != null
 					&& winnerDonations.get(randomInteger).getContributionReceiptDate() != null
 					&& winnerDonations.get(randomInteger).getContributionReceiptAmount() > 0.0
-					&& winnerDonationScatterData.length() <= 5800) {
+					&& winnerDonationScatterData.length() <= 5500) {
 				winnerDonationScatterData += "{x:"
 						+ winnerDonations.get(randomInteger).getContributionReceiptDate().substring(0, 4) + "."
 						+ winnerDonations.get(randomInteger).getContributionReceiptDate().substring(5, 7)
@@ -197,21 +224,8 @@ public class CitySearchController {
 			}
 		}
 
-		// If the previous loop was broken before reaching the end of the
-		// winnerDonations
-		// array, then continue traversing through the array to record donation data.
-		// However, the data will no longer be added to the scatter chart displayed in
-		// the view.
-		for (int i = winnerIndex; i < winnerDonations.size(); i++) {
-			winner_total_donations += winnerDonations.get(i).getContributionReceiptAmount();
-			if (winnerDonations.get(i).getContributionReceiptAmount() > largest_winning_donation) {
-				largest_winning_donation = winnerDonations.get(i).getContributionReceiptAmount();
-			}
-		}
-
 		// Perform the same tasks for the loser donations
-		for (loserIndex = 0; loserIndex < loserDonations.size()
-				&& loserDonationScatterData.length() <= 5500; loserIndex++) {
+		for (loserIndex = 0; loserIndex < loserDonations.size(); loserIndex++) {
 			loser_total_donations += loserDonations.get(loserIndex).getContributionReceiptAmount();
 			if (loserDonations.get(loserIndex).getContributionReceiptAmount() > largest_losing_donation) {
 				largest_losing_donation = loserDonations.get(loserIndex).getContributionReceiptAmount();
@@ -223,7 +237,8 @@ public class CitySearchController {
 
 			if (loserDonations.get(loserIndex).getContributionReceiptAmount() != null
 					&& loserDonations.get(loserIndex).getContributionReceiptDate() != null
-					&& loserDonations.get(loserIndex).getContributionReceiptAmount() > 0.0) {
+					&& loserDonations.get(loserIndex).getContributionReceiptAmount() > 0.0
+					&& loserDonationScatterData.length() <= 5500) {
 				loserDonationScatterData += "{x:"
 						+ loserDonations.get(loserIndex).getContributionReceiptDate().substring(0, 4) + "."
 						+ loserDonations.get(loserIndex).getContributionReceiptDate().substring(5, 7)
@@ -232,13 +247,6 @@ public class CitySearchController {
 			}
 			loseRand.add(randomInteger2);
 
-		}
-
-		for (int i = loserIndex; i < loserDonations.size(); i++) {
-			loser_total_donations += loserDonations.get(i).getContributionReceiptAmount();
-			if (loserDonations.get(i).getContributionReceiptAmount() > largest_losing_donation) {
-				largest_losing_donation = loserDonations.get(i).getContributionReceiptAmount();
-			}
 		}
 
 		// Remove a comma from the end of the winner and loser scatter data strings.
@@ -253,6 +261,10 @@ public class CitySearchController {
 		}
 
 		// Calculate average winning and losing donations
+		System.out.println(winner_total_donations);
+		System.out.println(winnerDonations.size());
+		System.out.println(loser_total_donations);
+		System.out.println(loserDonations.size());
 		double avg_winning_donation = winner_total_donations / winnerDonations.size();
 		double avg_losing_donation = loser_total_donations / loserDonations.size();
 		// Construct a LocationSearchResult object using the data gathered and return it
@@ -385,20 +397,19 @@ public class CitySearchController {
 			}
 
 			lsr = getLocationSearchResult(city, state, electionYear);
+			System.out.println(lsr.toString());
 			lsrr.save(lsr);
 		} else {
 			lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear);
 		}
 		String location = city + ", " + state;
 		String majorityDonationName = "";
-		if (lsr.getNumWinnerDonations() > lsr.getNumLoserDonations()) {
+		if (lsr.getWinnerTotalDonations() > lsr.getLoserTotalDonations()) {
 			majorityDonationName = lsr.getWinnerName();
 		} else {
 			majorityDonationName = lsr.getLoserName();
 		}
 
-		System.out.println(
-				"Winnersize: " + lsr.getWinnerDonations().size() + " LoserSize: " + lsr.getLoserDonations().size());
 		ModelAndView mv = new ModelAndView("location-search-results");
 		if (elr.findByElectionYear(electionYear).get(0).getWinningParty().equals(PoliticalParty.DEMOCRAT)) {
 			mv.addObject("winnerColor", "#0071cd");
@@ -429,6 +440,8 @@ public class CitySearchController {
 		double avgLoseDon = 0;
 		double bigLoseDon = 0;
 		String losName = "";
+		System.out.println(lsr.getWinnerName());
+		System.out.println(majorityDonationName);
 		try {
 			if (lsr.getWinnerName().equals(majorityDonationName)) {
 				percentState = (new BigDecimal(lsr.getWinnerTotalDonations()).divide(new BigDecimal(stateTot), 4,
@@ -455,7 +468,7 @@ public class CitySearchController {
 		} catch (ArithmeticException e) {
 			percentState = 0;
 		}
-
+		System.out.println(losName);
 		// For the recipient of the largest total donations, calculate the percentage of
 		// donations all states that came from this city
 		double allStateTot = 0;
@@ -510,14 +523,12 @@ public class CitySearchController {
 		}
 		String location = city + ", " + state;
 		String majorityDonationName = "";
-		if (lsr.getNumWinnerDonations() > lsr.getNumLoserDonations()) {
+		if (lsr.getWinnerTotalDonations() > lsr.getLoserTotalDonations()) {
 			majorityDonationName = lsr.getWinnerName();
 		} else {
 			majorityDonationName = lsr.getLoserName();
 		}
 
-		System.out.println(
-				"Winnersize: " + lsr.getWinnerDonations().size() + " LoserSize: " + lsr.getLoserDonations().size());
 		ModelAndView mv = new ModelAndView("location-search-results");
 		if (elr.findByElectionYear(electionYear).get(0).getWinningParty().equals(PoliticalParty.DEMOCRAT)) {
 			mv.addObject("winnerColor", "#0071cd");
@@ -526,7 +537,6 @@ public class CitySearchController {
 			mv.addObject("winnerColor", "#de0000");
 			mv.addObject("loserColor", "#0071cd");
 		}
-
 		// For the recipient of the largest total donations, calculate the percentage of
 		// donations from the given state that came from this city
 		double stateTot = 0;
@@ -542,19 +552,42 @@ public class CitySearchController {
 		}
 
 		double percentState = 0;
+		double totWinDon = 0;
+		double avgWinDon = 0;
+		double bigWinDon = 0;
+		double totLoseDon = 0;
+		double avgLoseDon = 0;
+		double bigLoseDon = 0;
+		String losName = "";
+		System.out.println(lsr.getWinnerName());
+		System.out.println(majorityDonationName);
 		try {
 			if (lsr.getWinnerName().equals(majorityDonationName)) {
 				percentState = (new BigDecimal(lsr.getWinnerTotalDonations()).divide(new BigDecimal(stateTot), 4,
 						RoundingMode.HALF_UP)).doubleValue();
+				totWinDon = lsr.getWinnerTotalDonations();
+				avgWinDon = lsr.getAvgWinningDonation();
+				bigWinDon = lsr.getLargestWinningDonation();
+				totLoseDon = lsr.getLoserTotalDonations();
+				avgLoseDon = lsr.getAvgLosingDonation();
+				bigLoseDon = lsr.getLargestLosingDonation();
+				losName = lsr.getLoserName();
 			} else {
 				percentState = (new BigDecimal(lsr.getLoserTotalDonations()).divide(new BigDecimal(stateTot), 4,
 						RoundingMode.HALF_UP)).doubleValue();
+				totWinDon = lsr.getLoserTotalDonations();
+				avgWinDon = lsr.getAvgLosingDonation();
+				bigWinDon = lsr.getLargestLosingDonation();
+				totLoseDon = lsr.getWinnerTotalDonations();
+				avgLoseDon = lsr.getAvgWinningDonation();
+				bigLoseDon = lsr.getLargestWinningDonation();
+				losName = lsr.getWinnerName();
 			}
 
 		} catch (ArithmeticException e) {
 			percentState = 0;
 		}
-
+		System.out.println(losName);
 		// For the recipient of the largest total donations, calculate the percentage of
 		// donations all states that came from this city
 		double allStateTot = 0;
@@ -579,26 +612,22 @@ public class CitySearchController {
 		} catch (ArithmeticException e) {
 			percentAllStates = 0;
 		}
-		System.out.println(percentAllStates);
+		mv.addObject("totLoseDon", String.format("%,.2f", totLoseDon));
+		mv.addObject("avgLoseDon", String.format("%,.2f", avgLoseDon));
+		mv.addObject("bigLoseDon", String.format("%,.2f", bigLoseDon));
+		mv.addObject("totWinDon", String.format("%,.2f", totWinDon));
+		mv.addObject("avgWinDon", String.format("%,.2f", avgWinDon));
+		mv.addObject("bigWinDon", String.format("%,.2f", bigWinDon));
 		mv.addObject("majDonPercentForState", percentState);
 		mv.addObject("majDonPercentAllStates", percentAllStates);
+		mv.addObject("urls", getImgUrls());
 		mv.addObject("majname", majorityDonationName);
+		mv.addObject("losName", losName);
 		mv.addObject("results", lsr);
 		mv.addObject("loserDonationData", lsr.getLoserDonationScatterData());
 		mv.addObject("winnerDonationData", lsr.getWinnerDonationScatterData());
 		mv.addObject("location", location);
-		mv.addObject("total_winners", lsr.getTotalWinners());
-		mv.addObject("total_losers", lsr.getTotalLosers());
-		mv.addObject("avg_winning_donation", String.format("%,.2f", lsr.getAvgWinningDonation()));
-		mv.addObject("avg_losing_donation", String.format("%,.2f", lsr.getAvgLosingDonation()));
-		mv.addObject("largest_winning_donation", String.format("%,.2f", lsr.getLargestWinningDonation()));
-		mv.addObject("largest_losing_donation", String.format("%,..2f", lsr.getLargestLosingDonation()));
-		mv.addObject("largest_winner_recipient", lsr.getWinnerName());
-		mv.addObject("largest_loser_recipient", lsr.getLoserName());
-		mv.addObject("largest_winner_total", String.format("%,.2f", lsr.getWinnerTotalDonations()));
-		mv.addObject("largest_loser_total", String.format("%,.2f", lsr.getLoserTotalDonations()));
-		mv.addObject("largest_total_winner_recipient", lsr.getWinnerName());
-		mv.addObject("largest_total_loser_recipient", lsr.getLoserName());
+		mv.addObject("city", city);
 		return mv;
 	}
 

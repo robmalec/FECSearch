@@ -11,18 +11,18 @@ public class CustomStateProperty {
 	private Integer id;
 	private String stateCode = "";
 	private String category = "";
-	private String value = "";
+	private Double value = 0.0;
 	
 	CustomStateProperty(){}
 	
-	public CustomStateProperty(String stateCode, String category, String value) {
+	public CustomStateProperty(String stateCode, String category, Double value) {
 		super();
 		this.stateCode = stateCode;
 		this.category = category;
 		this.value = value;
 	}
 	
-	public CustomStateProperty(Integer id, String stateCode, String category, String value) {
+	public CustomStateProperty(Integer id, String stateCode, String category, Double value) {
 		super();
 		this.id = id;
 		this.stateCode = stateCode;
@@ -50,10 +50,10 @@ public class CustomStateProperty {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public String getValue() {
+	public Double getValue() {
 		return value;
 	}
-	public void setValue(String value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 	

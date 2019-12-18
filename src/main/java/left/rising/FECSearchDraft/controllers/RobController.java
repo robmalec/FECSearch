@@ -73,7 +73,11 @@ public class RobController {
 	@Value("${fec.key4}")
 	String fecKey4;
 
+<<<<<<< HEAD
 	ArrayList<String> fecKeys;
+=======
+	static ArrayList<String> fecKeys;
+>>>>>>> 747f0da47bcf0e4274723df95584d8ade6773def
 	List<State> states;
 
 	RestTemplate rt = new RestTemplate();
@@ -163,6 +167,7 @@ public class RobController {
 		return new ModelAndView("index");
 	}
 
+<<<<<<< HEAD
 
 	@RequestMapping("load-state-stats-page")
 	public ModelAndView loadStateStatsPage(String stateCode, int beginYear, int endYear) {
@@ -171,6 +176,19 @@ public class RobController {
 		fecKeys.add(fecKey2);
 		fecKeys.add(fecKey3);
 		fecKeys.add(fecKey4);
+=======
+	@RequestMapping("load-state-stats-page")
+	public ModelAndView loadStateStatsPage(String stateCode, int beginYear, int endYear) {
+
+		// Loading FEC keys
+		if ((fecKeys == null) || (fecKeys.isEmpty())) {
+			fecKeys = new ArrayList<>();
+			fecKeys.add(fecKey);
+			fecKeys.add(fecKey2);
+			fecKeys.add(fecKey3);
+			fecKeys.add(fecKey4);
+		}
+>>>>>>> 747f0da47bcf0e4274723df95584d8ade6773def
 
 		ModelAndView mv = new ModelAndView("state-stats-page");
 		List<CandFundsPerState> fundsFromThisState = cfpsRepo.findByStateCode(stateCode);
@@ -446,6 +464,167 @@ public class RobController {
 		return mv;
 	}
 
+<<<<<<< HEAD
+=======
+	@RequestMapping("calculate-prediction-rate-and-compare")
+	public ModelAndView calcPredictionRate(Integer beginYear, Integer endYear, String compCat) {
+		System.out.println("beginYear: " + beginYear);
+		System.out.println("endYear: " + endYear);
+		double totalMoneyDonated = 0.0;
+		double totalWinningMoneyDonated = 0.0;
+		
+		List<State> states = sRepo.findAll();
+		ArrayList<Double> predictionRates = new ArrayList<>();
+		ElResult thisYearResult = null;
+		
+		for (State s : states) {
+			totalMoneyDonated = 0.0;
+			totalWinningMoneyDonated = 0.0;
+			List<CandFundsPerState> candFundsList = cfpsRepo.findByStateCode(s.getStateCode());
+			// Get total amount of money donated by state within given time bounds
+			// Get total amount donated to the winning candidate
+			// Divide this by total amount
+			for (CandFundsPerState c : candFundsList) {
+				
+				double thisFunds = c.getFunds();
+				totalMoneyDonated += thisFunds;
+				
+				thisYearResult = resRepo.findByElectionYear(c.getYear()).get(0);
+				if (c.getCandId() == thisYearResult.getWinnerId()) {
+					totalWinningMoneyDonated += thisFunds;
+				}
+			}
+			
+			predictionRates.add(totalWinningMoneyDonated/totalMoneyDonated);
+
+		}
+		ModelAndView mv = new ModelAndView("show-custom-data-chart");
+		
+		mv.addObject("beginYear",beginYear);
+		mv.addObject("endYear", endYear);
+		
+		mv.addObject("states",states);
+		mv.addObject("predictionRates", predictionRates);
+		
+		ArrayList<Double> customPropDataset = new ArrayList<Double>();
+		
+		//Loading custom properties for comparison
+		List<CustomStateProperty> customProps = cspRepo.findByCategory(compCat);
+		for (CustomStateProperty c : customProps) {
+			customPropDataset.add(c.getValue());
+		}
+		
+		mv.addObject("dataSet", customPropDataset);
+		
+		return mv;
+	}
+
+	@RequestMapping("download-state-funds-per-candidate-data")
+	public ModelAndView getCandFundsPerStateFromAPI() {
+		int beginYear = 1980;
+		int endYear = 2016;
+
+		// Loading FEC keys
+		if ((fecKeys == null) || (fecKeys.isEmpty())) {
+			fecKeys = new ArrayList<>();
+			fecKeys.add(fecKey);
+			fecKeys.add(fecKey2);
+			fecKeys.add(fecKey3);
+			fecKeys.add(fecKey4);
+		}
+
+		for (State s : sRepo.findAll()) {
+
+			if (true/*cfpsRepo.findByStateCode(s.getStateCode()).size() == 0*/) {
+				String stateCode = s.getStateCode();
+				ArrayList<CandFundsPerState> fundsFromThisState = new ArrayList<>();
+
+				// Running this code if there isn't any per-state search data saved in our DB
+				HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
+				ResponseEntity<StateScheduleAResults> respEnt;
+
+				/*
+				 * NOTE: I had to rewrite this as a list of object arrays. Also had to rewrite
+				 * CandFundsPerState to include an integer reference to the row in the
+				 * CandidateData table that contains the candidate we're looking at, rather than
+				 * having a reference to the CandidateData class that was initially there,
+				 * because saving the state data to MySQL was getting very messy and
+				 * JpaRepository was not liking the fact that we had a table referencing a table
+				 * that references yet another table. So I changed it to an integer reference in
+				 * order to get the code to compile. Changed the former candFunds to an
+				 * ArrayList of object arrays because changing this CandFundsPerState reference
+				 * to an integer meant I no longer get the candidate name in the same way I was
+				 * doing before, and I formerly learned that working with JpaRepos inside of
+				 * classes was just about impossible, so I did this to work around having to do
+				 * that. Please slack me if you have any questions.
+				 */
+
+				List<CandidateCommitteeId> comIDList = canComRepo.findAll();
+				List<ElResult> elResultList = resRepo.findAll();
+
+				Map<CandidateData, Double> fundingMap = new HashMap<>();
+
+				String url = "";
+
+				StateScheduleAResults results = null;
+
+				// going through our list of candidate committee IDs
+				for (CandidateCommitteeId c : comIDList) {
+					for (String key : fecKeys) {
+						try {
+							url = "http://api.open.fec.gov/v1/schedules/schedule_a/by_state/?api_key=" + key
+									+ "&committee_id=" + c.getCommittee_id() + "&state=" + stateCode + "&per_page=100";
+							results = rt.getForObject(url, StateScheduleAResults.class);
+							break;
+						} catch (Exception e) {
+							System.out.println("Key " + key + " didn't work ");
+						}
+					}
+
+					String candName = c.getCandidate_assigned().getName();
+
+					CandidateData thisCand = c.getCandidate_assigned();
+
+					System.out.println(results);
+					// Going through each result
+					for (DBDonationResult r : results.getResults()) {
+
+						Boolean resultIsValidElectionYear = (((r.getCycle() % 4) == 0) && (r.getCycle() >= beginYear)
+								&& (r.getCycle() <= endYear));
+
+						if (resultIsValidElectionYear) {
+							ElResult thisResult = getResultOfYear(r.getCycle());
+
+							Boolean candidateIsWinnerOrLoser = ((thisCand.getId() == thisResult.getWinnerId())
+									|| (thisCand.getId() == thisResult.getLoserId()));
+							if (candidateIsWinnerOrLoser) {
+								int posOfCandInList = listContainsCandidateInYear(fundsFromThisState, thisCand.getId(),
+										r.getCycle());
+								if (posOfCandInList == -1) {
+									CandFundsPerState newCFPS = new CandFundsPerState(stateCode, thisCand.getId(),
+											r.getCycle(), r.getTotal());
+									fundsFromThisState.add(newCFPS);
+
+								} else {
+									fundsFromThisState.get(posOfCandInList).addFunds(r.getTotal());
+								}
+							}
+						}
+					}
+
+				}
+				// Finally saving everything to the DB
+				for (CandFundsPerState c : fundsFromThisState) {
+					cfpsRepo.save(c);
+				}
+			}
+		}
+
+		return new ModelAndView("redirect:/");
+
+	}
+
+>>>>>>> 747f0da47bcf0e4274723df95584d8ade6773def
 	@RequestMapping("save-data-to-db")
 	public ModelAndView saveDataToDb(String categories) {
 		String stateName = "";
@@ -461,13 +640,21 @@ public class RobController {
 						stateName = dataMap.get(i).get(scCol);
 						System.out.println(stateName);
 						data = dataMap.get(i).get(catIndex);
+<<<<<<< HEAD
 						cspRepo.save(new CustomStateProperty(stateName, s, data));
+=======
+						cspRepo.save(new CustomStateProperty(stateName, s, Double.valueOf(data)));
+>>>>>>> 747f0da47bcf0e4274723df95584d8ade6773def
 					}
 				} else {
 					for (int i = scCol; i < dataMap.get(0).size(); i++) {
 						stateName = dataMap.get(scRow).get(i);
 						data = dataMap.get(catIndex).get(i);
+<<<<<<< HEAD
 						cspRepo.save(new CustomStateProperty(stateName, s, data));
+=======
+						cspRepo.save(new CustomStateProperty(stateName, s, Double.valueOf(data)));
+>>>>>>> 747f0da47bcf0e4274723df95584d8ade6773def
 					}
 				}
 			}
@@ -549,4 +736,8 @@ public class RobController {
 		headers.add("location", "Detroit+MI");
 		return headers;
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 747f0da47bcf0e4274723df95584d8ade6773def
