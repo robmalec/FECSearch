@@ -1,4 +1,4 @@
-zpackage left.rising.FECSearchDraft.controllers;
+package left.rising.FECSearchDraft.controllers;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -26,6 +26,8 @@ import left.rising.FECSearchDraft.dbrepos.CanFundsPerStateRepo;
 import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
 import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
+import left.rising.FECSearchDraft.dbrepos.CustomStateProperty;
+import left.rising.FECSearchDraft.dbrepos.CustomStatePropertyRepo;
 import left.rising.FECSearchDraft.dbrepos.ElResult;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
 import left.rising.FECSearchDraft.dbrepos.State;
@@ -49,6 +51,9 @@ public class RobController {
 
 	@Autowired
 	CanFundsPerStateRepo cfpsRepo;
+	
+	@Autowired
+	CustomStatePropertyRepo cspRepo;
 
 	@Autowired
 	StateRepo sRepo;
@@ -61,19 +66,28 @@ public class RobController {
 
 	@Value("${fec.key2}")
 	String fecKey2;
-	
+
 	@Value("${fec.key3}")
 	String fecKey3;
-	
+
 	@Value("${fec.key4}")
 	String fecKey4;
-	
+
 	ArrayList<String> fecKeys;
 	List<State> states;
 
 	RestTemplate rt = new RestTemplate();
 
 	final RateLimiter rateLimiter = RateLimiter.create(2.0);
+
+	ArrayList<ArrayList<String>> dataMap = new ArrayList<>();
+	
+	Map<String,Integer> catIndexMap = new HashMap<>();
+	
+	int scRow = -1;
+	int scCol = -1;
+	
+	Boolean verticalTable = null;
 
 	@RequestMapping("/load-el-data")
 	public ModelAndView loadElDataFromCSV() {
@@ -172,7 +186,7 @@ public class RobController {
 	}
 
 	@RequestMapping("load-state-stats-page")
-	public ModelAndView loadStateStatsPage(String stateCode) {
+	public ModelAndView loadStateStatsPage(String stateCode, int beginYear, int endYear) {
 		fecKeys = new ArrayList<>();
 		fecKeys.add(fecKey);
 		fecKeys.add(fecKey2);
@@ -187,13 +201,11 @@ public class RobController {
 			System.out.println("Committee ID: " + c.getId() + " Associated candidate: "
 					+ c.getCandidate_assigned().getName() + " in year: " + c.getElection_year());
 		}
-		
-		int beginYear = 1980;
+
 		mv.addObject("beginYear", beginYear);
-		
-		int endYear = 2019;
+
 		mv.addObject("endYear", endYear);
-		
+
 		String stateName = sRepo.findByStateCode(stateCode).get(0).getStateName();
 		mv.addObject("stateName", stateName);
 
@@ -226,22 +238,20 @@ public class RobController {
 			String url = "";
 
 			StateScheduleAResults results = null;
-			
+
 			// going through our list of candidate committee IDs
 			for (CandidateCommitteeId c : comIDList) {
-				
+
 				for (String key : fecKeys) {
 					try {
-					url = "http://api.open.fec.gov/v1/schedules/schedule_a/by_state/?api_key=" + key + "&committee_id="
-							+ c.getCommittee_id() + "&state=" + stateCode + "&per_page=100";
-					results = rt.getForObject(url, StateScheduleAResults.class);
-					break;
-					}
-					catch (Exception e) {
-						
+						url = "http://api.open.fec.gov/v1/schedules/schedule_a/by_state/?api_key=" + key
+								+ "&committee_id=" + c.getCommittee_id() + "&state=" + stateCode + "&per_page=100";
+						results = rt.getForObject(url, StateScheduleAResults.class);
+						break;
+					} catch (Exception e) {
+
 					}
 				}
-				
 
 				String candName = c.getCandidate_assigned().getName();
 
@@ -250,16 +260,12 @@ public class RobController {
 				// Going through each result
 				for (DBDonationResult r : results.getResults()) {
 
-					
-
 					Boolean resultIsValidElectionYear = (((r.getCycle() % 4) == 0) && (r.getCycle() >= beginYear)
 							&& (r.getCycle() < endYear));
 
 					if (resultIsValidElectionYear) {
 						ElResult thisResult = getResultOfYear(r.getCycle());
-						
-						
-						
+
 						Boolean candidateIsWinnerOrLoser = ((thisCand.getId() == thisResult.getWinnerId())
 								|| (thisCand.getId() == thisResult.getLoserId()));
 						if (candidateIsWinnerOrLoser) {
@@ -269,7 +275,7 @@ public class RobController {
 								CandFundsPerState newCFPS = new CandFundsPerState(stateCode, thisCand.getId(),
 										r.getCycle(), r.getTotal());
 								fundsFromThisState.add(newCFPS);
-								
+
 							} else {
 								fundsFromThisState.get(posOfCandInList).addFunds(r.getTotal());
 							}
@@ -277,12 +283,12 @@ public class RobController {
 					}
 				}
 			}
-			
+
 			// Finally saving everything to the DB
-			if((beginYear == 1980) && (endYear == 2019))
-			for (CandFundsPerState c : fundsFromThisState) {
-				cfpsRepo.save(c);
-			}
+			if ((beginYear == 1980) && (endYear == 2019))
+				for (CandFundsPerState c : fundsFromThisState) {
+					cfpsRepo.save(c);
+				}
 		}
 
 		// Calculating biggest and smallest money winners and losers from list
@@ -338,8 +344,7 @@ public class RobController {
 		}
 
 		// Sorting array of per-candidate state fundraising numbers
-		
-		
+
 		mv.addObject("candFundsList", candFundsArr);
 		mv.addObject("totalWinningFunds", formatDollarAmount(totalWinningFunds));
 		mv.addObject("totalLosingFunds", formatDollarAmount(totalLosingFunds));
@@ -358,6 +363,168 @@ public class RobController {
 		mv.addObject("smlBudget", formatDollarAmount(sml.getFunds()));
 
 		return mv;
+	}
+
+	@RequestMapping("load-custom-data")
+	public ModelAndView loadCustomData(String filePath) {
+		//Clearing out data from previous load
+		HashMap<String,String> testing = sRepo.getAllProperties("MI");
+		System.out.println(testing);
+		
+		dataMap = new ArrayList<>();
+		catIndexMap = new HashMap<>();
+		verticalTable = null;
+		scRow = -1;
+		scCol = -1;
+		
+		BufferedReader br = null;
+		try {
+			// Loading presidential election result data
+			br = new BufferedReader(new FileReader("nst-est2018-alldata.csv"));
+			String line = "";
+			ArrayList<String> thisLineList;
+			while ((line = br.readLine()) != null) {
+				thisLineList = new ArrayList<>();
+				for (String s : line.split(",")) {
+					thisLineList.add(s);
+				}
+				dataMap.add(thisLineList);
+			}
+		} catch (Exception e) {
+
+		}
+
+		
+
+		// Looking for newly imported table until it finds a cell that contains a state
+		// name
+		for (int rowNum = 0; rowNum < dataMap.size(); rowNum++) {
+			for (int colNum = 0; colNum < dataMap.get(0).size(); colNum++) {
+				if (getIsStateName(dataMap.get(rowNum).get(colNum))) {
+					scRow = rowNum;
+					scCol = colNum;
+					break;
+				}
+			}
+			if (scRow != -1) {
+				break;
+			}
+		}
+
+		// Checking cells around found cell to see if state names are in a row or a
+		// column
+
+		if (scRow != -1) {
+
+			Boolean cellBelow = false;
+			Boolean cellAbove = false;
+			Boolean cellToRight = false;
+			Boolean cellToLeft = false;
+
+			int stateLabelIndex = -1;
+
+			if (scRow != 0) {
+				cellAbove = getIsStateName(dataMap.get(scRow - 1).get(scCol));
+			}
+			if (scRow != dataMap.size() - 1) {
+				cellBelow = getIsStateName(dataMap.get(scRow + 1).get(scCol));
+			}
+			if (scCol != 0) {
+				cellToLeft = getIsStateName(dataMap.get(scRow).get(scCol - 1));
+			}
+			if (scCol != dataMap.size() - 1) {
+				cellToRight = getIsStateName(dataMap.get(scRow).get(scCol + 1));
+			}
+
+			if ((cellBelow) || (cellAbove)) {
+				verticalTable = true;
+				stateLabelIndex = scCol;
+			} else if ((cellToRight || cellToLeft)) {
+				verticalTable = false;
+				stateLabelIndex = scRow;
+			}
+		}
+
+		// If no state names have been found in the entire table (or a single one was
+		// found by accident),
+		// send user to an error message page
+		if (verticalTable == null) {
+			return new ModelAndView("data-import-error");
+		}
+
+		ArrayList<String> categories;
+		if (verticalTable) {
+			categories = dataMap.get(0);
+		} else {
+			categories = new ArrayList<>();
+			for (ArrayList<String> list : dataMap) {
+				categories.add(list.get(0));
+			}
+		}
+		
+		for (int i = 0; i < categories.size(); i++) {
+			catIndexMap.put(categories.get(i), i);
+		}
+		
+		ModelAndView mv = new ModelAndView("set-custom-data-settings");
+		mv.addObject("categories",categories);
+		
+		return mv;
+	}
+	
+	@RequestMapping("save-data-to-db")
+	public ModelAndView saveDataToDb(String categories){
+		String stateName = "";
+		String data = "";
+		
+		System.out.println(sRepo.getAllProperties("MI"));
+		
+		int catIndex = catIndexMap.get(categories);
+		
+		for (String s : categories.split("&&")) {
+			
+			if (cspRepo.findByCategory(s).size() == 0) {
+				if (verticalTable) {
+					for (int i = scRow; i < dataMap.size(); i++) {
+						stateName = dataMap.get(scCol).get(i);
+						data = dataMap.get(catIndex).get(i);
+						cspRepo.save(new CustomStateProperty(stateName, s, data));
+					}
+				}
+				else {
+					for (int i = scCol; i < dataMap.get(0).size(); i++) {
+						stateName = dataMap.get(i).get(scRow);
+						data = dataMap.get(i).get(catIndex);
+						cspRepo.save(new CustomStateProperty(stateName, s, data));
+					}
+				}
+			}
+		}
+		ModelAndView mv = new ModelAndView("redirect:/");
+		return mv;
+	}
+
+	Boolean getIsStateName(String input) {
+		if (input.length() > 2) {
+			String[] stateNames = {
+					"Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"	
+			};
+			for (String s : stateNames) {
+				if (input.equalsIgnoreCase(s)) {
+					return true;
+				}
+			}
+		}
+		else {
+			String[] stateCodes = {"AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"};
+			for (String s : stateCodes) {
+				if (input.equalsIgnoreCase(s)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	public int listContainsCandidateInYear(List<CandFundsPerState> list, int candId, int year) {
@@ -379,9 +546,10 @@ public class RobController {
 			return null;
 		}
 	}
-	
+
 	/*
-	 * Removes scientific notation and adds commas to make monetary amounts more readable
+	 * Removes scientific notation and adds commas to make monetary amounts more
+	 * readable
 	 */
 	public String formatDollarAmount(double input) {
 		return String.format("%,20.0f", input);
