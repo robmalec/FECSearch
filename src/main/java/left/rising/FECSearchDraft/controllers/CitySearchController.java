@@ -215,7 +215,7 @@ System.out.println("Losdonsize " + loserDonations.size());
 			if (winnerDonations.get(randomInteger).getContributionReceiptAmount() != null
 					&& winnerDonations.get(randomInteger).getContributionReceiptDate() != null
 					&& winnerDonations.get(randomInteger).getContributionReceiptAmount() > 0.0
-					&& winnerDonationScatterData.length() <= 5800) {
+					&& winnerDonationScatterData.length() <= 5500) {
 				winnerDonationScatterData += "{x:"
 						+ winnerDonations.get(randomInteger).getContributionReceiptDate().substring(0, 4) + "."
 						+ winnerDonations.get(randomInteger).getContributionReceiptDate().substring(5, 7)
@@ -237,7 +237,8 @@ System.out.println("Losdonsize " + loserDonations.size());
 
 			if (loserDonations.get(loserIndex).getContributionReceiptAmount() != null
 					&& loserDonations.get(loserIndex).getContributionReceiptDate() != null
-					&& loserDonations.get(loserIndex).getContributionReceiptAmount() > 0.0) {
+					&& loserDonations.get(loserIndex).getContributionReceiptAmount() > 0.0
+					&& loserDonationScatterData.length() <= 5500) {
 				loserDonationScatterData += "{x:"
 						+ loserDonations.get(loserIndex).getContributionReceiptDate().substring(0, 4) + "."
 						+ loserDonations.get(loserIndex).getContributionReceiptDate().substring(5, 7)
@@ -396,6 +397,7 @@ System.out.println("Losdonsize " + loserDonations.size());
 			}
 
 			lsr = getLocationSearchResult(city, state, electionYear);
+			System.out.println(lsr.toString());
 			lsrr.save(lsr);
 		} else {
 			lsr = lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear);
