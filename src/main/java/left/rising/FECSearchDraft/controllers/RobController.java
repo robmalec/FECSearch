@@ -51,7 +51,7 @@ public class RobController {
 
 	@Autowired
 	CanFundsPerStateRepo cfpsRepo;
-	
+
 	@Autowired
 	CustomStatePropertyRepo cspRepo;
 
@@ -81,12 +81,12 @@ public class RobController {
 	final RateLimiter rateLimiter = RateLimiter.create(2.0);
 
 	ArrayList<ArrayList<String>> dataMap = new ArrayList<>();
-	
-	Map<String,Integer> catIndexMap = new HashMap<>();
-	
+
+	Map<String, Integer> catIndexMap = new HashMap<>();
+
 	int scRow = -1;
 	int scCol = -1;
-	
+
 	Boolean verticalTable = null;
 
 	@RequestMapping("/load-el-data")
@@ -163,27 +163,6 @@ public class RobController {
 		return new ModelAndView("index");
 	}
 
-	@RequestMapping("load-test-map")
-	public ModelAndView loadMap() {
-		ModelAndView view = new ModelAndView("test-map", "apiKey", gMapsKey);
-
-		view.addObject("opacity", 0.9);
-
-		states = sRepo.findAll();
-
-		String idString = "";
-		String stateCodeString = "";
-
-		for (State s : states) {
-			idString += s.getOSMStateId() + " ";
-			stateCodeString += s.getStateCode() + " ";
-		}
-
-		view.addObject("idString", idString);
-		view.addObject("stateCodes", stateCodeString);
-
-		return view;
-	}
 
 	@RequestMapping("load-state-stats-page")
 	public ModelAndView loadStateStatsPage(String stateCode, int beginYear, int endYear) {
@@ -285,10 +264,9 @@ public class RobController {
 			}
 
 			// Finally saving everything to the DB
-			if ((beginYear == 1980) && (endYear == 2019))
-				for (CandFundsPerState c : fundsFromThisState) {
-					cfpsRepo.save(c);
-				}
+			for (CandFundsPerState c : fundsFromThisState) {
+				cfpsRepo.save(c);
+			}
 		}
 
 		// Calculating biggest and smallest money winners and losers from list
@@ -367,14 +345,14 @@ public class RobController {
 
 	@RequestMapping("load-custom-data")
 	public ModelAndView loadCustomData(String filePath) {
-		//Clearing out data from previous load
-		
+		// Clearing out data from previous load
+
 		dataMap = new ArrayList<>();
 		catIndexMap = new HashMap<>();
 		verticalTable = null;
 		scRow = -1;
 		scCol = -1;
-		
+
 		BufferedReader br = null;
 		try {
 			// Loading presidential election result data
@@ -391,8 +369,6 @@ public class RobController {
 		} catch (Exception e) {
 
 		}
-
-		
 
 		// Looking for newly imported table until it finds a cell that contains a state
 		// name
@@ -459,39 +435,38 @@ public class RobController {
 				categories.add(list.get(0));
 			}
 		}
-		
+
 		for (int i = 0; i < categories.size(); i++) {
 			catIndexMap.put(categories.get(i), i);
 		}
-		
+
 		ModelAndView mv = new ModelAndView("set-custom-data-settings");
-		mv.addObject("categories",categories);
-		
+		mv.addObject("categories", categories);
+
 		return mv;
 	}
-	
+
 	@RequestMapping("save-data-to-db")
-	public ModelAndView saveDataToDb(String categories){
+	public ModelAndView saveDataToDb(String categories) {
 		String stateName = "";
 		String data = "";
-		
-		
+
 		int catIndex = catIndexMap.get(categories);
-		
+
 		for (String s : categories.split("&&")) {
-			
+
 			if (cspRepo.findByCategory(s).size() == 0) {
 				if (verticalTable) {
 					for (int i = scRow; i < dataMap.size(); i++) {
-						stateName = dataMap.get(scCol).get(i);
-						data = dataMap.get(catIndex).get(i);
+						stateName = dataMap.get(i).get(scCol);
+						System.out.println(stateName);
+						data = dataMap.get(i).get(catIndex);
 						cspRepo.save(new CustomStateProperty(stateName, s, data));
 					}
-				}
-				else {
+				} else {
 					for (int i = scCol; i < dataMap.get(0).size(); i++) {
-						stateName = dataMap.get(i).get(scRow);
-						data = dataMap.get(i).get(catIndex);
+						stateName = dataMap.get(scRow).get(i);
+						data = dataMap.get(catIndex).get(i);
 						cspRepo.save(new CustomStateProperty(stateName, s, data));
 					}
 				}
@@ -503,24 +478,30 @@ public class RobController {
 
 	Boolean getIsStateName(String input) {
 		if (input.length() > 2) {
-			String[] stateNames = {
-					"Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"	
-			};
+			String[] stateNames = { "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+					"Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+					"Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+					"Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey",
+					"New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+					"Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah",
+					"Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming" };
 			for (String s : stateNames) {
 				if (input.equalsIgnoreCase(s)) {
 					return true;
 				}
 			}
-		}
-		else {
-			String[] stateCodes = {"AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"};
+		} else {
+			String[] stateCodes = { "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID",
+					"IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE",
+					"NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA",
+					"VT", "WA", "WI", "WV", "WY" };
 			for (String s : stateCodes) {
 				if (input.equalsIgnoreCase(s)) {
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
