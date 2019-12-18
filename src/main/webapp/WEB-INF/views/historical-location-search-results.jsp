@@ -6,147 +6,150 @@
 <head>
 <meta charset="UTF-8">
 <title>Location Search Results</title>
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+<link
+	href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/litera/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-pLgJ8jZ4aoPja/9zBSujjzs7QbkTKvKw1+zfKuumQF9U+TH3xv09UUsRI52fS+A6"
 	crossorigin="anonymous">
-<link rel="stylesheet" href="location-result-style.css">
 </head>
 <body>
 	<div id="grad">
 		<ul class="nav nav-tabs bg-dark navbar-dark">
-			<li class="nav-item"><a class="nav-link active" href="#">Active</a>
-			</li>
-			<li class="nav-item"><a class="nav-link" href="#"
-				style="color: white;">Link</a></li>
+			<li class="nav-item"><a class="nav-link active" href="#"><strong>Presidential
+						Elections: Historical City Search</strong></a></li>
+			<li class="nav-item"><a class="nav-link" href="/"
+				style="color: white;">Home</a></li>
 		</ul>
 
 		<div class="container">
 			<br>
-			<div class="row">
+			<div class="row" style="border-bottom: 2pt solid;">
 				<div class="col-lg-12 text-center">
 					<h1>${location}</h1>
+					<br>
 				</div>
 			</div>
-			<hr>
-			<div class="row">
+			<div class="row" style="border-bottom: 2pt solid;">
 				<div class="col-lg-12 text-center">
+					<br>
 					<h3>The majority of donors in ${location} supported:</h3>
+					<br>
 				</div>
 			</div>
-			<hr>
+			<br>
 			<div class="row">
 				<div class="col-lg-6 text-center">
-					<h6 class="win-lose-total">${total_winners}</h6>
-					<p>winning candidates</p>
-					<p>
-						<button class="btn btn-dark" type="button" data-toggle="collapse"
-							data-target="#collapse1" aria-expanded="false"
-							aria-controls="collapse1">
-							<small>see all winners ...</small>
-						</button>
-					</p>
+					<button class="btn btn-dark" type="button" data-toggle="collapse"
+						data-target="#collapse1" aria-expanded="false"
+						aria-controls="collapse1">
+						<h4>${total_winners}</h4>
+						<h6>Elected Presidents</h6>
+					</button>
+				</div>
+				<div class="col-lg-6 text-center">
+					<button class="btn btn-dark" type="button" data-toggle="collapse"
+						data-target="#collapse2" aria-expanded="false"
+						aria-controls="collapse2">
+						<h4>${total_losers}</h4>
+						<h6>Losing Candidates</h6>
+					</button>
+
+				</div>
+			</div>
+			<br>
+			<div class="row" style="border-bottom: 2pt solid;">
+				<div class="col-lg-6 text-center">
 					<div class="collapse" id="collapse1">
-						<div class="card card-body">
-							<c:forEach var="w" items="${winnerNames}" varStatus="i">
-								<small>${i.count}. ${w}</small>
-								<br>
-							</c:forEach>
-						</div>
+						<c:forEach var="w" items="${winnerNames}" varStatus="i">
+							<p>
+								<strong>${i.count}.</strong> ${w}
+							</p>
+						</c:forEach>
 					</div>
 				</div>
 				<div class="col-lg-6 text-center">
-					<h6 class="win-lose-total">${total_losers}</h6>
-					<p>losing candidates</p>
-					<p>
-						<button class="btn btn-dark" type="button" data-toggle="collapse"
-							data-target="#collapse2" aria-expanded="false"
-							aria-controls="collapse2">
-							<small>see all losers ...</small>
-						</button>
-					</p>
 					<div class="collapse" id="collapse2">
-						<div class="card card-body">
-							<c:forEach var="l" items="${loserNames}" varStatus="i">
-								<small>${i.count}. ${l}</small>
-								<br>
-							</c:forEach>
-						</div>
+						<c:forEach var="l" items="${loserNames}" varStatus="i">
+							<p>
+								<strong>${i.count}.</strong> ${l}
+							</p>
+						</c:forEach>
 					</div>
 				</div>
 			</div>
-			<hr>
-			<div class="row">
+			<div class="row" style="border-bottom: 2pt solid;">
 				<div class="col-lg-12 text-center">
+					<br>
 					<h3>Average Donations</h3>
+					<br>
 				</div>
 			</div>
-			<hr>
-
-			<div class="row">
+			<div class="row" style="border-bottom: 2pt solid;">
 				<div class="col-lg-12">
+					<br>
 					<div class="row">
-
-						<div class="col-lg-6 text-center">
+						<div class="col-lg-8" style="border-right: 2pt solid;">
+							<h6>
+								On average, donations made from ${location} to winning presidential candidates were <strong>$${avg_winning_donation}</strong>,
+								while donations to losing candidates were <strong>$${avg_losing_donation}</strong>.
+							</h6>
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item">HighestAvgCand had the largest average donation ($money).</li>
+								<li class="list-group-item">LowestAvgCand had the lowest average donation ($money.)</li>
+								<li class="list-group-item">Party candidates have typically had higher average donations than OtherParty candidates, except for the elections in ElectionYear[].</li>
+								<li class="list-group-item">Porta ac consectetur ac</li>
+								<li class="list-group-item">Vestibulum at eros</li>
+							</ul>
+							<!--  
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="row">
-										<div class="col">
-											<h4>To winning candidates:</h4>
-											<h6 class="win-lose-total">$${avg_winning_donation}</h6>
-											<p>
-												<button class="btn btn-dark" type="button"
-													data-toggle="collapse" data-target="#collapse3"
-													aria-expanded="false" aria-controls="collapse3">
-													<small>See averages for all elections</small>
-												</button>
-											</p>
+										<div class="col-lg-12">
+											<button class="btn btn-dark" type="button"
+												data-toggle="collapse" data-target="#collapse3"
+												aria-expanded="false" aria-controls="collapse3">
+												<h4 class="win-lose-total">$${avg_winning_donation}</h4>
+												<h6>For Elected Presidents</h6>
+											</button>
 										</div>
-										<div>
+									</div>
+									<div class="row">
+										<div class="col-lg-12">
 											<div class="collapse" id="collapse3">
-												<div class="card card-body">
-													<c:forEach var="rtot" items="${results}" varStatus="i">
-														<small>${i.count}.
-															$${String.format("%.2f",rtot.getAvgWinningDonation())}
-															(${rtot.getWinnerName()}, ${rtot.getElectionYear()})</small>
-														<br>
-													</c:forEach>
-												</div>
+												<c:forEach var="rtot" items="${results}" varStatus="i">
+													<p>
+														<strong>${i.count}.</strong>
+														$${String.format("%.2f",rtot.getAvgWinningDonation())}
+														(${rtot.getWinnerName()}, ${rtot.getElectionYear()})
+													</p>
+												</c:forEach>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							<hr>
+							<br>
 							<div class="row">
 								<div class="col-lg-12">
-									<div class="row">
-										<div class="col">
-											<h4>To losing candidates:</h4>
-											<h6 class="win-lose-total">$${avg_losing_donation}</h6>
+									<button class="btn btn-dark" type="button"
+										data-toggle="collapse" data-target="#collapse4"
+										aria-expanded="false" aria-controls="collapse4">
+										<h4 class="win-lose-total">$${avg_losing_donation}</h4>
+										<h6>For Losing Candidates</h6>
+									</button>
+									<br>
+									<div class="collapse" id="collapse4">
+										<c:forEach var="lavg" items="${results}" varStatus="i">
 											<p>
-												<button class="btn btn-dark" type="button"
-													data-toggle="collapse" data-target="#collapse4"
-													aria-expanded="false" aria-controls="collapse4">
-													<small>See averages for all elections</small>
-												</button>
+												<strong>${i.count}.</strong>
+												$${String.format("%,.2f",lavg.getAvgLosingDonation())}
+												(${lavg.getLoserName()}, ${lavg.getElectionYear()})
 											</p>
-										</div>
-										<div>
-											<div class="collapse" id="collapse4">
-												<div class="card card-body">
-													<c:forEach var="lavg" items="${results}" varStatus="i">
-														<small>${i.count}.
-															$${String.format("%.2f",lavg.getAvgLosingDonation())}
-															(${lavg.getLoserName()}, ${lavg.getElectionYear()})</small>
-														<br>
-													</c:forEach>
-												</div>
-											</div>
-										</div>
+										</c:forEach>
 									</div>
 								</div>
 							</div>
+							-->
 						</div>
 						<div class="col-lg-4">
 							<canvas id="avgChart" width="400" height="400"></canvas>

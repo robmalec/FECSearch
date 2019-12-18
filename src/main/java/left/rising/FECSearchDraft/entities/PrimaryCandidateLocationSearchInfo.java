@@ -1,47 +1,43 @@
 package left.rising.FECSearchDraft.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.Size;
+import javax.persistence.Table;
 
 import com.sun.istack.NotNull;
 
 @Entity
+@Table(name="primary_candidate_location_search_info")
 public class PrimaryCandidateLocationSearchInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@NotNull
-	@Size(max = 100)
 	private String candidateName;
 
-	@NotNull
-	@Size(max = 100)
 	private String city;
 
-	@NotNull
-	@Size(max = 100)
 	private String state;
 
-	@NotNull
 	private double totalSumDonations;
 
-	@NotNull
 	private double totalNumDonations;
 
-	@NotNull
 	private double avgDonation;
 
-	@NotNull
 	private double largestDonation;
 
-	@NotNull
 	private double percentDonationsForState;
+	
+	private double percentTotalDonations;
+	
+	@Column(length=6000)
+	private String donationScatterData;
 
 	@ManyToOne
 	private PrimaryLocationSearchResult plsr;
@@ -50,9 +46,9 @@ public class PrimaryCandidateLocationSearchInfo {
 		super();
 	}
 
-	public PrimaryCandidateLocationSearchInfo(@Size(max = 100) String candidateName, @Size(max = 100) String city,
-			@Size(max = 100) String state, double totalSumDonations, double totalNumDonations, double avgDonation,
-			double largestDonation, double percentDonationsForState) {
+	public PrimaryCandidateLocationSearchInfo(String candidateName, String city,
+			String state, double totalSumDonations, double totalNumDonations, double avgDonation,
+			double largestDonation, double percentDonationsForState, double percentTotalDonations, String donationScatterData) {
 		super();
 		this.candidateName = candidateName;
 		this.city = city;
@@ -62,6 +58,8 @@ public class PrimaryCandidateLocationSearchInfo {
 		this.avgDonation = avgDonation;
 		this.largestDonation = largestDonation;
 		this.percentDonationsForState = percentDonationsForState;
+		this.percentTotalDonations = percentTotalDonations;
+		this.donationScatterData = donationScatterData;
 	}
 
 	public Long getId() {
@@ -134,6 +132,22 @@ public class PrimaryCandidateLocationSearchInfo {
 
 	public void setPercentDonationsForState(double percentDonationsForState) {
 		this.percentDonationsForState = percentDonationsForState;
+	}
+
+	public double getPercentTotalDonations() {
+		return percentTotalDonations;
+	}
+
+	public void setPercentTotalDonations(double percentTotalDonations) {
+		this.percentTotalDonations = percentTotalDonations;
+	}
+	
+	public String getDonationScatterData() {
+		return donationScatterData;
+	}
+
+	public void setDonationScatterData(String donationScatterData) {
+		this.donationScatterData = donationScatterData;
 	}
 
 	public PrimaryLocationSearchResult getPlsr() {

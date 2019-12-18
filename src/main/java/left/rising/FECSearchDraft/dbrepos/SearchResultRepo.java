@@ -1,7 +1,5 @@
 package left.rising.FECSearchDraft.dbrepos;
 
-import javax.naming.directory.SearchResult;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
