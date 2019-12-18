@@ -1,5 +1,7 @@
 package left.rising.FECSearchDraft.controllers;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,12 +23,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.common.util.concurrent.RateLimiter;
 
 import left.rising.FECSearchDraft.dbrepos.CanCommitteeRepo;
+import left.rising.FECSearchDraft.dbrepos.CanFundsPerStateRepo;
 import left.rising.FECSearchDraft.dbrepos.CandidateCommitteeId;
 import left.rising.FECSearchDraft.dbrepos.CandidateData;
 import left.rising.FECSearchDraft.dbrepos.CandidateDataRepo;
 import left.rising.FECSearchDraft.dbrepos.ElResult;
 import left.rising.FECSearchDraft.dbrepos.ElResultRepo;
 import left.rising.FECSearchDraft.dbrepos.SearchResultRepo;
+import left.rising.FECSearchDraft.entities.CandFundsPerState;
 import left.rising.FECSearchDraft.entities.DBDonation;
 import left.rising.FECSearchDraft.entities.LocationSearchResult;
 import left.rising.FECSearchDraft.entities.PoliticalParty;
@@ -48,6 +52,9 @@ public class CitySearchController {
 
 	@Autowired
 	SearchResultRepo lsrr;
+
+	@Autowired
+	CanFundsPerStateRepo cfps;
 
 	private RestTemplate rt = new RestTemplate();
 
@@ -71,10 +78,10 @@ public class CitySearchController {
 	public ModelAndView testSearchHistorical() {
 		return new ModelAndView("test-search-historical");
 	}
-	
-	public HashMap<String, String> getImgUrls(){
+
+	public HashMap<String, String> getImgUrls() {
 		HashMap<String, String> urls = new HashMap<>();
-		for (CandidateData d: cdr.findAll()) {
+		for (CandidateData d : cdr.findAll()) {
 			String urlName = "Candidate_Photos/";
 			for (int i = 0; i < d.getName().split(" ").length; i++) {
 				urlName += d.getName().split(" ")[i];
@@ -352,14 +359,11 @@ public class CitySearchController {
 	public ModelAndView locationSearchResults(String city, String state, int electionYear) {
 		LocationSearchResult lsr = new LocationSearchResult();
 		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear) == null) {
-			int pages = checkPages(
-					city, state, electionYear, ccr
-					.findByCandidateAssigned(
-							cdr.getCandidateDataFromID(
-									elr.findByElectionYear(electionYear).get(0).getWinnerId()).get(
-											0))
-					.get(0).getCommittee_id());
-			if (pages >50) {
+			int pages = checkPages(city, state, electionYear,
+					ccr.findByCandidateAssigned(cdr
+							.getCandidateDataFromID(elr.findByElectionYear(electionYear).get(0).getWinnerId()).get(0))
+							.get(0).getCommittee_id());
+			if (pages > 50) {
 				ModelAndView confirm = new ModelAndView("confirm-page");
 				confirm.addObject("city", city);
 				confirm.addObject("state", state);
@@ -367,9 +371,10 @@ public class CitySearchController {
 				confirm.addObject("estimate", pages);
 				return confirm;
 			}
-			int pages2 = checkPages(city, state, electionYear, ccr.findByCandidateAssigned(
-					cdr.getCandidateDataFromID(elr.findByElectionYear(electionYear).get(0).getLoserId()).get(0))
-					.get(0).getCommittee_id());
+			int pages2 = checkPages(city, state, electionYear,
+					ccr.findByCandidateAssigned(
+							cdr.getCandidateDataFromID(elr.findByElectionYear(electionYear).get(0).getLoserId()).get(0))
+							.get(0).getCommittee_id());
 			if (pages2 > 50) {
 				ModelAndView confirm = new ModelAndView("confirm-page");
 				confirm.addObject("city", city);
@@ -378,7 +383,7 @@ public class CitySearchController {
 				confirm.addObject("estimate", pages + pages2);
 				return confirm;
 			}
-				
+
 			lsr = getLocationSearchResult(city, state, electionYear);
 			lsrr.save(lsr);
 		} else {
@@ -421,11 +426,11 @@ public class CitySearchController {
 		mv.addObject("largest_total_loser_recipient", lsr.getLoserName());
 		return mv;
 	}
-	
+
 	@RequestMapping("confirmed-location-search-results")
 	public ModelAndView confirmedLocationSearchResults(String city, String state, int electionYear, boolean b) {
 		LocationSearchResult lsr = new LocationSearchResult();
-		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear) == null) {			
+		if (lsrr.getSearchResultsFromCityStateAndElectionYear(city, state, electionYear) == null) {
 			lsr = getLocationSearchResult(city, state, electionYear);
 			lsrr.save(lsr);
 		} else {
@@ -641,7 +646,7 @@ public class CitySearchController {
 				electionYears.add(e.getElectionYear());
 			}
 		}
-		System.out.println(electionYears.toString());
+
 		// For each election year ...
 		try {
 			for (Integer i : electionYears) {
@@ -672,13 +677,21 @@ public class CitySearchController {
 				}
 			}
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
 		String totalData = "";
 		String electionYearsTbl = "";
 		String avgData = "";
+
+		int timesRepHigherAvg = 0;
+		int timesDemHigherAvg = 0;
+		double highestAvgDonation = 0;
+		double lowestAvgDonation = results.get(0).getAvgLosingDonation();
+		String highestAvgDonationRecipient = "";
+		String lowestAvgDonationRecipient = results.get(0).getLoserName();
+		int lowAvgYear = 0;
+		int highAvgYear = 0;
 		// Calculate historical data using all search results for each location
 		for (LocationSearchResult l : results) {
 
@@ -692,6 +705,26 @@ public class CitySearchController {
 				largestTotalLoserName = l.getLoserName();
 			}
 
+			if (l.getAvgLosingDonation() > highestAvgDonation) {
+				highestAvgDonation = l.getAvgLosingDonation();
+				highestAvgDonationRecipient = l.getLoserName();
+				highAvgYear = l.getElectionYear();
+			}
+			if (l.getAvgWinningDonation() > highestAvgDonation) {
+				highestAvgDonation = l.getAvgLosingDonation();
+				highestAvgDonationRecipient = l.getWinnerName();
+				highAvgYear = l.getElectionYear();
+			}
+			if (l.getAvgLosingDonation() < lowestAvgDonation) {
+				lowestAvgDonation = l.getAvgLosingDonation();
+				lowestAvgDonationRecipient = l.getLoserName();
+				lowAvgYear = l.getElectionYear();
+			}
+			if (l.getAvgWinningDonation() < lowestAvgDonation) {
+				lowestAvgDonation = l.getAvgWinningDonation();
+				lowestAvgDonationRecipient = l.getWinnerName();
+				lowAvgYear = l.getElectionYear();
+			}
 			// Add average losing donation to be used in calculation after the loop
 			// concludes
 			averageLosingDonation += l.getAvgLosingDonation();
@@ -710,6 +743,25 @@ public class CitySearchController {
 			// concludes
 			averageWinningDonation += l.getAvgWinningDonation();
 
+			switch (elr.findByElectionYear(l.getElectionYear()).get(0).getWinningParty()) {
+			case DEMOCRAT:
+				if (l.getAvgWinningDonation() > l.getAvgLosingDonation()) {
+					timesDemHigherAvg += 1;
+				} else if (l.getAvgWinningDonation() < l.getAvgLosingDonation()){
+					timesRepHigherAvg += 1;
+				}
+				break;
+			case REPUBLICAN:
+				if (l.getAvgWinningDonation() > l.getAvgLosingDonation()) {
+					timesRepHigherAvg += 1;
+				} else if (l.getAvgWinningDonation() < l.getAvgLosingDonation()){
+					timesDemHigherAvg += 1;
+				}
+				break;
+			default:
+				break;
+			}
+			
 			// Find total number of winners, losers, and ties supported at the location
 			if (l.getWinnerTotalDonations() > l.getLoserTotalDonations()) {
 				totalWinners += 1;
@@ -736,10 +788,72 @@ public class CitySearchController {
 			}
 
 		}
+
+		// For the recipient of the largest total donations, calculate the percentage of
+		// donations from the given state that came from this city
+		double stateTot = 0;
+		List<CandFundsPerState> thisStateFunds = new ArrayList<>();
+
+		thisStateFunds.addAll(cfps.findByStateCode(state));
+		for (CandFundsPerState c : thisStateFunds) {
+			if (cdr.getCandidateDataFromID(c.getCandId()).get(0).getName()
+					.equals(cdr.getCandidateDataFromName(largestTotalWinnerName).get(0).getName())
+					&& c.getYear() == bigWinElectionYear) {
+				stateTot = c.getFunds();
+			}
+		}
+
+		double percentState = 0;
+		try {
+			percentState = (new BigDecimal(largestTotalWinnerDonations).divide(new BigDecimal(stateTot), 4,
+					RoundingMode.HALF_UP)).doubleValue();
+		} catch (ArithmeticException e) {
+			percentState = 0;
+		}
+
+		// For the recipient of the largest total donations, calculate the percentage of
+		// donations all states that came from this city
+		double allStateTot = 0;
+		List<CandFundsPerState> allStateFunds = new ArrayList<>();
+		allStateFunds.addAll(cfps.findAll());
+		for (CandFundsPerState c : allStateFunds) {
+			if (cdr.getCandidateDataFromID(c.getCandId()).get(0) == cdr.getCandidateDataFromName(largestTotalWinnerName)
+					.get(0) && c.getYear() == bigWinElectionYear) {
+				allStateTot += c.getFunds();
+			}
+		}
+
+		double percentAllStates = 0;
+		try {
+			percentAllStates = (new BigDecimal(largestTotalWinnerDonations).divide(new BigDecimal(allStateTot), 4,
+					RoundingMode.HALF_UP)).doubleValue();
+		} catch (ArithmeticException e) {
+			percentAllStates = 0;
+		}
+
+		String partyHigherAvg = "";
+		if (timesDemHigherAvg > timesRepHigherAvg) {
+			partyHigherAvg = "Democratic candidates have typically received larger donations from " + city + " than Republican candidates.";
+		} else if (timesDemHigherAvg < timesRepHigherAvg){
+			partyHigherAvg = "Republican candidates have typically received larger donations from " + city + " than Democratic candidates.";
+		} else {
+			partyHigherAvg = "The average donations from " + city + " are typically balanced between the two parties - no one party has had higher average donations more frequently than the other party.";
+			
+		}
 		// Calculate average winning and losing donations for all election years
 		averageWinningDonation = averageWinningDonation / 9;
 		averageLosingDonation = averageLosingDonation / 9;
 		// Add objects to the ModelAndView
+		mv.addObject("highAvgYear", highAvgYear);
+		mv.addObject("lowAvgYear", lowAvgYear);
+		mv.addObject("highestAvgDonation", highestAvgDonation);
+		mv.addObject("lowestAvgDonation", lowestAvgDonation);
+		mv.addObject("highestAvgDonationRecipient", highestAvgDonationRecipient);
+		mv.addObject("lowestAvgDonationRecipient", lowestAvgDonationRecipient);
+		mv.addObject("partyHigherAvg", partyHigherAvg);
+		mv.addObject("city", city);
+		mv.addObject("winnerPercentAllStates", String.format("%,.1f", percentAllStates * 100) + "%");
+		mv.addObject("winnerPercentState", String.format("%,.1f", percentState * 100) + "%");
 		mv.addObject("bigWinElectionYear", bigWinElectionYear);
 		mv.addObject("urls", getImgUrls());
 		mv.addObject("avgData", avgData);
