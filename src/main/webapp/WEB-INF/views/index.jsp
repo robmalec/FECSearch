@@ -123,66 +123,66 @@ background-size: cover;*/
 									<label for="form1state">State</label> <select
 										class="form-control" name="state" id="form1state">
 
-										<option name="AL">Alabama</option>
-										<option name="AK">Alaska</option>
-										<option name="AZ">Arizona</option>
-										<option name="AR">Arkansas</option>
-										<option name="CA">California</option>
-										<option name="CO">Colorado</option>
-										<option name="CT">Connecticut</option>
-										<option name="DE">Delaware</option>
-										<option name="DC">District Of Columbia</option>
-										<option name="FL">Florida</option>
-										<option name="GA">Georgia</option>
-										<option name="HI">Hawaii</option>
-										<option name="ID">Idaho</option>
-										<option name="IL">Illinois</option>
-										<option name="IN">Indiana</option>
-										<option name="IA">Iowa</option>
-										<option name="KS">Kansas</option>
-										<option name="KY">Kentucky</option>
-										<option name="LA">Louisiana</option>
-										<option name="ME">Maine</option>
-										<option name="MD">Maryland</option>
-										<option name="MA">Massachusetts</option>
-										<option name="MI">Michigan</option>
-										<option name="MN">Minnesota</option>
-										<option name="MS">Mississippi</option>
-										<option name="MO">Missouri</option>
-										<option name="MT">Montana</option>
-										<option name="NE">Nebraska</option>
-										<option name="NV">Nevada</option>
-										<option name="NH">New Hampshire</option>
-										<option name="NJ">New Jersey</option>
-										<option name="NM">New Mexico</option>
-										<option name="NY">New York</option>
-										<option name="NC">North Carolina</option>
-										<option name="ND">North Dakota</option>
-										<option name="OH">Ohio</option>
-										<option name="OK">Oklahoma</option>
-										<option name="OR">Oregon</option>
-										<option name="PA">Pennsylvania</option>
-										<option name="RI">Rhode Island</option>
-										<option name="SC">South Carolina</option>
-										<option name="SD">South Dakota</option>
-										<option name="TN">Tennessee</option>
-										<option name="TX">Texas</option>
-										<option name="UT">Utah</option>
-										<option name="VT">Vermont</option>
-										<option name="VA">Virginia</option>
-										<option name="WA">Washington</option>
-										<option name="WV">West Virginia</option>
-										<option name="WI">Wisconsin</option>
-										<option name="WY">Wyoming</option>
-										<option name="GU">Guam</option>
-										<option name="AA">Armed Forces Americas</option>
-										<option name="AS">American Samoa</option>
-										<option name="AE">Armed Forces Europe</option>
-										<option name="AP">Armed Forces Pacific</option>
-										<option name="ZZ">Foreign Countries</option>
-										<option name="MP">Northern Mariana Islands</option>
-										<option name="PR">Puerto Rico</option>
-										<option name="VI">Virgin Islands</option>
+										<option value="AL" name="AL">Alabama</option>
+										<option value="AK" name="AK">Alaska</option>
+										<option value="AZ" name="AZ">Arizona</option>
+										<option value="AR" name="AR">Arkansas</option>
+										<option value="CA" name="CA">California</option>
+										<option value="CO" name="CO">Colorado</option>
+										<option value="CT" name="CT">Connecticut</option>
+										<option value="DE" name="DE">Delaware</option>
+										<option value="DC" name="DC">District Of Columbia</option>
+										<option value="FL" name="FL">Florida</option>
+										<option value="GA" name="GA">Georgia</option>
+										<option value="HI" name="HI">Hawaii</option>
+										<option value="ID" name="ID">Idaho</option>
+										<option value="IL" name="IL">Illinois</option>
+										<option value="IN" name="IN">Indiana</option>
+										<option value="IA" name="IA">Iowa</option>
+										<option value="KS" name="KS">Kansas</option>
+										<option value="KY" name="KY">Kentucky</option>
+										<option value="LA" name="LA">Louisiana</option>
+										<option value="ME" name="ME">Maine</option>
+										<option value="MD" name="MD">Maryland</option>
+										<option value="MA" name="MA">Massachusetts</option>
+										<option value="MI" name="MI">Michigan</option>
+										<option value="MN" name="MN">Minnesota</option>
+										<option value="MS" name="MS">Mississippi</option>
+										<option value="MO" name="MO">Missouri</option>
+										<option value="MT" name="MT">Montana</option>
+										<option value="NE" name="NE">Nebraska</option>
+										<option value="NV" name="NV">Nevada</option>
+										<option value="NH" name="NH">New Hampshire</option>
+										<option value="NJ" name="NJ">New Jersey</option>
+										<option value="NM" name="NM">New Mexico</option>
+										<option value="NY" name="NY">New York</option>
+										<option value="NC" name="NC">North Carolina</option>
+										<option value="ND" name="ND">North Dakota</option>
+										<option value="OH" name="OH">Ohio</option>
+										<option value="OK" name="OK">Oklahoma</option>
+										<option value="OR" name="OR">Oregon</option>
+										<option value="PA" name="PA">Pennsylvania</option>
+										<option value="RI" name="RI">Rhode Island</option>
+										<option value="SC" name="SC">South Carolina</option>
+										<option value="SD" name="SD">South Dakota</option>
+										<option value="TN" name="TN">Tennessee</option>
+										<option value="TX" name="TX">Texas</option>
+										<option value="UT" name="UT">Utah</option>
+										<option value="VT" name="VT">Vermont</option>
+										<option value="VA" name="VA">Virginia</option>
+										<option value="WA" name="WA">Washington</option>
+										<option value="WV" name="WV">West Virginia</option>
+										<option value="WI" name="WI">Wisconsin</option>
+										<option value="WY" name="WY">Wyoming</option>
+										<option value="GU" name="GU">Guam</option>
+										<option value="AA" name="AA">Armed Forces Americas</option>
+										<option value="AS" name="AS">American Samoa</option>
+										<option value="AE" name="AE">Armed Forces Europe</option>
+										<option value="AP" name="AP">Armed Forces Pacific</option>
+										<option value="ZZ" name="ZZ">Foreign Countries</option>
+										<option value="MP" name="MP">Northern Mariana Islands</option>
+										<option value="PR" name="PR">Puerto Rico</option>
+										<option value="VI" name="VI">Virgin Islands</option>
 									</select> <br> <input type="Submit" class="btn btn-dark">
 								</div>
 							</div>
@@ -203,66 +203,66 @@ background-size: cover;*/
 									<label for="form2state">State</label> <select name="state"
 										class="form-control" id="form2state">
 
-										<option name="AL">Alabama</option>
-										<option name="AK">Alaska</option>
-										<option name="AZ">Arizona</option>
-										<option name="AR">Arkansas</option>
-										<option name="CA">California</option>
-										<option name="CO">Colorado</option>
-										<option name="CT">Connecticut</option>
-										<option name="DE">Delaware</option>
-										<option name="DC">District Of Columbia</option>
-										<option name="FL">Florida</option>
-										<option name="GA">Georgia</option>
-										<option name="HI">Hawaii</option>
-										<option name="ID">Idaho</option>
-										<option name="IL">Illinois</option>
-										<option name="IN">Indiana</option>
-										<option name="IA">Iowa</option>
-										<option name="KS">Kansas</option>
-										<option name="KY">Kentucky</option>
-										<option name="LA">Louisiana</option>
-										<option name="ME">Maine</option>
-										<option name="MD">Maryland</option>
-										<option name="MA">Massachusetts</option>
-										<option name="MI">Michigan</option>
-										<option name="MN">Minnesota</option>
-										<option name="MS">Mississippi</option>
-										<option name="MO">Missouri</option>
-										<option name="MT">Montana</option>
-										<option name="NE">Nebraska</option>
-										<option name="NV">Nevada</option>
-										<option name="NH">New Hampshire</option>
-										<option name="NJ">New Jersey</option>
-										<option name="NM">New Mexico</option>
-										<option name="NY">New York</option>
-										<option name="NC">North Carolina</option>
-										<option name="ND">North Dakota</option>
-										<option name="OH">Ohio</option>
-										<option name="OK">Oklahoma</option>
-										<option name="OR">Oregon</option>
-										<option name="PA">Pennsylvania</option>
-										<option name="RI">Rhode Island</option>
-										<option name="SC">South Carolina</option>
-										<option name="SD">South Dakota</option>
-										<option name="TN">Tennessee</option>
-										<option name="TX">Texas</option>
-										<option name="UT">Utah</option>
-										<option name="VT">Vermont</option>
-										<option name="VA">Virginia</option>
-										<option name="WA">Washington</option>
-										<option name="WV">West Virginia</option>
-										<option name="WI">Wisconsin</option>
-										<option name="WY">Wyoming</option>
-										<option name="GU">Guam</option>
-										<option name="AA">Armed Forces Americas</option>
-										<option name="AS">American Samoa</option>
-										<option name="AE">Armed Forces Europe</option>
-										<option name="AP">Armed Forces Pacific</option>
-										<option name="ZZ">Foreign Countries</option>
-										<option name="MP">Northern Mariana Islands</option>
-										<option name="PR">Puerto Rico</option>
-										<option name="VI">Virgin Islands</option>
+										<option value="AL" name="AL">Alabama</option>
+										<option value="AK" name="AK">Alaska</option>
+										<option value="AZ" name="AZ">Arizona</option>
+										<option value="AR" name="AR">Arkansas</option>
+										<option value="CA" name="CA">California</option>
+										<option value="CO" name="CO">Colorado</option>
+										<option value="CT" name="CT">Connecticut</option>
+										<option value="DE" name="DE">Delaware</option>
+										<option value="DC" name="DC">District Of Columbia</option>
+										<option value="FL" name="FL">Florida</option>
+										<option value="GA" name="GA">Georgia</option>
+										<option value="HI" name="HI">Hawaii</option>
+										<option value="ID" name="ID">Idaho</option>
+										<option value="IL" name="IL">Illinois</option>
+										<option value="IN" name="IN">Indiana</option>
+										<option value="IA" name="IA">Iowa</option>
+										<option value="KS" name="KS">Kansas</option>
+										<option value="KY" name="KY">Kentucky</option>
+										<option value="LA" name="LA">Louisiana</option>
+										<option value="ME" name="ME">Maine</option>
+										<option value="MD" name="MD">Maryland</option>
+										<option value="MA" name="MA">Massachusetts</option>
+										<option value="MI" name="MI">Michigan</option>
+										<option value="MN" name="MN">Minnesota</option>
+										<option value="MS" name="MS">Mississippi</option>
+										<option value="MO" name="MO">Missouri</option>
+										<option value="MT" name="MT">Montana</option>
+										<option value="NE" name="NE">Nebraska</option>
+										<option value="NV" name="NV">Nevada</option>
+										<option value="NH" name="NH">New Hampshire</option>
+										<option value="NJ" name="NJ">New Jersey</option>
+										<option value="NM" name="NM">New Mexico</option>
+										<option value="NY" name="NY">New York</option>
+										<option value="NC" name="NC">North Carolina</option>
+										<option value="ND" name="ND">North Dakota</option>
+										<option value="OH" name="OH">Ohio</option>
+										<option value="OK" name="OK">Oklahoma</option>
+										<option value="OR" name="OR">Oregon</option>
+										<option value="PA" name="PA">Pennsylvania</option>
+										<option value="RI" name="RI">Rhode Island</option>
+										<option value="SC" name="SC">South Carolina</option>
+										<option value="SD" name="SD">South Dakota</option>
+										<option value="TN" name="TN">Tennessee</option>
+										<option value="TX" name="TX">Texas</option>
+										<option value="UT" name="UT">Utah</option>
+										<option value="VT" name="VT">Vermont</option>
+										<option value="VA" name="VA">Virginia</option>
+										<option value="WA" name="WA">Washington</option>
+										<option value="WV" name="WV">West Virginia</option>
+										<option value="WI" name="WI">Wisconsin</option>
+										<option value="WY" name="WY">Wyoming</option>
+										<option value="GU" name="GU">Guam</option>
+										<option value="AA" name="AA">Armed Forces Americas</option>
+										<option value="AS" name="AS">American Samoa</option>
+										<option value="AE" name="AE">Armed Forces Europe</option>
+										<option value="AP" name="AP">Armed Forces Pacific</option>
+										<option value="ZZ" name="ZZ">Foreign Countries</option>
+										<option value="MP" name="MP">Northern Mariana Islands</option>
+										<option value="PR" name="PR">Puerto Rico</option>
+										<option value="VI" name="VI">Virgin Islands</option>
 									</select>
 								</div>
 
@@ -299,66 +299,66 @@ background-size: cover;*/
 											<label for="form3state1">State</label> <select
 												class="form-control" name="state1" id="form3state1">
 
-												<option name="AL">Alabama</option>
-												<option name="AK">Alaska</option>
-												<option name="AZ">Arizona</option>
-												<option name="AR">Arkansas</option>
-												<option name="CA">California</option>
-												<option name="CO">Colorado</option>
-												<option name="CT">Connecticut</option>
-												<option name="DE">Delaware</option>
-												<option name="DC">District Of Columbia</option>
-												<option name="FL">Florida</option>
-												<option name="GA">Georgia</option>
-												<option name="HI">Hawaii</option>
-												<option name="ID">Idaho</option>
-												<option name="IL">Illinois</option>
-												<option name="IN">Indiana</option>
-												<option name="IA">Iowa</option>
-												<option name="KS">Kansas</option>
-												<option name="KY">Kentucky</option>
-												<option name="LA">Louisiana</option>
-												<option name="ME">Maine</option>
-												<option name="MD">Maryland</option>
-												<option name="MA">Massachusetts</option>
-												<option name="MI">Michigan</option>
-												<option name="MN">Minnesota</option>
-												<option name="MS">Mississippi</option>
-												<option name="MO">Missouri</option>
-												<option name="MT">Montana</option>
-												<option name="NE">Nebraska</option>
-												<option name="NV">Nevada</option>
-												<option name="NH">New Hampshire</option>
-												<option name="NJ">New Jersey</option>
-												<option name="NM">New Mexico</option>
-												<option name="NY">New York</option>
-												<option name="NC">North Carolina</option>
-												<option name="ND">North Dakota</option>
-												<option name="OH">Ohio</option>
-												<option name="OK">Oklahoma</option>
-												<option name="OR">Oregon</option>
-												<option name="PA">Pennsylvania</option>
-												<option name="RI">Rhode Island</option>
-												<option name="SC">South Carolina</option>
-												<option name="SD">South Dakota</option>
-												<option name="TN">Tennessee</option>
-												<option name="TX">Texas</option>
-												<option name="UT">Utah</option>
-												<option name="VT">Vermont</option>
-												<option name="VA">Virginia</option>
-												<option name="WA">Washington</option>
-												<option name="WV">West Virginia</option>
-												<option name="WI">Wisconsin</option>
-												<option name="WY">Wyoming</option>
-												<option name="GU">Guam</option>
-												<option name="AA">Armed Forces Americas</option>
-												<option name="AS">American Samoa</option>
-												<option name="AE">Armed Forces Europe</option>
-												<option name="AP">Armed Forces Pacific</option>
-												<option name="ZZ">Foreign Countries</option>
-												<option name="MP">Northern Mariana Islands</option>
-												<option name="PR">Puerto Rico</option>
-												<option name="VI">Virgin Islands</option>
+												<option value="AL" name="AL">Alabama</option>
+										<option value="AK" name="AK">Alaska</option>
+										<option value="AZ" name="AZ">Arizona</option>
+										<option value="AR" name="AR">Arkansas</option>
+										<option value="CA" name="CA">California</option>
+										<option value="CO" name="CO">Colorado</option>
+										<option value="CT" name="CT">Connecticut</option>
+										<option value="DE" name="DE">Delaware</option>
+										<option value="DC" name="DC">District Of Columbia</option>
+										<option value="FL" name="FL">Florida</option>
+										<option value="GA" name="GA">Georgia</option>
+										<option value="HI" name="HI">Hawaii</option>
+										<option value="ID" name="ID">Idaho</option>
+										<option value="IL" name="IL">Illinois</option>
+										<option value="IN" name="IN">Indiana</option>
+										<option value="IA" name="IA">Iowa</option>
+										<option value="KS" name="KS">Kansas</option>
+										<option value="KY" name="KY">Kentucky</option>
+										<option value="LA" name="LA">Louisiana</option>
+										<option value="ME" name="ME">Maine</option>
+										<option value="MD" name="MD">Maryland</option>
+										<option value="MA" name="MA">Massachusetts</option>
+										<option value="MI" name="MI">Michigan</option>
+										<option value="MN" name="MN">Minnesota</option>
+										<option value="MS" name="MS">Mississippi</option>
+										<option value="MO" name="MO">Missouri</option>
+										<option value="MT" name="MT">Montana</option>
+										<option value="NE" name="NE">Nebraska</option>
+										<option value="NV" name="NV">Nevada</option>
+										<option value="NH" name="NH">New Hampshire</option>
+										<option value="NJ" name="NJ">New Jersey</option>
+										<option value="NM" name="NM">New Mexico</option>
+										<option value="NY" name="NY">New York</option>
+										<option value="NC" name="NC">North Carolina</option>
+										<option value="ND" name="ND">North Dakota</option>
+										<option value="OH" name="OH">Ohio</option>
+										<option value="OK" name="OK">Oklahoma</option>
+										<option value="OR" name="OR">Oregon</option>
+										<option value="PA" name="PA">Pennsylvania</option>
+										<option value="RI" name="RI">Rhode Island</option>
+										<option value="SC" name="SC">South Carolina</option>
+										<option value="SD" name="SD">South Dakota</option>
+										<option value="TN" name="TN">Tennessee</option>
+										<option value="TX" name="TX">Texas</option>
+										<option value="UT" name="UT">Utah</option>
+										<option value="VT" name="VT">Vermont</option>
+										<option value="VA" name="VA">Virginia</option>
+										<option value="WA" name="WA">Washington</option>
+										<option value="WV" name="WV">West Virginia</option>
+										<option value="WI" name="WI">Wisconsin</option>
+										<option value="WY" name="WY">Wyoming</option>
+										<option value="GU" name="GU">Guam</option>
+										<option value="AA" name="AA">Armed Forces Americas</option>
+										<option value="AS" name="AS">American Samoa</option>
+										<option value="AE" name="AE">Armed Forces Europe</option>
+										<option value="AP" name="AP">Armed Forces Pacific</option>
+										<option value="ZZ" name="ZZ">Foreign Countries</option>
+										<option value="MP" name="MP">Northern Mariana Islands</option>
+										<option value="PR" name="PR">Puerto Rico</option>
+										<option value="VI" name="VI">Virgin Islands</option>
 
 											</select>
 										</div>
@@ -374,66 +374,66 @@ background-size: cover;*/
 											<label for="form3state2">State</label> <select
 												class="form-control" name="state2" id="form3state2">
 
-												<option name="AL">Alabama</option>
-												<option name="AK">Alaska</option>
-												<option name="AZ">Arizona</option>
-												<option name="AR">Arkansas</option>
-												<option name="CA">California</option>
-												<option name="CO">Colorado</option>
-												<option name="CT">Connecticut</option>
-												<option name="DE">Delaware</option>
-												<option name="DC">District Of Columbia</option>
-												<option name="FL">Florida</option>
-												<option name="GA">Georgia</option>
-												<option name="HI">Hawaii</option>
-												<option name="ID">Idaho</option>
-												<option name="IL">Illinois</option>
-												<option name="IN">Indiana</option>
-												<option name="IA">Iowa</option>
-												<option name="KS">Kansas</option>
-												<option name="KY">Kentucky</option>
-												<option name="LA">Louisiana</option>
-												<option name="ME">Maine</option>
-												<option name="MD">Maryland</option>
-												<option name="MA">Massachusetts</option>
-												<option name="MI">Michigan</option>
-												<option name="MN">Minnesota</option>
-												<option name="MS">Mississippi</option>
-												<option name="MO">Missouri</option>
-												<option name="MT">Montana</option>
-												<option name="NE">Nebraska</option>
-												<option name="NV">Nevada</option>
-												<option name="NH">New Hampshire</option>
-												<option name="NJ">New Jersey</option>
-												<option name="NM">New Mexico</option>
-												<option name="NY">New York</option>
-												<option name="NC">North Carolina</option>
-												<option name="ND">North Dakota</option>
-												<option name="OH">Ohio</option>
-												<option name="OK">Oklahoma</option>
-												<option name="OR">Oregon</option>
-												<option name="PA">Pennsylvania</option>
-												<option name="RI">Rhode Island</option>
-												<option name="SC">South Carolina</option>
-												<option name="SD">South Dakota</option>
-												<option name="TN">Tennessee</option>
-												<option name="TX">Texas</option>
-												<option name="UT">Utah</option>
-												<option name="VT">Vermont</option>
-												<option name="VA">Virginia</option>
-												<option name="WA">Washington</option>
-												<option name="WV">West Virginia</option>
-												<option name="WI">Wisconsin</option>
-												<option name="WY">Wyoming</option>
-												<option name="GU">Guam</option>
-												<option name="AA">Armed Forces Americas</option>
-												<option name="AS">American Samoa</option>
-												<option name="AE">Armed Forces Europe</option>
-												<option name="AP">Armed Forces Pacific</option>
-												<option name="ZZ">Foreign Countries</option>
-												<option name="MP">Northern Mariana Islands</option>
-												<option name="PR">Puerto Rico</option>
-												<option name="VI">Virgin Islands</option>
+												<option value="AL" name="AL">Alabama</option>
+										<option value="AK" name="AK">Alaska</option>
+										<option value="AZ" name="AZ">Arizona</option>
+										<option value="AR" name="AR">Arkansas</option>
+										<option value="CA" name="CA">California</option>
+										<option value="CO" name="CO">Colorado</option>
+										<option value="CT" name="CT">Connecticut</option>
+										<option value="DE" name="DE">Delaware</option>
+										<option value="DC" name="DC">District Of Columbia</option>
+										<option value="FL" name="FL">Florida</option>
+										<option value="GA" name="GA">Georgia</option>
+										<option value="HI" name="HI">Hawaii</option>
+										<option value="ID" name="ID">Idaho</option>
+										<option value="IL" name="IL">Illinois</option>
+										<option value="IN" name="IN">Indiana</option>
+										<option value="IA" name="IA">Iowa</option>
+										<option value="KS" name="KS">Kansas</option>
+										<option value="KY" name="KY">Kentucky</option>
+										<option value="LA" name="LA">Louisiana</option>
+										<option value="ME" name="ME">Maine</option>
+										<option value="MD" name="MD">Maryland</option>
+										<option value="MA" name="MA">Massachusetts</option>
+										<option value="MI" name="MI">Michigan</option>
+										<option value="MN" name="MN">Minnesota</option>
+										<option value="MS" name="MS">Mississippi</option>
+										<option value="MO" name="MO">Missouri</option>
+										<option value="MT" name="MT">Montana</option>
+										<option value="NE" name="NE">Nebraska</option>
+										<option value="NV" name="NV">Nevada</option>
+										<option value="NH" name="NH">New Hampshire</option>
+										<option value="NJ" name="NJ">New Jersey</option>
+										<option value="NM" name="NM">New Mexico</option>
+										<option value="NY" name="NY">New York</option>
+										<option value="NC" name="NC">North Carolina</option>
+										<option value="ND" name="ND">North Dakota</option>
+										<option value="OH" name="OH">Ohio</option>
+										<option value="OK" name="OK">Oklahoma</option>
+										<option value="OR" name="OR">Oregon</option>
+										<option value="PA" name="PA">Pennsylvania</option>
+										<option value="RI" name="RI">Rhode Island</option>
+										<option value="SC" name="SC">South Carolina</option>
+										<option value="SD" name="SD">South Dakota</option>
+										<option value="TN" name="TN">Tennessee</option>
+										<option value="TX" name="TX">Texas</option>
+										<option value="UT" name="UT">Utah</option>
+										<option value="VT" name="VT">Vermont</option>
+										<option value="VA" name="VA">Virginia</option>
+										<option value="WA" name="WA">Washington</option>
+										<option value="WV" name="WV">West Virginia</option>
+										<option value="WI" name="WI">Wisconsin</option>
+										<option value="WY" name="WY">Wyoming</option>
+										<option value="GU" name="GU">Guam</option>
+										<option value="AA" name="AA">Armed Forces Americas</option>
+										<option value="AS" name="AS">American Samoa</option>
+										<option value="AE" name="AE">Armed Forces Europe</option>
+										<option value="AP" name="AP">Armed Forces Pacific</option>
+										<option value="ZZ" name="ZZ">Foreign Countries</option>
+										<option value="MP" name="MP">Northern Mariana Islands</option>
+										<option value="PR" name="PR">Puerto Rico</option>
+										<option value="VI" name="VI">Virgin Islands</option>
 											</select>
 										</div>
 									</div>
