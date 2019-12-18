@@ -18,6 +18,8 @@
 					Elections: Historical City Search</strong></a></li>
 		<li class="nav-item"><a class="nav-link" href="/"
 			style="color: white;">Home</a></li>
+			<li class="nav-item"><a class="nav-link" href="/about"
+			style="color: white;">About</a></li>
 	</ul>
 
 	<div class="container">
