@@ -47,13 +47,12 @@ background-size: cover;*/
 <body>
 	<div class="container" id="container">
 		<br>
-		<nav aria-label="breadcrumb">
-			<ol class="breadcrumb">
-				<li class="breadcrumb-item active" aria-current="page"><a
-					href="#">Home</a></li>
-				<li class="breadcrumb-item"><a href="about">About</a></li>
-			</ol>
-		</nav>
+		<ul class="nav justify-content-center">
+
+			<li class="nav-item"><a class="nav-link" href="">Home</a></li>
+			<li class="nav-item"><a class="nav-link" href="about">About</a></li>
+			<li class="nav-item"><a class="nav-link" href="contact">Contact</a></li>
+		</ul>
 		<br>
 		<div class="row">
 			<div class="col-lg-12 text-center pagetitle">
@@ -518,8 +517,9 @@ background-size: cover;*/
 					</div>
 				</div>
 			</div>
-			<a class = "btn btn-primary" href="load-custom-data">Load custom data from .csv file</a>
-			
+			<a class="btn btn-primary" href="load-custom-data">Load custom
+				data from .csv file</a>
+
 		</div>
 	</div>
 
