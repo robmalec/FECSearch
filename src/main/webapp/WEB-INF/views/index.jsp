@@ -51,8 +51,7 @@ background-size: cover;*/
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item active" aria-current="page"><a
 					href="#">Home</a></li>
-				<li class="breadcrumb-item"><a
-					href="about">About</a></li>
+				<li class="breadcrumb-item"><a href="about">About</a></li>
 			</ol>
 		</nav>
 		<br>
@@ -503,9 +502,12 @@ background-size: cover;*/
 							<h3>Search Donations by State</h3>
 							<br>
 						</div>
-						<h6>Click on any state below to see information about
-							donations from that state for every presidential election from
-							1980-2016.</h6>
+						<h6>
+							Click on any state below to see information about donations from
+							that state for any presidential election from 1980 to 2016: <br>
+							Beginning year: <input type="text" id="beginYear"></input><br>
+							Ending year: <input type="text" id="endYear"></input>
+						</h6>
 						<br>
 					</div>
 				</div>
@@ -516,6 +518,8 @@ background-size: cover;*/
 					</div>
 				</div>
 			</div>
+			<a class = "btn btn-primary" href="load-custom-data">Load custom data from .csv file</a>
+			
 		</div>
 	</div>
 
@@ -607,8 +611,22 @@ background-size: cover;*/
 										thisPoly,
 										'click',
 										function(event) {
+											var beginYear = document
+													.getElementById('beginYear').value;
+											var endYear = document
+													.getElementById('endYear').value;
+											if (beginYear == "") {
+												beginYear = 1980;
+											}
+											if (endYear == "") {
+												endYear = 2016;
+											}
 											window.location = "/load-state-stats-page?stateCode="
-													+ stateCode;
+													+ stateCode
+													+ "&beginYear="
+													+ beginYear
+													+ "&endYear="
+													+ endYear;
 										});
 						json.features[0].geometry.type = data.geojson.type;
 						json.features[0].geometry.coordinates = data.geojson.coordinates;

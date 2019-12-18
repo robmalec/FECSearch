@@ -13,7 +13,7 @@
 	crossorigin="anonymous">
 </head>
 <body>
-	<h1>Info for ${stateName }</h1>
+	<h1>Info for ${stateName } between ${beginYear } and ${endYear }:</h1>
 	<h2>Total funds raised</h2><br>
 	${totalFunds }
 	<h2>Total winning funds raised</h2><br>
@@ -27,15 +27,15 @@
 	<h2>Smallest money winner candidate:</h2><br>
 	${smw.getName() } with $${smwBudget}
 	<h2>Smallest money loser candidate:</h2><br>
-	${sml.getName() } with $${sml.Budget}
+	${sml.getName() } with $${smlBudget}
 	<h2>Presidential candidates by fundraising numbers</h2><br>
 	<table>
 		<tr>
-			<th>Candidate name</th><th>Funds raised in ${stateName }</th>
+			<th>Candidate name</th><th>Campaign year</th><th>Funds raised in ${stateName }</th>
 		</tr>
 		<c:forEach var="cand" items="${candFundsList }">
 			<tr>
-				<td>${cand[0]}</td><td>$${cand[1]}</td>
+				<td>${cand[0]}</td><td>${cand[2] }</td><td>$${cand[1]}</td>
 			</tr>
 		</c:forEach>
 	</table>
