@@ -234,15 +234,15 @@ public class PrimaryController {
 						+ donations.get(randomInteger).getContributionReceiptDate().substring(8, 10) + ", y:"
 						+ donations.get(randomInteger).getContributionReceiptAmount() + "},";
 			}
-		}
+		}/*
 		for (int i = index; i < donations.size(); i++) {
 			totalSumDonations += donations.get(index).getContributionReceiptAmount();
 			if (donations.get(index).getContributionReceiptAmount() > largestDonation) {
 				largestDonation = donations.get(index).getContributionReceiptAmount();
 			}
-		}
+		}*/
 		avgDonation = totalSumDonations / totalNumDonations;
-		System.out.println(totalSumDonations);
+		System.out.println("TotalLocationDonations:" + new BigDecimal(totalSumDonations));
 		try {
 			percentDonationsForState = (new BigDecimal(totalSumDonations)
 					.divide(new BigDecimal(psr.findByIdAndState(candidate, state).getFunds()), 4, RoundingMode.HALF_UP))
@@ -254,8 +254,6 @@ public class PrimaryController {
 		double totalDonations = 0;
 		for (String s : stateCodes) {
 			if (s.equals("RI")) {
-				System.out.println("RI at point 0: " + psr.findByState(s).get(0).getFunds());
-				System.out.println("Cand " + psr.findByIdAndState(candidate, s).getCandidate().getName());
 			}
 			totalDonations += psr.findByIdAndState(candidate, s).getFunds();
 		}
@@ -326,7 +324,7 @@ public class PrimaryController {
 				break;
 			}
 		}
-		System.out.println(parties.get("Bernie Sanders"));
+		System.out.println(winner.getPercentDonationsForState());
 		avgDon = avgDonTot / searches.size();
 		ModelAndView mv = new ModelAndView("primary-location-search-results");
 		mv.addObject("parties", parties);
