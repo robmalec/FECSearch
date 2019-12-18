@@ -13,287 +13,225 @@
 	crossorigin="anonymous">
 </head>
 <body>
-	<div id="grad">
-		<ul class="nav nav-tabs bg-dark navbar-dark">
-			<li class="nav-item"><a class="nav-link active" href="#"><strong>Presidential
-						Elections: Historical City Search</strong></a></li>
-			<li class="nav-item"><a class="nav-link" href="/"
-				style="color: white;">Home</a></li>
-		</ul>
+	<ul class="nav nav-tabs bg-dark navbar-dark">
+		<li class="nav-item"><a class="nav-link active" href="#"><strong>Presidential
+					Elections: Historical City Search</strong></a></li>
+		<li class="nav-item"><a class="nav-link" href="/"
+			style="color: white;">Home</a></li>
+	</ul>
 
-		<div class="container">
-			<br>
-			<div class="row" style="border-bottom: 2pt solid;">
-				<div class="col-lg-12 text-center">
-					<h1>${location}</h1>
-					<br>
-				</div>
-			</div>
-			<div class="row" style="border-bottom: 2pt solid;">
-				<div class="col-lg-12 text-center">
-					<br>
-					<h3>The majority of donors in ${location} supported:</h3>
-					<br>
-				</div>
-			</div>
-			<br>
-			<div class="row">
-				<div class="col-lg-6 text-center">
-					<button class="btn btn-dark" type="button" data-toggle="collapse"
-						data-target="#collapse1" aria-expanded="false"
-						aria-controls="collapse1">
-						<h4>${total_winners}</h4>
-						<h6>Elected Presidents</h6>
-					</button>
-				</div>
-				<div class="col-lg-6 text-center">
-					<button class="btn btn-dark" type="button" data-toggle="collapse"
-						data-target="#collapse2" aria-expanded="false"
-						aria-controls="collapse2">
-						<h4>${total_losers}</h4>
-						<h6>Losing Candidates</h6>
-					</button>
-
-				</div>
-			</div>
-			<br>
-			<div class="row" style="border-bottom: 2pt solid;">
-				<div class="col-lg-6 text-center">
-					<div class="collapse" id="collapse1">
-						<c:forEach var="w" items="${winnerNames}" varStatus="i">
-							<p>
-								<strong>${i.count}.</strong> ${w}
-							</p>
-						</c:forEach>
-					</div>
-				</div>
-				<div class="col-lg-6 text-center">
-					<div class="collapse" id="collapse2">
-						<c:forEach var="l" items="${loserNames}" varStatus="i">
-							<p>
-								<strong>${i.count}.</strong> ${l}
-							</p>
-						</c:forEach>
-					</div>
-				</div>
-			</div>
-			<div class="row" style="border-bottom: 2pt solid;">
-				<div class="col-lg-12 text-center">
-					<br>
-					<h3>Average Donations</h3>
-					<br>
-				</div>
-			</div>
-			<div class="row" style="border-bottom: 2pt solid;">
-				<div class="col-lg-12">
-					<br>
-					<div class="row">
-						<div class="col-lg-8" style="border-right: 2pt solid;">
-							<h6>
-								On average, donations made from ${location} to winning presidential candidates were <strong>$${avg_winning_donation}</strong>,
-								while donations to losing candidates were <strong>$${avg_losing_donation}</strong>.
-							</h6>
-							<ul class="list-group list-group-flush">
-								<li class="list-group-item">HighestAvgCand had the largest average donation ($money).</li>
-								<li class="list-group-item">LowestAvgCand had the lowest average donation ($money.)</li>
-								<li class="list-group-item">Party candidates have typically had higher average donations than OtherParty candidates, except for the elections in ElectionYear[].</li>
-								<li class="list-group-item">Porta ac consectetur ac</li>
-								<li class="list-group-item">Vestibulum at eros</li>
-							</ul>
-							<!--  
-							<div class="row">
-								<div class="col-lg-12">
-									<div class="row">
-										<div class="col-lg-12">
-											<button class="btn btn-dark" type="button"
-												data-toggle="collapse" data-target="#collapse3"
-												aria-expanded="false" aria-controls="collapse3">
-												<h4 class="win-lose-total">$${avg_winning_donation}</h4>
-												<h6>For Elected Presidents</h6>
-											</button>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="collapse" id="collapse3">
-												<c:forEach var="rtot" items="${results}" varStatus="i">
-													<p>
-														<strong>${i.count}.</strong>
-														$${String.format("%.2f",rtot.getAvgWinningDonation())}
-														(${rtot.getWinnerName()}, ${rtot.getElectionYear()})
-													</p>
-												</c:forEach>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<br>
-							<div class="row">
-								<div class="col-lg-12">
-									<button class="btn btn-dark" type="button"
-										data-toggle="collapse" data-target="#collapse4"
-										aria-expanded="false" aria-controls="collapse4">
-										<h4 class="win-lose-total">$${avg_losing_donation}</h4>
-										<h6>For Losing Candidates</h6>
-									</button>
-									<br>
-									<div class="collapse" id="collapse4">
-										<c:forEach var="lavg" items="${results}" varStatus="i">
-											<p>
-												<strong>${i.count}.</strong>
-												$${String.format("%,.2f",lavg.getAvgLosingDonation())}
-												(${lavg.getLoserName()}, ${lavg.getElectionYear()})
-											</p>
-										</c:forEach>
-									</div>
-								</div>
-							</div>
-							-->
-						</div>
-						<div class="col-lg-4">
-							<canvas id="avgChart" width="400" height="400"></canvas>
-						</div>
-					</div>
-					<br>
-				</div>
-			</div>
-
-
-			<hr>
-			<div class="row">
-				<div class="col-lg-12 text-center">
-					<h3>Largest Individual Donations</h3>
-				</div>
-			</div>
-			<hr>
-			<div class="row">
-				<div class="col-lg-6 text-center">
-					<h4>To a winning candidate:</h4>
-					<h6 class="win-lose-total">$${largest_winning_donation}</h6>
-					<p>Donated to ${largest_winner_recipient}</p>
-					<p>
-						<button class="btn btn-dark" type="button" data-toggle="collapse"
-							data-target="#collapse5" aria-expanded="false"
-							aria-controls="collapse5">
-							<small>See largest donations for all elections</small>
-						</button>
-					</p>
-					<div class="collapse" id="collapse5">
-						<div class="card card-body">
-							<c:forEach var="lavg" items="${results}" varStatus="i">
-								<small>${i.count}.
-									$${String.format("%.2f",lavg.getLargestWinningDonation())}
-									(${lavg.getWinnerName()}, ${lavg.getElectionYear()})</small>
-								<br>
-							</c:forEach>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6 text-center">
-					<h4>To a losing candidate:</h4>
-					<h6 class="win-lose-total">$${largest_losing_donation}</h6>
-					<p>Donated to ${largest_loser_recipient}</p>
-					<p>
-						<button class="btn btn-dark" type="button" data-toggle="collapse"
-							data-target="#collapse6" aria-expanded="false"
-							aria-controls="collapse6">
-							<small>See largest donations for all elections</small>
-						</button>
-					</p>
-					<div class="collapse" id="collapse6">
-						<div class="card card-body">
-							<c:forEach var="lavg" items="${results}" varStatus="i">
-								<small>${i.count}.
-									$${String.format("%.2f",lavg.getLargestLosingDonation())}
-									(${lavg.getLoserName()}, ${lavg.getElectionYear()})</small>
-								<br>
-							</c:forEach>
-						</div>
-					</div>
-				</div>
-			</div>
-			<hr>
-			<div class="row">
-				<div class="col-lg-12 text-center">
-					<h3>Largest Cumulative Donation Totals</h3>
-				</div>
-			</div>
-			<hr>
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="row">
-						<div class="col-lg-6">
-							<canvas id="myChart" width="100%" height="75%"></canvas>
-						</div>
-						<div class="col-lg-6 text-center">
-							<div class="row">
-								<div class="col-lg-12">
-									<div class="row">
-										<div class="col">
-											<h4>To a winning candidate:</h4>
-											<h6 class="win-lose-total">$${largest_winner_total}</h6>
-											<p>Donated to ${largest_total_winner_recipient}</p>
-											<p>
-												<button class="btn btn-dark" type="button"
-													data-toggle="collapse" data-target="#collapse7"
-													aria-expanded="false" aria-controls="collapse7">
-													<small>See totals for all elections</small>
-												</button>
-											</p>
-										</div>
-										<div>
-											<div class="collapse" id="collapse7">
-												<div class="card card-body">
-													<c:forEach var="rtot" items="${results}" varStatus="i">
-														<small>${i.count}.
-															$${String.format("%.2f",rtot.getWinnerTotalDonations())}
-															(${rtot.getWinnerName()}, ${rtot.getElectionYear()})</small>
-														<br>
-													</c:forEach>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-lg-12">
-									<div class="row">
-										<div class="col">
-											<h4>To a losing candidate:</h4>
-											<h6 class="win-lose-total">$${largest_loser_total}</h6>
-											<p>Donated to ${largest_total_loser_recipient}</p>
-											<p>
-												<button class="btn btn-dark" type="button"
-													data-toggle="collapse" data-target="#collapse8"
-													aria-expanded="false" aria-controls="collapse8">
-													<small>See totals for all elections</small>
-												</button>
-											</p>
-										</div>
-										<div>
-											<div class="collapse" id="collapse8">
-												<div class="card card-body">
-													<c:forEach var="lavg" items="${results}" varStatus="i">
-														<small>${i.count}.
-															$${String.format("%.2f",lavg.getLoserTotalDonations())}
-															(${lavg.getLoserName()}, ${lavg.getElectionYear()})</small>
-														<br>
-													</c:forEach>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<br>
-				</div>
+	<div class="container">
+		<br>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-12 text-center">
+				<h1>${location}</h1>
+				<br>
 			</div>
 		</div>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-12 text-center">
+				<br>
+				<h3>The majority of donors in ${location} supported:</h3>
+				<br>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-lg-6 text-center">
+				<button class="btn btn-dark" type="button" data-toggle="collapse"
+					data-target="#collapse1" aria-expanded="false"
+					aria-controls="collapse1">
+					<h4>${total_winners}</h4>
+					<h6>Elected Presidents</h6>
+				</button>
+			</div>
+			<div class="col-lg-6 text-center">
+				<button class="btn btn-dark" type="button" data-toggle="collapse"
+					data-target="#collapse2" aria-expanded="false"
+					aria-controls="collapse2">
+					<h4>${total_losers}</h4>
+					<h6>Losing Candidates</h6>
+				</button>
+			</div>
+		</div>
+		<br>
+		<div class="row"
+			style="border-bottom: solid 2pt; border-top: solid 2pt;">
+			<div class="col-lg-12 text-center">
+				<br>
+				<h3>Total Donations</h3>
+				<br>
+			</div>
+		</div>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-3  text-center" style="border-right: 2pt solid;">
+				<br>
+				<div class="row">
+					<div class="col-lg-12  align-self-center">
+						<h4>${largest_total_winner_recipient}</h4>
+						<img src="${urls.get(largest_total_winner_recipient)}"
+							style="max-height: 200px;">
+					</div>
+				</div>
+				<br>
+			</div>
+			<div class="col-lg-6">
+				<div class="row">
+					<div class="col-lg-12">
+						<br>
+						<h5>${largest_total_winner_recipient}
+							raised <strong>$${largest_winner_total}</strong> in ${location}
+							during the ${bigWinElectionYear} election cycle.
+						</h5>
+						<p>That was the highest total amount of funds raised for any
+							winning presidential candidate in this city between 1980 and
+							2016. Those donations accounted for Percent of
+							${largest_total_winner_recipient}'s total donations from ${state}
+							for the ${bigWinElectionYear} cycle, and 2Percent of their
+							donations nationwide.</p>
+						<h6>Click any of the buttons below to see the total donations
+							to winning and losing candidates from this city for other
+							election cycles.</h6>
+						<c:forEach var="r" items="${results}" varStatus="i">
+							<c:if test="${r.getElectionYear() != bigWinElectionYear}">
+								<button class="btn btn-dark" type="button"
+									data-toggle="collapse" data-target="#collapseWinYear${i.count}"
+									aria-expanded="false" aria-controls="collapseWinYear${i.count}"
+									style="margin: 5px;">${r.getElectionYear()}</button>
+							</c:if>
+						</c:forEach>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-lg-12 text-center">
+						<c:forEach var="r" items="${results}" varStatus="i">
+							<c:if test="${r.getElectionYear() != bigWinElectionYear}">
+								<div class="collapse" id="collapseWinYear${i.count}">
+									<div class="row">
+										<div class="col-lg-6">
+											<h5>${r.getWinnerName()}</h5>
+											<h6>$${String.format("%,.2f",r.getWinnerTotalDonations())}</h6>
+											<img src="${urls.get(r.getWinnerName())}"
+												style="max-height: 200px;">
+										</div>
+										<div class="col-lg-6">
+											<h5>${r.getLoserName()}</h5>
+											<h6>$${String.format("%,.2f",r.getLoserTotalDonations())}</h6>
+											<img src="${urls.get(r.getLoserName())}"
+												style="max-height: 200px;">
+										</div>
+									</div>
+								</div>
+							</c:if>
+						</c:forEach>
+						<br>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3" style="border-left: 2pt solid;">
+				<br>
+				<div class="row">
+					<div class="col-lg-12 text-center align-self-center">
+						<canvas id="myChart" width="100%" height="200 px"></canvas>
+					</div>
+				</div>
+				<br>
+			</div>
+		</div>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-12 text-center">
+				<br>
+				<h3>Average Donations</h3>
+				<br>
+			</div>
+		</div>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-12">
+				<br>
+				<div class="row">
+					<div class="col-lg-8" style="border-right: 2pt solid;">
+						<h6>
+							On average, donations made from ${location} to winning
+							presidential candidates were <strong>$${avg_winning_donation}</strong>,
+							while donations to losing candidates were <strong>$${avg_losing_donation}</strong>.
+						</h6>
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">HighestAvgCand had the largest
+								average donation ($money).</li>
+							<li class="list-group-item">LowestAvgCand had the lowest
+								average donation ($money.)</li>
+							<li class="list-group-item">Party candidates have typically
+								received higher average donations than OtherParty candidates,
+								except for the elections in ElectionYear[].</li>
+							<li class="list-group-item">Porta ac consectetur ac</li>
+							<li class="list-group-item">Vestibulum at eros</li>
+						</ul>
+					</div>
+					<div class="col-lg-4">
+						<canvas id="avgChart" width="400" height="400"></canvas>
+					</div>
+				</div>
+				<br>
+			</div>
+		</div>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-12 text-center">
+				<br>
+				<h3>Largest Individual Donations</h3>
+				<br>
+			</div>
+		</div>
+		<br>
+		<div class="row" style="border-bottom: 2pt solid;">
+			<div class="col-lg-6 text-center">
+				<h4>To a winning candidate:</h4>
+				<h6 class="win-lose-total">$${largest_winning_donation}</h6>
+				<p>Donated to ${largest_winner_recipient}</p>
+				<p>
+					<button class="btn btn-dark" type="button" data-toggle="collapse"
+						data-target="#collapse5" aria-expanded="false"
+						aria-controls="collapse5">
+						<small>See largest donations for all elections</small>
+					</button>
+				</p>
+				<div class="collapse" id="collapse5">
+					<div class="card card-body">
+						<c:forEach var="lavg" items="${results}" varStatus="i">
+							<small>${i.count}.
+								$${String.format("%.2f",lavg.getLargestWinningDonation())}
+								(${lavg.getWinnerName()}, ${lavg.getElectionYear()})</small>
+							<br>
+						</c:forEach>
+					</div>
+				</div>
+				<br>
+			</div>
+			<div class="col-lg-6 text-center">
+				<h4>To a losing candidate:</h4>
+				<h6 class="win-lose-total">$${largest_losing_donation}</h6>
+				<p>Donated to ${largest_loser_recipient}</p>
+				<p>
+					<button class="btn btn-dark" type="button" data-toggle="collapse"
+						data-target="#collapse6" aria-expanded="false"
+						aria-controls="collapse6">
+						<small>See largest donations for all elections</small>
+					</button>
+				</p>
+				<div class="collapse" id="collapse6">
+					<div class="card card-body">
+						<c:forEach var="lavg" items="${results}" varStatus="i">
+							<small>${i.count}.
+								$${String.format("%.2f",lavg.getLargestLosingDonation())}
+								(${lavg.getLoserName()}, ${lavg.getElectionYear()})</small>
+							<br>
+						</c:forEach>
+					</div>
+				</div>
+				<br>
+			</div>
+		</div>
+
 	</div>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -344,11 +282,11 @@
 							}
 						} ],
 						xAxes : [{
+							offset: false,
 							ticks: {
 								beginAtZero:true,
 								 callback: function(value, index, values) {
 						                return '$' + value;
-						              
 						            }
 							}
 						}]

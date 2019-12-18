@@ -2,6 +2,7 @@ package left.rising.FECSearchDraft.controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,18 @@ public class CitySearchController {
 	public ModelAndView testSearchHistorical() {
 		return new ModelAndView("test-search-historical");
 	}
+	
+	public HashMap<String, String> getImgUrls(){
+		HashMap<String, String> urls = new HashMap<>();
+		for (CandidateData d: cdr.findAll()) {
+			String urlName = "Candidate_Photos/";
+			for (int i = 0; i < d.getName().split(" ").length; i++) {
+				urlName += d.getName().split(" ")[i];
+			}
+			urls.put(d.getName(), urlName + ".jpg");
+		}
+		return urls;
+	}
 
 	public LocationSearchResult getLocationSearchResult(String city, String state, Integer electionYear) {
 		// Declare variables
@@ -96,6 +109,7 @@ public class CitySearchController {
 		int loserIndex = 0;
 		int numWinnerDonations = 0;
 		int numLoserDonations = 0;
+		int bigWinElectionYear = 0;
 		ArrayList<Integer> winRand = new ArrayList<>();
 		ArrayList<Integer> loseRand = new ArrayList<>();
 
@@ -298,14 +312,14 @@ public class CitySearchController {
 		mv.addObject("location2MostDon", lsr2MostDon);
 		mv.addObject("location1_winners", lsr1.getTotalWinners());
 		mv.addObject("location2_winners", lsr2.getTotalWinners());
-		mv.addObject("avg_winning_donation_location1", String.format("%.2f", lsr1.getAvgWinningDonation()));
-		mv.addObject("avg_winning_donation_location2", String.format("%.2f", lsr2.getAvgWinningDonation()));
-		mv.addObject("largest_winning_donation_location1", String.format("%.2f", lsr1.getLargestWinningDonation()));
-		mv.addObject("largest_winning_donation_location2", String.format("%.2f", lsr2.getLargestWinningDonation()));
+		mv.addObject("avg_winning_donation_location1", String.format("%,.2f", lsr1.getAvgWinningDonation()));
+		mv.addObject("avg_winning_donation_location2", String.format("%,.2f", lsr2.getAvgWinningDonation()));
+		mv.addObject("largest_winning_donation_location1", String.format("%,.2f", lsr1.getLargestWinningDonation()));
+		mv.addObject("largest_winning_donation_location2", String.format("%,.2f", lsr2.getLargestWinningDonation()));
 		mv.addObject("largest_winner_recipient_location1", lsr1.getWinnerName());
 		mv.addObject("largest_winner_recipient_location2", lsr2.getWinnerName());
-		mv.addObject("largest_winner_total_location1", String.format("%.2f", lsr1.getWinnerTotalDonations()));
-		mv.addObject("largest_winner_total_location2", String.format("%.2f", lsr2.getWinnerTotalDonations()));
+		mv.addObject("largest_winner_total_location1", String.format("%,.2f", lsr1.getWinnerTotalDonations()));
+		mv.addObject("largest_winner_total_location2", String.format("%,.2f", lsr2.getWinnerTotalDonations()));
 		mv.addObject("largest_total_winner_recipient_location1", lsr1.getWinnerName());
 		mv.addObject("largest_total_winner_recipient_location1", lsr2.getWinnerName());
 		return mv;
@@ -395,14 +409,14 @@ public class CitySearchController {
 		mv.addObject("location", location);
 		mv.addObject("total_winners", lsr.getTotalWinners());
 		mv.addObject("total_losers", lsr.getTotalLosers());
-		mv.addObject("avg_winning_donation", String.format("%.2f", lsr.getAvgWinningDonation()));
-		mv.addObject("avg_losing_donation", String.format("%.2f", lsr.getAvgLosingDonation()));
-		mv.addObject("largest_winning_donation", String.format("%.2f", lsr.getLargestWinningDonation()));
-		mv.addObject("largest_losing_donation", String.format("%.2f", lsr.getLargestLosingDonation()));
+		mv.addObject("avg_winning_donation", String.format("%,.2f", lsr.getAvgWinningDonation()));
+		mv.addObject("avg_losing_donation", String.format("%,.2f", lsr.getAvgLosingDonation()));
+		mv.addObject("largest_winning_donation", String.format("%,.2f", lsr.getLargestWinningDonation()));
+		mv.addObject("largest_losing_donation", String.format("%,.2f", lsr.getLargestLosingDonation()));
 		mv.addObject("largest_winner_recipient", lsr.getWinnerName());
 		mv.addObject("largest_loser_recipient", lsr.getLoserName());
-		mv.addObject("largest_winner_total", String.format("%.2f", lsr.getWinnerTotalDonations()));
-		mv.addObject("largest_loser_total", String.format("%.2f", lsr.getLoserTotalDonations()));
+		mv.addObject("largest_winner_total", String.format("%,.2f", lsr.getWinnerTotalDonations()));
+		mv.addObject("largest_loser_total", String.format("%,.2f", lsr.getLoserTotalDonations()));
 		mv.addObject("largest_total_winner_recipient", lsr.getWinnerName());
 		mv.addObject("largest_total_loser_recipient", lsr.getLoserName());
 		return mv;
@@ -442,14 +456,14 @@ public class CitySearchController {
 		mv.addObject("location", location);
 		mv.addObject("total_winners", lsr.getTotalWinners());
 		mv.addObject("total_losers", lsr.getTotalLosers());
-		mv.addObject("avg_winning_donation", String.format("%.2f", lsr.getAvgWinningDonation()));
-		mv.addObject("avg_losing_donation", String.format("%.2f", lsr.getAvgLosingDonation()));
-		mv.addObject("largest_winning_donation", String.format("%.2f", lsr.getLargestWinningDonation()));
-		mv.addObject("largest_losing_donation", String.format("%.2f", lsr.getLargestLosingDonation()));
+		mv.addObject("avg_winning_donation", String.format("%,.2f", lsr.getAvgWinningDonation()));
+		mv.addObject("avg_losing_donation", String.format("%,.2f", lsr.getAvgLosingDonation()));
+		mv.addObject("largest_winning_donation", String.format("%,.2f", lsr.getLargestWinningDonation()));
+		mv.addObject("largest_losing_donation", String.format("%,..2f", lsr.getLargestLosingDonation()));
 		mv.addObject("largest_winner_recipient", lsr.getWinnerName());
 		mv.addObject("largest_loser_recipient", lsr.getLoserName());
-		mv.addObject("largest_winner_total", String.format("%.2f", lsr.getWinnerTotalDonations()));
-		mv.addObject("largest_loser_total", String.format("%.2f", lsr.getLoserTotalDonations()));
+		mv.addObject("largest_winner_total", String.format("%,.2f", lsr.getWinnerTotalDonations()));
+		mv.addObject("largest_loser_total", String.format("%,.2f", lsr.getLoserTotalDonations()));
 		mv.addObject("largest_total_winner_recipient", lsr.getWinnerName());
 		mv.addObject("largest_total_loser_recipient", lsr.getLoserName());
 		return mv;
@@ -618,6 +632,7 @@ public class CitySearchController {
 		ArrayList<String> loserNames = new ArrayList<>();
 		ArrayList<String> ties = new ArrayList<>();
 		String location = city + ", " + state;
+		int bigWinElectionYear = 0;
 		ModelAndView mv = new ModelAndView("historical-location-search-results");
 
 		// Save election years in the election result repo to an array
@@ -684,6 +699,7 @@ public class CitySearchController {
 			// Check for largest winning donation and largest total donations to the winner
 			if (l.getWinnerTotalDonations() > largestTotalWinnerDonations) {
 				largestTotalWinnerDonations = l.getWinnerTotalDonations();
+				bigWinElectionYear = l.getElectionYear();
 				largestTotalWinnerName = l.getWinnerName();
 			}
 			if (l.getLargestWinningDonation() > largestWinningDonation) {
@@ -723,8 +739,9 @@ public class CitySearchController {
 		// Calculate average winning and losing donations for all election years
 		averageWinningDonation = averageWinningDonation / 9;
 		averageLosingDonation = averageLosingDonation / 9;
-
 		// Add objects to the ModelAndView
+		mv.addObject("bigWinElectionYear", bigWinElectionYear);
+		mv.addObject("urls", getImgUrls());
 		mv.addObject("avgData", avgData);
 		mv.addObject("electionYears", electionYearsTbl);
 		mv.addObject("totalData", totalData);
@@ -735,14 +752,14 @@ public class CitySearchController {
 		mv.addObject("location", location);
 		mv.addObject("total_winners", totalWinners);
 		mv.addObject("total_losers", totalLosers);
-		mv.addObject("avg_winning_donation", String.format("%.2f", averageWinningDonation));
-		mv.addObject("avg_losing_donation", String.format("%.2f", averageLosingDonation));
-		mv.addObject("largest_winning_donation", String.format("%.2f", largestWinningDonation));
-		mv.addObject("largest_losing_donation", String.format("%.2f", largestLosingDonation));
+		mv.addObject("avg_winning_donation", String.format("%,.2f", averageWinningDonation));
+		mv.addObject("avg_losing_donation", String.format("%,.2f", averageLosingDonation));
+		mv.addObject("largest_winning_donation", String.format("%,.2f", largestWinningDonation));
+		mv.addObject("largest_losing_donation", String.format("%,.2f", largestLosingDonation));
 		mv.addObject("largest_winner_recipient", biggestWinnerRecipient);
 		mv.addObject("largest_loser_recipient", biggestLoserRecipient);
-		mv.addObject("largest_winner_total", String.format("%.2f", largestTotalWinnerDonations));
-		mv.addObject("largest_loser_total", String.format("%.2f", largestTotalLoserDonations));
+		mv.addObject("largest_winner_total", String.format("%,.2f", largestTotalWinnerDonations));
+		mv.addObject("largest_loser_total", String.format("%,.2f", largestTotalLoserDonations));
 		mv.addObject("largest_total_winner_recipient", largestTotalWinnerName);
 		mv.addObject("largest_total_loser_recipient", largestTotalLoserName);
 		return mv;

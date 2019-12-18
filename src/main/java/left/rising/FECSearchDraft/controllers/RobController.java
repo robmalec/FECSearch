@@ -1,4 +1,4 @@
-zpackage left.rising.FECSearchDraft.controllers;
+package left.rising.FECSearchDraft.controllers;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
