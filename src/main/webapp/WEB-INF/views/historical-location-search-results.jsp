@@ -183,8 +183,6 @@
 					<li class="list-group-item">${highestAvgDonationRecipient}'s contributions in ${highAvgYear} were the highest on average ($${String.format("%,.2f", highestAvgDonation)}).</li>
 					<li class="list-group-item">${lowestAvgDonationRecipient}'s contributions in ${lowAvgYear} were the lowest on average ($${String.format("%,.2f", lowestAvgDonation)}).</li>
 					<li class="list-group-item">${partyHigherAvg}</li>
-					<li class="list-group-item">Porta ac consectetur ac</li>
-					<li class="list-group-item">Vestibulum at eros</li>
 				</ul>
 				<br>
 			</div>
