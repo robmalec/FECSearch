@@ -78,10 +78,12 @@ background-size: cover;*/
 				<div class="page-header">
 					<h3>Search Donations by City</h3>
 					<br>
+					<h4>For Presidential Elections</h4>
 				</div>
 				<h6>Select one of the search options from the drop-down below
 					to find information about donations from individual cities.</h6>
-				<br> <br>
+				<br>
+				<br>
 				<ul class="nav btn btn-dark">
 
 					<li class="nav-item dropdown"><a
@@ -112,6 +114,7 @@ background-size: cover;*/
 						<form action="/historical-search-results">
 							<div id="secondForm" class="collapse card card-body">
 								<h5>Search for All Elections</h5>
+								<h6>(Due to a bug of the FEC, the search results for the 2,000 election are not available.)</h6>
 								<hr>
 								<div class="form-group">
 									<label for="form1city">City</label><input type="text"
@@ -193,6 +196,7 @@ background-size: cover;*/
 						<form action="/location-search-results">
 							<div id="thirdForm" class="collapse card card-body">
 								<h5>Search by Individual Elections</h5>
+								<h6>(Due to a bug of the FEC, the search results for the 2,000 election are not available.)</h6>
 								<hr>
 								<div class="form-group">
 									<label for="form2city">City</label><input type="text"
@@ -287,6 +291,7 @@ background-size: cover;*/
 						<form action="compare-location-search-results">
 							<div id="fourthForm" class="collapse card card-body">
 								<h5>Compare Cities for Individual Elections</h5>
+								<h6>(Due to a bug of the FEC, the search results for the 2,000 election are not available.)</h6>
 								<hr>
 								<div class="form-row">
 									<div class="col">
