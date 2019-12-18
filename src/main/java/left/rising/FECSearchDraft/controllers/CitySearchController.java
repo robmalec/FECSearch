@@ -119,7 +119,6 @@ public class CitySearchController {
 		int bigWinElectionYear = 0;
 		ArrayList<Integer> winRand = new ArrayList<>();
 		ArrayList<Integer> loseRand = new ArrayList<>();
-
 		// Populate the winnerDonations and loserDonations arrays with all donations to
 		// the winning and losing candidates from the selected location
 		for (CandidateCommitteeId c : ccr.findByCandidateAssigned(winner)) {
@@ -133,6 +132,35 @@ public class CitySearchController {
 			}
 		}
 
+System.out.println("Windonsize " + winnerDonations.size());
+System.out.println("Losdonsize " + loserDonations.size());
+		ArrayList<DBDonation> winToRemove = new ArrayList<>();
+		ArrayList<DBDonation> loseToRemove = new ArrayList<>();
+		if (winnerDonations.size() > 1) {
+			for (DBDonation d : winnerDonations) {
+				if (d.getContributionReceiptAmount() != 0.0) {
+					winToRemove.add(d);
+				}
+			}
+			
+			if (winToRemove.size() != 0) {
+				winnerDonations = winToRemove;
+			}
+		}
+		if (loserDonations.size() > 1) {
+			for (DBDonation d : loserDonations) {
+				if (d.getContributionReceiptAmount() != 0.0) {
+					loseToRemove.add(d);
+				}
+			}
+			if (loseToRemove.size() != 0) {
+				loserDonations = loseToRemove;
+			}
+		}
+
+		
+		System.out.println("Windonsize " + winnerDonations.size());
+		System.out.println("Losdonsize " + loserDonations.size());
 		// Gather the total number of winner and loser donations
 		numWinnerDonations = winnerDonations.size();
 		numLoserDonations = loserDonations.size();
@@ -159,8 +187,7 @@ public class CitySearchController {
 		// Begin traversing through the array of winnerDonations to record information
 		// about the donations. If winnerDonationScatterData exceeds 5500 characters,
 		// break the loop.
-		for (winnerIndex = 0; winnerIndex < winnerDonations.size()
-				&& winnerDonationScatterData.length() <= 5500; winnerIndex++) {
+		for (winnerIndex = 0; winnerIndex < winnerDonations.size(); winnerIndex++) {
 
 			// Add donation amount to winner_total_donations
 			winner_total_donations += winnerDonations.get(winnerIndex).getContributionReceiptAmount();
@@ -197,21 +224,8 @@ public class CitySearchController {
 			}
 		}
 
-		// If the previous loop was broken before reaching the end of the
-		// winnerDonations
-		// array, then continue traversing through the array to record donation data.
-		// However, the data will no longer be added to the scatter chart displayed in
-		// the view.
-		for (int i = winnerIndex; i < winnerDonations.size(); i++) {
-			winner_total_donations += winnerDonations.get(i).getContributionReceiptAmount();
-			if (winnerDonations.get(i).getContributionReceiptAmount() > largest_winning_donation) {
-				largest_winning_donation = winnerDonations.get(i).getContributionReceiptAmount();
-			}
-		}
-
 		// Perform the same tasks for the loser donations
-		for (loserIndex = 0; loserIndex < loserDonations.size()
-				&& loserDonationScatterData.length() <= 5500; loserIndex++) {
+		for (loserIndex = 0; loserIndex < loserDonations.size(); loserIndex++) {
 			loser_total_donations += loserDonations.get(loserIndex).getContributionReceiptAmount();
 			if (loserDonations.get(loserIndex).getContributionReceiptAmount() > largest_losing_donation) {
 				largest_losing_donation = loserDonations.get(loserIndex).getContributionReceiptAmount();
@@ -234,13 +248,6 @@ public class CitySearchController {
 
 		}
 
-		for (int i = loserIndex; i < loserDonations.size(); i++) {
-			loser_total_donations += loserDonations.get(i).getContributionReceiptAmount();
-			if (loserDonations.get(i).getContributionReceiptAmount() > largest_losing_donation) {
-				largest_losing_donation = loserDonations.get(i).getContributionReceiptAmount();
-			}
-		}
-
 		// Remove a comma from the end of the winner and loser scatter data strings.
 		// Catches index out of bound in the event the string was empty.
 		try {
@@ -253,6 +260,10 @@ public class CitySearchController {
 		}
 
 		// Calculate average winning and losing donations
+		System.out.println(winner_total_donations);
+		System.out.println(winnerDonations.size());
+		System.out.println(loser_total_donations);
+		System.out.println(loserDonations.size());
 		double avg_winning_donation = winner_total_donations / winnerDonations.size();
 		double avg_losing_donation = loser_total_donations / loserDonations.size();
 		// Construct a LocationSearchResult object using the data gathered and return it
@@ -391,12 +402,12 @@ public class CitySearchController {
 		}
 		String location = city + ", " + state;
 		String majorityDonationName = "";
-		if (lsr.getNumWinnerDonations() > lsr.getNumLoserDonations()) {
+		if (lsr.getWinnerTotalDonations() > lsr.getLoserTotalDonations()) {
 			majorityDonationName = lsr.getWinnerName();
 		} else {
 			majorityDonationName = lsr.getLoserName();
 		}
-		
+
 		ModelAndView mv = new ModelAndView("location-search-results");
 		if (elr.findByElectionYear(electionYear).get(0).getWinningParty().equals(PoliticalParty.DEMOCRAT)) {
 			mv.addObject("winnerColor", "#0071cd");
@@ -455,7 +466,7 @@ public class CitySearchController {
 		} catch (ArithmeticException e) {
 			percentState = 0;
 		}
-System.out.println(losName);
+		System.out.println(losName);
 		// For the recipient of the largest total donations, calculate the percentage of
 		// donations all states that came from this city
 		double allStateTot = 0;
