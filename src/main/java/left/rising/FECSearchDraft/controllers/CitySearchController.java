@@ -132,8 +132,8 @@ public class CitySearchController {
 			}
 		}
 
-System.out.println("Windonsize " + winnerDonations.size());
-System.out.println("Losdonsize " + loserDonations.size());
+		System.out.println("Windonsize " + winnerDonations.size());
+		System.out.println("Losdonsize " + loserDonations.size());
 		ArrayList<DBDonation> winToRemove = new ArrayList<>();
 		ArrayList<DBDonation> loseToRemove = new ArrayList<>();
 		if (winnerDonations.size() > 1) {
@@ -142,7 +142,7 @@ System.out.println("Losdonsize " + loserDonations.size());
 					winToRemove.add(d);
 				}
 			}
-			
+
 			if (winToRemove.size() != 0) {
 				winnerDonations = winToRemove;
 			}
@@ -158,7 +158,6 @@ System.out.println("Losdonsize " + loserDonations.size());
 			}
 		}
 
-		
 		System.out.println("Windonsize " + winnerDonations.size());
 		System.out.println("Losdonsize " + loserDonations.size());
 		// Gather the total number of winner and loser donations
@@ -885,7 +884,6 @@ System.out.println("Losdonsize " + loserDonations.size());
 			// Add average losing donation to be used in calculation after the loop
 			// concludes
 			averageLosingDonation += l.getAvgLosingDonation();
-
 			// Check for largest winning donation and largest total donations to the winner
 			if (l.getWinnerTotalDonations() > largestTotalWinnerDonations) {
 				largestTotalWinnerDonations = l.getWinnerTotalDonations();
@@ -895,6 +893,12 @@ System.out.println("Losdonsize " + loserDonations.size());
 			if (l.getLargestWinningDonation() > largestWinningDonation) {
 				largestWinningDonation = l.getLargestWinningDonation();
 				biggestWinnerRecipient = l.getWinnerName();
+			}
+			
+			if (l.getLoserTotalDonations() > largestTotalWinnerDonations) {
+				largestTotalWinnerDonations = l.getLoserTotalDonations();
+				bigWinElectionYear = l.getElectionYear();
+				largestTotalWinnerName = l.getLoserName();
 			}
 			// Add average winning donation to be used in calculation after the loop
 			// concludes
