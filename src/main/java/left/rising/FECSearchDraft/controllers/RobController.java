@@ -1,20 +1,17 @@
-package left.rising.FECSearchDraft.controllers;
+zpackage left.rising.FECSearchDraft.controllers;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -190,8 +187,17 @@ public class RobController {
 			System.out.println("Committee ID: " + c.getId() + " Associated candidate: "
 					+ c.getCandidate_assigned().getName() + " in year: " + c.getElection_year());
 		}
+		
+		int beginYear = 1980;
+		mv.addObject("beginYear", beginYear);
+		
+		int endYear = 2019;
+		mv.addObject("endYear", endYear);
+		
+		String stateName = sRepo.findByStateCode(stateCode).get(0).getStateName();
+		mv.addObject("stateName", stateName);
 
-		if (fundsFromThisState.size() == 0) {
+		if ((fundsFromThisState.size() == 0) || (beginYear != 1980)) {
 			// Running this code if there isn't any per-state search data saved in our DB
 			HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 			ResponseEntity<StateScheduleAResults> respEnt;
@@ -219,11 +225,8 @@ public class RobController {
 
 			String url = "";
 
-			String stateName = sRepo.findByStateCode(stateCode).get(0).getStateName();
-			mv.addObject("stateName", stateName);
-			
 			StateScheduleAResults results = null;
-
+			
 			// going through our list of candidate committee IDs
 			for (CandidateCommitteeId c : comIDList) {
 				
@@ -249,8 +252,8 @@ public class RobController {
 
 					
 
-					Boolean resultIsValidElectionYear = (((r.getCycle() % 4) == 0) && (r.getCycle() >= 1980)
-							&& (r.getCycle() < 2020));
+					Boolean resultIsValidElectionYear = (((r.getCycle() % 4) == 0) && (r.getCycle() >= beginYear)
+							&& (r.getCycle() < endYear));
 
 					if (resultIsValidElectionYear) {
 						ElResult thisResult = getResultOfYear(r.getCycle());
@@ -260,10 +263,6 @@ public class RobController {
 						Boolean candidateIsWinnerOrLoser = ((thisCand.getId() == thisResult.getWinnerId())
 								|| (thisCand.getId() == thisResult.getLoserId()));
 						if (candidateIsWinnerOrLoser) {
-							System.out.println("Year: " + r.getCycle());
-							System.out.println("Candidate name: " + getCandidateData(thisCand.getId()).getName());
-
-
 							int posOfCandInList = listContainsCandidateInYear(fundsFromThisState, thisCand.getId(),
 									r.getCycle());
 							if (posOfCandInList == -1) {
@@ -280,6 +279,7 @@ public class RobController {
 			}
 			
 			// Finally saving everything to the DB
+			if((beginYear == 1980) && (endYear == 2019))
 			for (CandFundsPerState c : fundsFromThisState) {
 				cfpsRepo.save(c);
 			}
@@ -338,23 +338,24 @@ public class RobController {
 		}
 
 		// Sorting array of per-candidate state fundraising numbers
-
+		
+		
 		mv.addObject("candFundsList", candFundsArr);
-		mv.addObject("totalWinningFunds", removeScientificNotation(totalWinningFunds));
-		mv.addObject("totalLosingFunds", removeScientificNotation(totalLosingFunds));
-		mv.addObject("totalFunds", removeScientificNotation(totalFunds));
+		mv.addObject("totalWinningFunds", formatDollarAmount(totalWinningFunds));
+		mv.addObject("totalLosingFunds", formatDollarAmount(totalLosingFunds));
+		mv.addObject("totalFunds", formatDollarAmount(totalFunds));
 
 		mv.addObject("bmw", getCandidateData(bmw.getCandId()));
-		mv.addObject("bmwBudget", removeScientificNotation(bmw.getFunds()));
+		mv.addObject("bmwBudget", formatDollarAmount(bmw.getFunds()));
 
 		mv.addObject("bml", getCandidateData(bml.getCandId()));
-		mv.addObject("bmlBudget", removeScientificNotation(bml.getFunds()));
+		mv.addObject("bmlBudget", formatDollarAmount(bml.getFunds()));
 
 		mv.addObject("smw", getCandidateData(smw.getCandId()));
-		mv.addObject("smwBudget", removeScientificNotation(smw.getFunds()));
+		mv.addObject("smwBudget", formatDollarAmount(smw.getFunds()));
 
 		mv.addObject("sml", getCandidateData(sml.getCandId()));
-		mv.addObject("smlBudget", removeScientificNotation(sml.getFunds()));
+		mv.addObject("smlBudget", formatDollarAmount(sml.getFunds()));
 
 		return mv;
 	}
@@ -378,14 +379,16 @@ public class RobController {
 			return null;
 		}
 	}
-
-	public String removeScientificNotation(double input) {
-		String output = String.format("%20.0f", input);
-		return output;
+	
+	/*
+	 * Removes scientific notation and adds commas to make monetary amounts more readable
+	 */
+	public String formatDollarAmount(double input) {
+		return String.format("%,20.0f", input);
 	}
 
 	public Object[] getCandidateInfo(int candId, double budget, int year) {
-		return new Object[] { getCandidateData(candId).getName(), removeScientificNotation(budget), year };
+		return new Object[] { getCandidateData(candId).getName(), formatDollarAmount(budget), year };
 	}
 
 	public CandidateData getCandidateData(int candId) {

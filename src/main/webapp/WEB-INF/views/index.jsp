@@ -47,6 +47,14 @@ background-size: cover;*/
 <body>
 	<div class="container" id="container">
 		<br>
+
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item active" aria-current="page"><a href="#">Home</a></li>
+				<li class="breadcrumb-item"><a href="http://localhost:8080/about">About</a></li>
+			</ol>
+		</nav>
+		<br>
 		<div class="row">
 			<div class="col-lg-12 text-center pagetitle">
 				<h1>Follow the $</h1>
@@ -178,9 +186,7 @@ background-size: cover;*/
 										<option value="MP">Northern Mariana Islands</option>
 										<option value="PR">Puerto Rico</option>
 										<option value="VI">Virgin Islands</option>
-									</select>
-									<br>
-									<input type="Submit" class="btn btn-dark">
+									</select> <br> <input type="Submit" class="btn btn-dark">
 								</div>
 							</div>
 
@@ -197,8 +203,8 @@ background-size: cover;*/
 								</div>
 								<div class="form-group">
 
-									<label for="form2state">State</label> <select
-										name="state" class="form-control" id="form2state">
+									<label for="form2state">State</label> <select name="state"
+										class="form-control" id="form2state">
 
 										<option value="AL">Alabama</option>
 										<option value="AK">Alaska</option>
@@ -440,7 +446,8 @@ background-size: cover;*/
 										<div class="form-group">
 
 											<label for="form3electionYear">Election Year</label> <select
-												class="form-control" name="electionYear" id="form3electionYear">
+												class="form-control" name="electionYear"
+												id="form3electionYear">
 
 												<option>1980</option>
 												<option>1984</option>
