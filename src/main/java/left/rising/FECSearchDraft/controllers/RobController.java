@@ -368,7 +368,6 @@ public class RobController {
 	@RequestMapping("load-custom-data")
 	public ModelAndView loadCustomData(String filePath) {
 		//Clearing out data from previous load
-		System.out.println(testing);
 		
 		dataMap = new ArrayList<>();
 		catIndexMap = new HashMap<>();
