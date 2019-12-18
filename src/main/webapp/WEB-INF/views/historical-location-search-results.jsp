@@ -92,7 +92,7 @@
 			style="border-bottom: solid 2pt; border-top: solid 2pt;">
 			<div class="col-lg-12 text-center">
 				<br>
-				<h3>Total Contributions</h3>
+				<h3>Top Fundraiser</h3>
 				<br>
 			</div>
 		</div>
@@ -101,7 +101,7 @@
 				<br>
 				<div class="row">
 					<div class="col-lg-12">
-						<h4>${largest_total_winner_recipient}</h4>
+						<h2>${largest_total_winner_recipient}</h2>
 						<img src="${urls.get(largest_total_winner_recipient)}"
 							style="max-height: 200px;">
 					</div>
