@@ -396,9 +396,7 @@ public class CitySearchController {
 		} else {
 			majorityDonationName = lsr.getLoserName();
 		}
-
-		System.out.println(
-				"Winnersize: " + lsr.getWinnerDonations().size() + " LoserSize: " + lsr.getLoserDonations().size());
+		
 		ModelAndView mv = new ModelAndView("location-search-results");
 		if (elr.findByElectionYear(electionYear).get(0).getWinningParty().equals(PoliticalParty.DEMOCRAT)) {
 			mv.addObject("winnerColor", "#0071cd");
@@ -429,6 +427,8 @@ public class CitySearchController {
 		double avgLoseDon = 0;
 		double bigLoseDon = 0;
 		String losName = "";
+		System.out.println(lsr.getWinnerName());
+		System.out.println(majorityDonationName);
 		try {
 			if (lsr.getWinnerName().equals(majorityDonationName)) {
 				percentState = (new BigDecimal(lsr.getWinnerTotalDonations()).divide(new BigDecimal(stateTot), 4,
@@ -455,7 +455,7 @@ public class CitySearchController {
 		} catch (ArithmeticException e) {
 			percentState = 0;
 		}
-
+System.out.println(losName);
 		// For the recipient of the largest total donations, calculate the percentage of
 		// donations all states that came from this city
 		double allStateTot = 0;

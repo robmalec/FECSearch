@@ -415,13 +415,10 @@
 			};</script>
 <script src="usmap.js"></script>
 
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-	crossorigin="anonymous">
-
-<link rel="stylesheet" href="location-result-style.css"
-	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+<link
+	href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/litera/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-pLgJ8jZ4aoPja/9zBSujjzs7QbkTKvKw1+zfKuumQF9U+TH3xv09UUsRI52fS+A6"
 	crossorigin="anonymous">
 <style type="text/css">
 .tt_sm {
@@ -507,13 +504,11 @@
 		<br>
 		<div class="row">
 			<div class="col-lg-12">
-				<h4>
+				<h5>
 					Hover over any of the states and U.S. territories in the map below
 					to see details about the top fundraiser among the 2020
-					primary candidates (including Democrats, Republicans, and several other candidates).<br>
-					<br>Scroll down below the map to explore more detailed
-					information for each state and territory.
-				</h4>
+					primary candidates (including Democrats, Republicans, and other parties).
+				</h5>
 				<br>
 			</div>
 		</div>
