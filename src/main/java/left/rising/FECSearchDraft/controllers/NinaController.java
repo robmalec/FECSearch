@@ -14,9 +14,14 @@ public class NinaController {
 	}
 	
 	@RequestMapping("about")
-	public ModelAndView formDeets() {
+	public ModelAndView aboutPage() {
 
 		return new ModelAndView("about", "p", "");
+	}
+	
+	@RequestMapping("contact")
+	public ModelAndView contactPage() {
+		return new ModelAndView("contact");
 	}
 	
 //	@RequestMapping("about") 
