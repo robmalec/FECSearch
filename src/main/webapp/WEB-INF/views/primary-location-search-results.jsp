@@ -257,7 +257,7 @@
 			type : 'scatter',
 			data : {
 				datasets : [ {
-					label : 'Donations to ${majname} (Date, Amount)', // Name the series
+					label : "Donations to ${majname} (Date, Amount)", // Name the series
 					data : data1, // Specify the data values array          
 					backgroundColor : '#0071cd', // Add custom color background (Points and Fill)
 				}]

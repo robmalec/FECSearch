@@ -31,7 +31,7 @@
 		<div class="row" style="border-bottom: 2pt solid;">
 			<div class="col-lg-12 text-center">
 				<br>
-				<h3>The majority of donors in ${location} supported:</h3>
+				<h3>The highest number of contributions from ${city} went to:</h3>
 				<br>
 			</div>
 		</div>
@@ -39,19 +39,48 @@
 		<div class="row">
 			<div class="col-lg-6 text-center">
 				<button class="btn btn-dark" type="button" data-toggle="collapse"
-					data-target="#collapse1" aria-expanded="false"
-					aria-controls="collapse1">
-					<h4>${total_winners}</h4>
-					<h6>Elected Presidents</h6>
+					data-target="#collapseWinners" aria-expanded="false"
+					aria-controls="collapseWinners">
+					<c:if test="${total_winners != 1}">
+						<h4>${total_winners}</h4>
+						<h6>Elected Presidents</h6>
+					</c:if>
+					<c:if test="${total_winners == 1}">
+						<h4>${total_winners}</h4>
+						<h6>Elected President</h6>
+					</c:if>
 				</button>
 			</div>
 			<div class="col-lg-6 text-center">
 				<button class="btn btn-dark" type="button" data-toggle="collapse"
-					data-target="#collapse2" aria-expanded="false"
-					aria-controls="collapse2">
+					data-target="#collapseLosers" aria-expanded="false"
+					aria-controls="collapseLosers">
 					<h4>${total_losers}</h4>
-					<h6>Losing Candidates</h6>
+					<c:if test="${total_losers != 1 }">
+						<h6>Losing Candidates</h6>
+					</c:if>
+					<c:if test="${total_losers == 1 }">
+						<h6>Losing Candidate</h6>
+					</c:if>
 				</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6 text-center">
+				<div class="collapse" id="collapseWinners">
+					<br>
+					<c:forEach var="r" items="${winnerNames}" varStatus="i">
+						<h6>${i.count}. ${r}</h6>
+					</c:forEach>
+				</div>
+			</div>
+			<div class="col-lg-6 text-center">
+				<div class="collapse" id="collapseLosers">
+					<br>
+					<c:forEach var="r" items="${loserNames}" varStatus="i">
+						<h6>${i.count}. ${r}</h6>
+					</c:forEach>
+				</div>
 			</div>
 		</div>
 		<br>
@@ -59,15 +88,15 @@
 			style="border-bottom: solid 2pt; border-top: solid 2pt;">
 			<div class="col-lg-12 text-center">
 				<br>
-				<h3>Total Donations</h3>
+				<h3>Total Contributions</h3>
 				<br>
 			</div>
 		</div>
 		<div class="row" style="border-bottom: 2pt solid;">
-			<div class="col-lg-3  text-center" style="border-right: 2pt solid;">
+			<div class="col-lg-2  text-center align-self-center">
 				<br>
 				<div class="row">
-					<div class="col-lg-12  align-self-center">
+					<div class="col-lg-12">
 						<h4>${largest_total_winner_recipient}</h4>
 						<img src="${urls.get(largest_total_winner_recipient)}"
 							style="max-height: 200px;">
@@ -75,21 +104,22 @@
 				</div>
 				<br>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-lg-6"
+				style="border-left: 2pt solid; border-right: 2pt solid;">
 				<div class="row">
 					<div class="col-lg-12">
 						<br>
 						<h5>${largest_total_winner_recipient}
-							raised <strong>$${largest_winner_total}</strong> in ${location}
+							raised <strong>$${largest_winner_total}</strong> in ${city}
 							during the ${bigWinElectionYear} election cycle.
 						</h5>
 						<p>That was the highest total amount of funds raised for any
 							winning presidential candidate in this city between 1980 and
-							2016. Those donations accounted for Percent of
-							${largest_total_winner_recipient}'s total donations from ${state}
-							for the ${bigWinElectionYear} cycle, and 2Percent of their
-							donations nationwide.</p>
-						<h6>Click any of the buttons below to see the total donations
+							2016. Those contributions accounted for ${winnerPercentState} of
+							${largest_total_winner_recipient}'s total funds raised in this
+							state for the ${bigWinElectionYear} cycle, and
+							${winnerPercentAllStates} of their funds raised nationwide.</p>
+						<h6>Click any of the buttons below to see the total contributions
 							to winning and losing candidates from this city for other
 							election cycles.</h6>
 						<c:forEach var="r" items="${results}" varStatus="i">
@@ -109,13 +139,13 @@
 							<c:if test="${r.getElectionYear() != bigWinElectionYear}">
 								<div class="collapse" id="collapseWinYear${i.count}">
 									<div class="row">
-										<div class="col-lg-6">
+										<div class="col-sm-6">
 											<h5>${r.getWinnerName()}</h5>
 											<h6>$${String.format("%,.2f",r.getWinnerTotalDonations())}</h6>
 											<img src="${urls.get(r.getWinnerName())}"
 												style="max-height: 200px;">
 										</div>
-										<div class="col-lg-6">
+										<div class="col-sm-6">
 											<h5>${r.getLoserName()}</h5>
 											<h6>$${String.format("%,.2f",r.getLoserTotalDonations())}</h6>
 											<img src="${urls.get(r.getLoserName())}"
@@ -129,13 +159,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-3" style="border-left: 2pt solid;">
+			<div class="col-lg-4 align-self-center">
 				<br>
-				<div class="row">
-					<div class="col-lg-12 text-center align-self-center">
-						<canvas id="myChart" width="100%" height="200 px"></canvas>
-					</div>
-				</div>
+				<canvas id="myChart" style="max-width: 100%; max-height: 200px;"></canvas>
 				<br>
 			</div>
 		</div>
@@ -147,34 +173,28 @@
 			</div>
 		</div>
 		<div class="row" style="border-bottom: 2pt solid;">
-			<div class="col-lg-12">
+			<div class="col-lg-8" style="border-right: 2pt solid;">
+			<br>
+				<h6>
+					The average contribution made to winning candidates in ${city}  was<strong>$${avg_winning_donation}</strong>, while
+					the average contribution to losing candidates was <strong>$${avg_losing_donation}</strong>.
+				</h6>
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">${highestAvgDonationRecipient}'s contributions in ${highAvgYear} were the highest on average ($${String.format("%,.2f", highestAvgDonation)}).</li>
+					<li class="list-group-item">${lowestAvgDonationRecipient}'s contributions in ${lowAvgYear} were the lowest on average ($${String.format("%,.2f", lowestAvgDonation)}).</li>
+					<li class="list-group-item">${partyHigherAvg}</li>
+					<li class="list-group-item">Porta ac consectetur ac</li>
+					<li class="list-group-item">Vestibulum at eros</li>
+				</ul>
 				<br>
-				<div class="row">
-					<div class="col-lg-8" style="border-right: 2pt solid;">
-						<h6>
-							On average, donations made from ${location} to winning
-							presidential candidates were <strong>$${avg_winning_donation}</strong>,
-							while donations to losing candidates were <strong>$${avg_losing_donation}</strong>.
-						</h6>
-						<ul class="list-group list-group-flush">
-							<li class="list-group-item">HighestAvgCand had the largest
-								average donation ($money).</li>
-							<li class="list-group-item">LowestAvgCand had the lowest
-								average donation ($money.)</li>
-							<li class="list-group-item">Party candidates have typically
-								received higher average donations than OtherParty candidates,
-								except for the elections in ElectionYear[].</li>
-							<li class="list-group-item">Porta ac consectetur ac</li>
-							<li class="list-group-item">Vestibulum at eros</li>
-						</ul>
-					</div>
-					<div class="col-lg-4">
-						<canvas id="avgChart" width="400" height="400"></canvas>
-					</div>
-				</div>
+			</div>
+			<div class="col-lg-4 align-self-center">
+			<br>
+				<canvas id="avgChart" style="max-width: 100%; max-height: 300 px;"></canvas>
 				<br>
 			</div>
 		</div>
+		<!-- 
 		<div class="row" style="border-bottom: 2pt solid;">
 			<div class="col-lg-12 text-center">
 				<br>
@@ -231,7 +251,7 @@
 				<br>
 			</div>
 		</div>
-
+ -->
 	</div>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -251,7 +271,7 @@
 			}
 			
 			var myChart = new Chart(ctx, {
-				type : 'horizontalBar',
+				type : 'bar',
 				
 				data : {
 					labels : [${electionYears}],
@@ -276,18 +296,17 @@
 					legend : {display:false},
 					scales : {
 						yAxes : [ {
-							ticks : {
-								display:false,
-								beginAtZero : true
-							}
-						} ],
-						xAxes : [{
-							offset: false,
 							ticks: {
 								beginAtZero:true,
 								 callback: function(value, index, values) {
 						                return '$' + value;
 						            }
+							}
+						} ],
+						xAxes : [{
+							ticks : {
+								display:false,
+								beginAtZero : true
 							}
 						}]
 					}
