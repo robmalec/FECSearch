@@ -368,7 +368,6 @@ public class RobController {
 	@RequestMapping("load-custom-data")
 	public ModelAndView loadCustomData(String filePath) {
 		//Clearing out data from previous load
-		HashMap<String,String> testing = sRepo.getAllProperties("MI");
 		System.out.println(testing);
 		
 		dataMap = new ArrayList<>();
@@ -477,7 +476,6 @@ public class RobController {
 		String stateName = "";
 		String data = "";
 		
-		System.out.println(sRepo.getAllProperties("MI"));
 		
 		int catIndex = catIndexMap.get(categories);
 		
