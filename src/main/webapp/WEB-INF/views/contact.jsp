@@ -7,39 +7,60 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-#scontainer {
-justify-content-center;
+#scontainer {justify-content-center;
+	
 }
 </style>
 <link
-	href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/simplex/bootstrap.min.css"
+	href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/litera/bootstrap.min.css"
 	rel="stylesheet"
-	integrity="sha384-cRAmF0wErT4D9dEBc36qB6pVu+KmLh516IoGWD/Gfm6FicBbyDuHgS4jmkQB8u1a"
+	integrity="sha384-pLgJ8jZ4aoPja/9zBSujjzs7QbkTKvKw1+zfKuumQF9U+TH3xv09UUsRI52fS+A6"
 	crossorigin="anonymous">
 </head>
 <body>
 
-	<div class="container" id="container">
-	<div class="header" id="header">
-	<h2>Contact Us</h2>
-	</div>
-	<br>
-	
 
-	<h4><strong>Rob Malecki</strong></h4>
+	<div class="container text-center" id="container">
+		<div class="header" id="header">
 
-	<h6>email</h6>
-	<h6>github</h6>
+			<br>
+			<h2>
+				<strong>Contact Us</strong>
+			</h2>
+<ul class="nav justify-content-center">
 
-	<h4><strong>Adam Depollo</strong></h4>
+		<li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+		<li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+		<li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+	</ul>
+		</div>
+		<br> <br>
 
-	<h6>email</h6>
-	<h6>github</h6>
 
-	<h4><strong>Nina Mills</strong></h4>
+		<h4>
+			<strong>Rob Malecki</strong>
+		</h4>
 
-	<h6>email</h6>
-	<h6>github</h6>
+		<h6>robmalec@umich.edu</h6>
+		<a href="https://github.com/robmalec"><img src="file:///Users/ninamills/eclipse-workspace-2/FinalProjectElectionData/src/main/resources/GitHub-Mark.png"></a>
+		<br>
+		<br>
+		<h4>
+			<strong>Adam Depollo</strong>
+		</h4>
+
+		<h6>adamdepollo@gmail.com</h6>
+		<a href="https://github.com/adamdepollo"><img src="file:///Users/ninamills/eclipse-workspace-2/FinalProjectElectionData/src/main/resources/GitHub-Mark.png"></a>
+		<h6>github</h6>
+		<br>
+
+		<h4>
+			<strong>Nina Mills</strong>
+		</h4>
+
+		<h6>ninacmills@gmail.com</h6>
+		<a href="https://github.com/ninavi0let"><img src="file:///Users/ninamills/eclipse-workspace-2/FinalProjectElectionData/src/main/resources/GitHub-Mark.png"></a>
+		
 	</div>
 
 </body>
