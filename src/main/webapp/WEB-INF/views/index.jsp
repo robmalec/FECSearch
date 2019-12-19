@@ -569,7 +569,7 @@ background-size: cover;*/
 			var stateCodeArr = stateCodes.split(" ");
 			var opacityArr = stateOpacities.split(" ");
 			//Variable for maximum opacity, if we set this to 1.0 it blocks out the entire map underneath the state data polygons
-			const maxOpacity = parseFloat(0.6);
+			const maxOpacity = parseFloat(1.3);
 			//running through every state ID and requesting data on its borders from OpenStreetMap API
 			for (var i = 0; i < idArr.length; i++) {
 				const thisId = idArr[i].toString();
@@ -623,7 +623,7 @@ background-size: cover;*/
 							strokeOpacity : (maxOpacity * thisOpacity),
 							strokeWeight : 1,
 							fillColor : '#ff00fb',
-							fillOpacity : (maxOpacity * thisOpacity)
+							fillOpacity : (maxOpacity * (thisOpacity-0.4))
 						});
 						//Adding wrapper variable to map
 						thisPoly.setMap(map);
