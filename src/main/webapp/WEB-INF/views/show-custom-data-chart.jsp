@@ -6,6 +6,11 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Data viewer</title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/litera/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-pLgJ8jZ4aoPja/9zBSujjzs7QbkTKvKw1+zfKuumQF9U+TH3xv09UUsRI52fS+A6"
+	crossorigin="anonymous">
 </head>
 <body>
 	<h1>
@@ -29,11 +34,19 @@
 			maintainAspectRatio : false, // Add to prevent default behaviour of full-width/height
 			scales : {
 				xAxes : [ {
+					scaleLabel:{
+						display:true,
+						labelString:'Winning candidates\' share of each state\'s total presidential donations, %',
+					},
 					ticks : {
 						beginAtZero : false,
 					}
 				} ],
 				yAxes : [ {
+					scaleLabel:{
+						display:true,
+						labelString:'${category}',
+					},
 					ticks:{
 						beginAtZero: false,
 					}
