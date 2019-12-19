@@ -28,7 +28,7 @@ p {
 }
 
 #c2 {
-color: grey;
+	color: grey;
 }
 </style>
 <link
@@ -36,8 +36,8 @@ color: grey;
 	rel="stylesheet"
 	integrity="sha384-pLgJ8jZ4aoPja/9zBSujjzs7QbkTKvKw1+zfKuumQF9U+TH3xv09UUsRI52fS+A6"
 	crossorigin="anonymous">
-	
-	
+
+
 </head>
 <body>
 
@@ -46,77 +46,117 @@ color: grey;
 	info about us including github repos -->
 
 
-	<ul class="nav justify-content-center">
-
-		<li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-		<li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-		<li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+	<ul class="nav nav-tabs bg-dark navbar-dark">
+		<li class="nav-item"><a class="nav-link active" href="#"><strong>About</strong></a></li>
+		<li class="nav-item"><a class="nav-link" href="/"
+			style="color: white;">Home</a></li>
+		<li class="nav-item"><a class="nav-link" href="/contact"
+			style="color: white;">Contact</a></li>
 	</ul>
-	<br>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 text-center pagetitle">
+				<br>
+				<h3>About</h3>
+				<br>
 
-	<div class="row">
-		<div class="col-lg-12 text-center pagetitle">
-			<h3>About</h3>
-			<br>
-
+			</div>
 		</div>
-		<div class="col-lg-12 text-center pagetitle">
+		<div class="row">
+			<div class="col-lg-12pagetitle">
 
-			<p style="text-align: center;">Our data comes from individual
-				contributions donated to candidates for primary and presidential elections, excluding PAC’s and Super PAC’s. We
-				have pulled data from the FEC, Google Maps, and Open Street Map
-				APIs to create algorithms that allow us to find the highest and
-				lowest amount of donations by state, city, candidate, and election
-				years.</p>
+				<p>
+					Our goal at <strong>Follow the $</strong> is to help shed light on
+					the often murky world of campaign finance, and hopefully find some
+					interesting facts in the process.
+				</p>
+				<p>
+					The data displayed in this website is derived from Schedule A
+					individual contributions filed with the Federal Election Commission
+					(FEC). For more information on the various types of contributions
+					filed with the FEC, <a
+						href="https://www.fec.gov/help-candidates-and-committees/candidate-taking-receipts/types-contributions/">click
+						here</a>. We pull the data directly from the FEC using their <a
+						href="https://api.open.fec.gov/developers/">OpenFEC API</a>.
+				</p>
+				<p>
+					Additionally, this website uses the Google Maps and Open Street Map
+					APIs to generate the interactive search map visible on our
+					homepage. The charts displaying contribution data are generated
+					using <a href="https://www.chartjs.org/">Chart.js</a>, and the
+					interactive U.S. map displaying 2020 primary state-level data was
+					created using the interactive JavaScript map available on <a
+						href="https://simplemaps.com/">SimpleMaps.com</a>.
+				</p>
 
-			<br>
+				<br>
+			</div>
 		</div>
-	</div>
-
-	<div id="carouselExampleIndicators" class="carousel slide"
-		data-ride="carousel">
-		<ol class="carousel-indicators">
-			<li data-target="#carouselExampleIndicators" data-slide-to="0"
-				class="active"></li>
-			<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-			<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-		</ol>
-		<div class="carousel-inner">
-			<div class="carousel-item active">
-					<img src="https://images.unsplash.com/photo-1447727214830-cbcbf097b52c?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max" height="500" width="850" alt="First Slide">
-					<div class="carousel-caption d-none d-md-block">
-						<h5>Donations</h5>
-						<p>Presidential and Primary</p>
+		<div class="row">
+			<div class="col-lg-12 text-center">
+				<h5>
+					Check out all of our code on <a
+						href="https://github.com/adamdepollo/FinalProjectElectionData">GitHub</a>
+				</h5>
+			</div>
+		</div>
+		<!-- 
+		<div class="row">
+			<div class="col-lg-12">
+				<div id="carouselExampleIndicators" class="carousel slide"
+					data-ride="carousel">
+					<ol class="carousel-indicators">
+						<li data-target="#carouselExampleIndicators" data-slide-to="0"
+							class="active"></li>
+						<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+						<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+					</ol>
+					<div class="carousel-inner">
+						<div class="carousel-item active">
+							<img
+								src="https://images.unsplash.com/photo-1447727214830-cbcbf097b52c?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max"
+								height="500" width="850" alt="First Slide">
+							<div class="carousel-caption d-none d-md-block">
+								<h5>Donations</h5>
+								<p>Presidential and Primary</p>
+							</div>
+						</div>
+						<div class="carousel-item" id="c2">
+							<img
+								src="https://images.unsplash.com/photo-1500496733680-167c3db69389?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1239&q=80"
+								height="500" width="850" alt="Second Slide">
+							<div class="carousel-caption d-none d-md-block">
+								<h5>Following the $</h5>
+								<p>Precise and fun calculations</p>
+							</div>
+						</div>
+						<div class="carousel-item">
+							<img
+								src="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80"
+								height="500" width="850" alt="Third Slide">
+							<div class="carousel-caption d-none d-md-block">
+								<h5>Cities across the US</h5>
+								<p>Find any location you'd like</p>
+							</div>
+						</div>
+					</div>
+					<a class="carousel-control-prev" href="#carouselExampleIndicators"
+						role="button" data-slide="prev"> <span
+						class="carousel-control-prev-icon" aria-hidden="true"></span> <span
+						class="sr-only">Previous</span>
+					</a> <a class="carousel-control-next" href="#carouselExampleIndicators"
+						role="button" data-slide="next"> <span
+						class="carousel-control-next-icon" aria-hidden="true"></span> <span
+						class="sr-only">Next</span>
+					</a>
 				</div>
 			</div>
-			<div class="carousel-item" id="c2">
-				<img src="https://images.unsplash.com/photo-1500496733680-167c3db69389?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1239&q=80" height="500" width="850" alt="Second Slide">
-					<div class="carousel-caption d-none d-md-block">
-						<h5>Following the $</h5>
-						<p>Precise and fun calculations</p>
-				</div>
-				</div>
-			<div class="carousel-item">
-				<img src="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80" height="500" width="850" alt="Third Slide">
-					<div class="carousel-caption d-none d-md-block">
-						<h5>Cities across the US</h5>
-						<p>Find any location you'd like</p>
-				</div>
-			</div>
-		</div> 
-		<a class="carousel-control-prev" href="#carouselExampleIndicators"
-			role="button" data-slide="prev"> <span
-			class="carousel-control-prev-icon" aria-hidden="true"></span> <span
-			class="sr-only">Previous</span>
-		</a> <a class="carousel-control-next" href="#carouselExampleIndicators"
-			role="button" data-slide="next"> <span
-			class="carousel-control-next-icon" aria-hidden="true"></span> <span
-			class="sr-only">Next</span>
-		</a>
+		</div>
+		 -->
 	</div>
 
-	
-	
+
+
 	<script
 		src="https://maps.googleapis.com/maps/api/js?key=${apiKey }&callback=initMap"
 		async defer></script>

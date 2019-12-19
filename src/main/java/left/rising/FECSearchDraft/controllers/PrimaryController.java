@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,6 +90,50 @@ public class PrimaryController {
 			"West Virginia", "Wisconsin", "Wyoming", "Guam", "Armed Forces Americas", "American Samoa",
 			"Armed Forces Europe", "Armed Forces Pacific", "Foreign Countries", "Northern Mariana Islands",
 			"Puerto Rico", "Virgin Islands" };
+
+	private String[] populousCities = { "New York NY", "Los Angeles CA", "Chicago IL", "Houston TX", "Phoenix AZ",
+			"Philadelphia PA", "San Antonio TX", "San Diego CA", "Dallas TX", "San Jose CA", "Austin TX",
+			"Jacksonville FL", "Fort Worth TX", "Columbus OH", "San Francisco CA", "Charlotte NC", "Indianapolis IN",
+			"Seattle WA", "Denver CO", "Washington DC", "Boston MA", "El Paso TX", "Detroit MI", "Nashville TN",
+			"Portland OR", "Memphis TN", "Oklahoma City OK", "Las Vegas NV", "Louisville KY", "Baltimore MD",
+			"Milwaukee WI", "Albuguerque NM", "Tucson AZ", "Fresno CA", "Mesa AZ", "Sacramento CA", "Atlanta GA",
+			"Kansas City MO", "Colorado Springs CO", "Miami FL", "Raleigh NC", "Omaha NE", "Long Beach CA",
+			"Virginia Beach VA", "Oakland CA", "Minneapolis MN", "Tulsa OK", "Arlington TX", "Tampa FL",
+			"New Orleans LA", "Wichita KS", "Cleveland OH", "Bakersfield CA", "Aurora CO", "Anaheim CA", "Honolulu HI",
+			"Santa Ana CA", "Riverside CA", "Corpus Christi TX", "Lexington KY", "Stockton CA", "Henderson NV",
+			"Saint Paul MN", "St. Louis MO", "Cincinnati OH", "Pittsburgh PA", "Greensboro NC", "Anchorage AK",
+			"Plano TX", "Lincoln NE", "Orlando FL", "Irvine CA", "Newark NJ", "Toledo OH", "Durham NC",
+			"Chula Vista CA", "Fort Wayne IN", "Jersey City NJ", "St. Petersburg FL", "Laredo TX", "Madison WI",
+			"Chandler AZ", "Buffalo NY", "Lubbock TX", "Scottsdale AZ", "Reno NV", "Glendale AZ", "Gilbert AZ",
+			"Winston-Salem NC", "North Las Vegas NV", "Norfolk VA", "Chesapeake VA", "Garland TX", "Irving TX",
+			"Hialeah FL", "Fremont CA", "Boise ID", "Richmond VA", "Baton Rouge LA", "Spokane WA", "Des Moines IA",
+			"Salt Lake City UT", "Montgomery AL", "Litte Rock AK", "Tallahassee FL", "Sioux Falls SD", "Providence RI",
+			"Salem OR", "Jackson MS" };
+
+	@RequestMapping("pull-cities")
+	public ModelAndView pullCities() {
+		for (CandidateData c : cdr.findAll())
+			if (c.getId() >= 19) {
+				for (String s : populousCities) {
+					String[] stuff = s.split(" ");
+					String state = stuff[stuff.length - 1];
+					String city = "";
+					if (stuff.length > 2) {
+						for (int i = 0; i < stuff.length - 1; i++) {
+							if (i != stuff.length - 2) {
+								city += stuff[i] + " ";
+							} else {
+								city += stuff[i];
+							}
+						}
+					} else {
+						city = stuff[0];
+					}
+					getPrimaryLocationSearchResult(city, state, c);
+				}
+			}
+		return new ModelAndView("index");
+	}
 
 	public PrimaryStateSearch getStateSearchResult(CandidateData c, String stateCode) {
 		String url = "";
@@ -194,7 +236,7 @@ public class PrimaryController {
 		System.out.println(candidate.getName());
 		double totalSumDonations = 0;
 
-		double totalNumDonations = 0;
+		int totalNumDonations = 0;
 
 		double avgDonation = 0;
 
@@ -234,13 +276,12 @@ public class PrimaryController {
 						+ donations.get(randomInteger).getContributionReceiptDate().substring(8, 10) + ", y:"
 						+ donations.get(randomInteger).getContributionReceiptAmount() + "},";
 			}
-		}/*
-		for (int i = index; i < donations.size(); i++) {
-			totalSumDonations += donations.get(index).getContributionReceiptAmount();
-			if (donations.get(index).getContributionReceiptAmount() > largestDonation) {
-				largestDonation = donations.get(index).getContributionReceiptAmount();
-			}
-		}*/
+		} /*
+			 * for (int i = index; i < donations.size(); i++) { totalSumDonations +=
+			 * donations.get(index).getContributionReceiptAmount(); if
+			 * (donations.get(index).getContributionReceiptAmount() > largestDonation) {
+			 * largestDonation = donations.get(index).getContributionReceiptAmount(); } }
+			 */
 		avgDonation = totalSumDonations / totalNumDonations;
 		System.out.println("TotalLocationDonations:" + new BigDecimal(totalSumDonations));
 		try {
@@ -282,7 +323,6 @@ public class PrimaryController {
 		for (int i = 19; i <= 52; i++) {
 			candidates.add(cdr.getCandidateDataFromID(i).get(0));
 		}
-		// System.out.println(candidates.get(0).getName());
 		for (CandidateData d : candidates) {
 			PrimaryCandidateLocationSearchInfo stateSearch = getPrimaryLocationSearchResult(city, state, d);
 			searches.add(stateSearch);
@@ -291,9 +331,12 @@ public class PrimaryController {
 		HashMap<String, String> colors = new HashMap<>();
 		HashMap<String, String> parties = new HashMap<>();
 		for (PrimaryCandidateLocationSearchInfo p : searches) {
+			if (p.getCandidateName().equals("Bernie Sanders")) {
+				System.out.println(p.getTotalSumDonations());
+			}
 			avgDonTot += (int) p.getAvgDonation();
 			totDon += p.getTotalSumDonations();
-			if ((int) p.getTotalNumDonations() > winner.getTotalNumDonations()) {
+			if ((int) p.getTotalSumDonations() > winner.getTotalSumDonations()) {
 				winner = p;
 			}
 			String url = "";
@@ -324,11 +367,11 @@ public class PrimaryController {
 				break;
 			}
 		}
-		System.out.println(winner.getPercentDonationsForState());
 		avgDon = avgDonTot / searches.size();
 		ModelAndView mv = new ModelAndView("primary-location-search-results");
 		mv.addObject("parties", parties);
 		mv.addObject("colors", colors);
+		mv.addObject("numWinDon", (int) winner.getTotalNumDonations());
 		mv.addObject("totDon", String.format("%,.2f", totDon));
 		mv.addObject("totWinDon", String.format("%,.2f", winner.getTotalSumDonations()));
 		mv.addObject("bigWinDon", String.format("%,.2f", winner.getLargestDonation()));
