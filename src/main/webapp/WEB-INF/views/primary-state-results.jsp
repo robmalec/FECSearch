@@ -489,16 +489,20 @@
 </head>
 <body>
 	<ul class="nav nav-tabs bg-dark navbar-dark">
-		<li class="nav-item"><a class="nav-link active" href="#">Active</a>
+		<li class="nav-item"><a class="nav-link active" href="#"><strong>2020 Primary: State Search</strong></a>
 		</li>
-		<li class="nav-item"><a class="nav-link" href="#"
-			style="color: white;">Link</a></li>
+		<li class="nav-item"><a class="nav-link" href="/"
+			style="color: white;">Home</a></li>
+			<li class="nav-item"><a class="nav-link" href="/about"
+			style="color: white;">About</a></li>
+			<li class="nav-item"><a class="nav-link" href="/contact"
+			style="color: white;">Contact</a></li>
 	</ul>
 	<div class="container">
 		<br>
 		<div class="row">
 			<div class="col-lg-12 text-center" id="title">
-				<h1>2020 Primary: Donations by State</h1>
+				<h1>2020 Primary: Contributions by State</h1>
 			</div>
 		</div>
 		<br>

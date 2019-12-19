@@ -20,6 +20,8 @@
 			style="color: white;">Home</a></li>
 			<li class="nav-item"><a class="nav-link" href="/about"
 			style="color: white;">About</a></li>
+			<li class="nav-item"><a class="nav-link" href="/contact"
+			style="color: white;">Contact</a></li>
 	</ul>
 
 	<div class="container">
@@ -90,7 +92,7 @@
 			style="border-bottom: solid 2pt; border-top: solid 2pt;">
 			<div class="col-lg-12 text-center">
 				<br>
-				<h3>Total Contributions</h3>
+				<h3>Top Fundraiser</h3>
 				<br>
 			</div>
 		</div>
@@ -99,7 +101,7 @@
 				<br>
 				<div class="row">
 					<div class="col-lg-12">
-						<h4>${largest_total_winner_recipient}</h4>
+						<h2>${largest_total_winner_recipient}</h2>
 						<img src="${urls.get(largest_total_winner_recipient)}"
 							style="max-height: 200px;">
 					</div>
@@ -178,15 +180,13 @@
 			<div class="col-lg-8" style="border-right: 2pt solid;">
 			<br>
 				<h6>
-					The average contribution made to winning candidates in ${city}  was<strong>$${avg_winning_donation}</strong>, while
+					The average contribution made to winning candidates in ${city}  was<strong> $${avg_winning_donation}</strong>, while
 					the average contribution to losing candidates was <strong>$${avg_losing_donation}</strong>.
 				</h6>
 				<ul class="list-group list-group-flush">
 					<li class="list-group-item">${highestAvgDonationRecipient}'s contributions in ${highAvgYear} were the highest on average ($${String.format("%,.2f", highestAvgDonation)}).</li>
 					<li class="list-group-item">${lowestAvgDonationRecipient}'s contributions in ${lowAvgYear} were the lowest on average ($${String.format("%,.2f", lowestAvgDonation)}).</li>
 					<li class="list-group-item">${partyHigherAvg}</li>
-					<li class="list-group-item">Porta ac consectetur ac</li>
-					<li class="list-group-item">Vestibulum at eros</li>
 				</ul>
 				<br>
 			</div>

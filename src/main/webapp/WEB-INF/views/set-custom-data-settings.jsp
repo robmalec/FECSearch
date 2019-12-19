@@ -10,8 +10,10 @@
 <body>
 <h1>Select a dataset to import:</h1>
 To load a data category, please click on it below:<br>
+
+
 <c:forEach var="cat" items="${categories }">
-<a href="/save-data-to-db?categories=${cat }">${cat }</a><br>
+<a href="/save-data-to-db?categories=${cat }&beginYear=${beginYear}&endYear=${endYear}">${cat }</a><br>
 </c:forEach>	
 
 
