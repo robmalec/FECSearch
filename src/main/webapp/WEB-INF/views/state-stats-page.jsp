@@ -6,6 +6,106 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Info for ${stateName }</title>
+<style>
+html, body{
+margin:0;
+padding: 0;
+}
+
+
+/* #h5 {
+	margin-top: 100px;
+	margin-bottom: 100px;
+	margin-right: 200px;
+	margin-left: 200px;
+} */
+ #left {
+margin-left: 20px;
+	text-align:center;
+	margin-top: 10px;
+margin-top: 97px; 
+	
+}
+.nav{
+
+background-color: lightgray;
+
+}
+
+.nav-link{
+color: white;
+}
+*a:hover{
+color: darkblue;
+}
+
+
+
+ tr{
+ 	height: 50px;
+ 	padding-top: 20px;
+ 	border-right: 2px solid black;
+ 	border-left: 2px solid black;
+ 	border-top: 2px solid black;
+ }
+ 
+ 
+ #right{
+ 	margin-left:-20px;
+ 	padding-left: 30px;
+ 	
+ 	
+ }
+ table{
+ margin-left: 20px;
+ }
+ 
+ b{
+	    font-size: 1.063rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #343a40;
+    text-align: center;
+    margin-left: 20px;
+   
+ }
+ .p{
+ 
+ 	border: 2px solid black;
+ 	margin-left: 20px;
+ }
+ .box{
+ border: 2px solid black;
+ margin-left: 20px;
+ }
+ td{
+ 	    font-size: 1.063rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #343a40;
+    text-align: left;
+    border-bottom: 2px solid black;
+    }
+    .presos{
+    font-size: 28px;
+    text-align:center;
+    margin-right: 20px;
+    padding-left: -30px;
+    }
+ a{
+ text-decoration: none;
+ text-emphasis: none;
+ 
+ }
+ h1{
+ color: darkred;
+ }
+ 
+ h6{
+ 	color: darkblue;
+ }
+
+</style>
 <link
 	href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/litera/bootstrap.min.css"
 	rel="stylesheet"
@@ -13,46 +113,61 @@
 	crossorigin="anonymous">
 </head>
 <body>
+
+<ul class="nav justify-content-center">
+
+		<li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+		<li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+		<li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+	</ul>
+	<br>
+	
 	<div class="row">
 		<div class="col-lg-12 text-center pagetitle">
-			<h1>Info for ${stateName } between ${beginYear } and ${endYear }:</h1>
+			<h1>${stateName } ${beginYear } - ${endYear }</h1>
+			
+			<h6><strong>${predictionScore }%</strong> of ${stateName }'s campaign donations
+				went to winning presidential candidates.</h6>
 			<br>
-			<h3>${predictionScore }% of ${stateName }'s campaign donations went to winning presidential candidates</h3>
 			<br>
 
 		</div>
 	</div>
+	<div class="fullContent">
 	<div class="row">
 		<div class="col-lg-6" id="left">
-			<b>Total funds raised:</b> $${totalFunds }<br>
-			<b>Total winning candidate funds raised:</b> $${totalWinningFunds }<br>
-			<b>Total losing  candidate funds raised:</b> $${totalLosingFunds }<br>
-			<b>Highest fundraising winner candidate:</b> ${bmw.getName() } with $${bmwBudget}<br>
-			<b>Biggest money loser candidate:</b> ${bml.getName() } with $${bmlBudget}<br>
-			<b>Smallest money winner candidate:</b> ${smw.getName() } with $${smwBudget}<br>
-			<b>Smallest money loser candidate:</b> ${sml.getName() } with $${smlBudget}<br>
+			<p class="box"><b>Total funds raised:</b> <br>$${totalFunds }<br> </p> 
+			<p class="box"><b>Total winning candidate funds raised:</b><br> $${totalWinningFunds }<br></p> 
+			<p class="box"><b>Total losing candidate funds raised:</b><br> $${totalLosingFunds }</p><br>
+			<p class="box"><b>Highest fundraising winner candidate:</b><br> ${bmw.getName() } with $${bmwBudget}</p><br>
+			<p class="box"><b>Biggest money loser candidate:</b><br> ${bml.getName() } with $${bmlBudget}</p><br> 
+			<p class="box"><b>Smallest money winner candidate:</b><br>${smw.getName() } with $${smwBudget}</p><br> 
+			<p class="box"><b>Smallest money loser candidate:</b><br> ${sml.getName() } with $${smlBudget}</p><br>
 		</div>
-		
+
 		<div class="col-lg-6" id="right">
-			<h2>Presidential candidates by fundraising numbers</h2>
+			<h2 class="presos">Presidential Candidates by Fundraising Numbers</h2>
 			<br>
 			<table>
 				<tr>
+				
 					<th>Candidate name</th>
 					<th>Campaign year</th>
 					<th>Funds raised in ${stateName }</th>
 				</tr>
 				<c:forEach var="cand" items="${candFundsList }">
 					<tr>
+					
 						<td>${cand[0]}</td>
 						<td>${cand[2] }</td>
 						<td>$${cand[1]}</td>
+						
 					</tr>
 				</c:forEach>
 			</table>
 		</div>
 	</div>
-
+</div>
 
 
 

@@ -26,7 +26,7 @@ public class PrimaryCandidateLocationSearchInfo {
 
 	private double totalSumDonations;
 
-	private double totalNumDonations;
+	private int totalNumDonations;
 
 	private double avgDonation;
 
@@ -47,7 +47,7 @@ public class PrimaryCandidateLocationSearchInfo {
 	}
 
 	public PrimaryCandidateLocationSearchInfo(String candidateName, String city,
-			String state, double totalSumDonations, double totalNumDonations, double avgDonation,
+			String state, double totalSumDonations, int totalNumDonations, double avgDonation,
 			double largestDonation, double percentDonationsForState, double percentTotalDonations, String donationScatterData) {
 		super();
 		this.candidateName = candidateName;
@@ -102,11 +102,11 @@ public class PrimaryCandidateLocationSearchInfo {
 		this.totalSumDonations = totalSumDonations;
 	}
 
-	public double getTotalNumDonations() {
+	public int getTotalNumDonations() {
 		return totalNumDonations;
 	}
 
-	public void setTotalNumDonations(double totalNumDonations) {
+	public void setTotalNumDonations(int totalNumDonations) {
 		this.totalNumDonations = totalNumDonations;
 	}
 

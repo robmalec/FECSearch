@@ -14,37 +14,38 @@
 </head>
 <body>
 	<ul class="nav nav-tabs bg-dark navbar-dark">
-		<li class="nav-item"><a class="nav-link active" href="#"><strong>2020 Primary: City Search</strong></a>
-		</li>
+		<li class="nav-item"><a class="nav-link active" href="#"><strong>2020
+					Primary: City Search</strong></a></li>
 		<li class="nav-item"><a class="nav-link" href="/"
 			style="color: white;">Home</a></li>
-			<li class="nav-item"><a class="nav-link" href="/about"
+		<li class="nav-item"><a class="nav-link" href="/about"
 			style="color: white;">About</a></li>
-			<li class="nav-item"><a class="nav-link" href="/contact"
+		<li class="nav-item"><a class="nav-link" href="/contact"
 			style="color: white;">Contact</a></li>
 	</ul>
 	<div class="container">
 		<br>
 		<div class="row" style="border-bottom: 2pt solid;">
 			<div class="col-lg-12 text-center">
-				<h1>${location}</h1>
+				<h1>2020 Primary Election: ${location}</h1>
 				<br>
 			</div>
 		</div>
 		<br>
 		<div class="row">
 			<div class="col-lg-12 text-center" style="border-bottom: 2pt solid;">
-				<h3>The majority of donations from ${location} went to:</h3>
+				<h3>Top Fundraiser</h3>
 				<br>
 			</div>
 		</div>
 		<div class="row" style="border-bottom: 2pt solid;">
-			<div class="col-lg-4 text-center align-self-center">
+			<div class="col-lg-3 text-center align-self-center">
 				<div class="row">
 					<div class="col-lg-12">
 						<h4>${majname}</h4>
 						<h6>(${parties.get(winner.getCandidateName())})</h6>
-						<img alt="" src="${urls.get(winner.getCandidateName())}" style="max-height: 200px;"> <br>
+						<img alt="" src="${urls.get(winner.getCandidateName())}"
+							style="max-height: 200px;"> <br>
 					</div>
 				</div>
 				<br>
@@ -58,20 +59,24 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-8" style="border-left: solid 2pt;">
+			<div class="col-lg-9" style="border-left: solid 2pt;">
 				<br>
 				<div class="row">
-					<div class="col-lg-4 text-center">
+					<div class="col-lg-3 text-center">
 						<h6>Total Donations:</h6>
 						<p>$${totWinDon}</p>
 					</div>
-					<div class="col-lg-4 text-center">
-						<h6>Largest Donation:</h6>
-						<p>$${bigWinDon}</p>
+					<div class="col-lg-3 text-center">
+						<h6>Number of Donations:</h6>
+						<p>${numWinDon}</p>
 					</div>
-					<div class="col-lg-4 text-center">
+					<div class="col-lg-3 text-center">
 						<h6>Average Donation:</h6>
 						<p>$${avgWinDon}</p>
+					</div>
+					<div class="col-lg-3 text-center">
+						<h6>Largest Donation:</h6>
+						<p>$${bigWinDon}</p>
 					</div>
 				</div>
 				<div class="row">
@@ -92,7 +97,9 @@
 		<div class="row">
 			<div class="col-lg-12 text-center">
 				<br>
-				<h6>Click any of the buttons below to view expanded information for the candidate. Click the button again to collapse the information again.</h6>
+				<h6>Click any of the buttons below to view expanded information
+					for the candidate. Click the button again to collapse the
+					information again.</h6>
 				<c:forEach var="r" items="${result}" varStatus="i">
 					<c:if test="${!r.getCandidateName().equals(majname)}">
 						<button class="btn btn-dark" type="button" data-toggle="collapse"
@@ -109,7 +116,7 @@
 			<c:if test="${!r.getCandidateName().equals(majname)}">
 				<div class="collapse" id="collapse${i.count}">
 					<div class="row" style="border-top: 2pt solid;">
-						<div class="col-lg-4 text-center align-self-center">
+						<div class="col-lg-3 text-center align-self-center">
 							<div class="row">
 								<div class="col-lg-12">
 									<h4>${r.getCandidateName()}</h4>
@@ -123,33 +130,49 @@
 								<div class="col-lg-12">
 									<p>
 										Donations from ${location} accounted for <strong>${String.format("%.2f", r.getPercentDonationsForState())}%</strong>
-										of the funds ${r.getCandidateName()} raised in this state, and <strong>${String.format("%.2f", r.getPercentTotalDonations())}%</strong>
+										of the funds ${r.getCandidateName()} raised in this state, and
+										<strong>${String.format("%.2f", r.getPercentTotalDonations())}%</strong>
 										of their total funds raised nationwide.
 									</p>
 								</div>
 							</div>
 						</div>
 
-						<div class="col-lg-8" style="border-left: solid 2pt;">
+						<div class="col-lg-9" style="border-left: solid 2pt;">
 							<br>
 							<div class="row">
-								<div class="col-lg-4 text-center">
+								<div class="col-lg-3 text-center">
 									<h6>Total Donations:</h6>
 									<p>$${String.format("%,.2f", r.getTotalSumDonations())}</p>
 								</div>
-								<div class="col-lg-4 text-center">
-									<h6>Largest Donation:</h6>
-									<p>$${String.format("%,.2f", r.getLargestDonation())}</p>
+								<div class="col-lg-3 text-center">
+									<h6>Number of Donation:</h6>
+									<c:if test="${r.getAvgDonation() != 0.0 }">
+										<p>${r.getTotalNumDonations()}</p>
+									</c:if>
+									<c:if test="${r.getAvgDonation() == 0.0 }">
+										<p>0</p>
+									</c:if>
 								</div>
-								<div class="col-lg-4 text-center">
+								<div class="col-lg-3 text-center">
 									<h6>Average Donation:</h6>
 									<p>$${String.format("%,.2f", r.getAvgDonation())}</p>
+								</div>
+								<div class="col-lg-3 text-center">
+									<h6>Largest Donation:</h6>
+									<p>$${String.format("%,.2f", r.getLargestDonation())}</p>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-12 text-center">
-									<canvas id="chart${i.count}" width="200px" height="100px"></canvas>
-									<br>
+									<c:if test="${r.getAvgDonation() != 0.0}">
+										<canvas id="chart${i.count}" width="200px" height="100px"></canvas>
+										<br>
+									</c:if>
+									<c:if test="${r.getAvgDonation() == 0.0}">
+									<br><br><br><br>
+										<h4>No donations to chart ...</h4>
+									</c:if>
 								</div>
 							</div>
 						</div>
