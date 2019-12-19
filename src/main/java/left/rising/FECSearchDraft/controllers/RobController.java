@@ -330,6 +330,9 @@ public class RobController {
 		mv.addObject("totalWinningFunds", formatDollarAmount(totalWinningFunds));
 		mv.addObject("totalLosingFunds", formatDollarAmount(totalLosingFunds));
 		mv.addObject("totalFunds", formatDollarAmount(totalFunds));
+		
+		double predictionScore = 100.0 * (totalWinningFunds/totalFunds);
+		mv.addObject("predictionScore", String.format("%2.2f", predictionScore));
 
 		mv.addObject("bmw", getCandidateData(bmw.getCandId()));
 		mv.addObject("bmwBudget", formatDollarAmount(bmw.getFunds()));
@@ -474,6 +477,8 @@ public class RobController {
 		//Iterating through the states
 		String scatterData = "";
 		
+		Boolean saveStateOpacity = ((cspRepo.findByCategory("predictionScore").size() == 0));
+		
 		for (State s : states) {
 			totalMoneyDonated = 0.0;
 			totalWinningMoneyDonated = 0.0;
@@ -505,6 +510,11 @@ public class RobController {
 			double pct = (totalWinningMoneyDonated/totalMoneyDonated);
 			scatterData += "{x:" + pct + ",y:" + cspRepo.getPropertyFromState(compCat, s.getStateCode()).get(0).getValue()
 					+ "}";
+			
+			//Code for calculating values for states' overall election prediction abilities
+			if (saveStateOpacity) {
+				cspRepo.save(new CustomStateProperty(s.getStateCode(), "predictionScore", pct));
+			}
 			if (s.getStateCode() != "PR") {
 				scatterData += ",";
 			}

@@ -16,7 +16,9 @@
 	<div class="row">
 		<div class="col-lg-12 text-center pagetitle">
 			<h1>Info for ${stateName } between ${beginYear } and ${endYear }:</h1>
-			<br> <br>
+			<br>
+			<h3>${predictionScore }% of ${stateName }'s campaign donations went to winning presidential candidates</h3>
+			<br>
 
 		</div>
 	</div>
