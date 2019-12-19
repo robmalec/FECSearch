@@ -345,9 +345,13 @@ public class RobController {
 
 		return mv;
 	}
+	@RequestMapping("show-load-custom-data-page")
+	public ModelAndView showLoadCustomDataPage(){
+		return new ModelAndView("load-custom-data");
+	}
 
 	@RequestMapping("load-custom-data")
-	public ModelAndView loadCustomData(String filePath) {
+	public ModelAndView loadCustomData(String filePath, int beginYear, int endYear) {
 		// Clearing out data from previous load
 
 		dataMap = new ArrayList<>();
@@ -359,10 +363,15 @@ public class RobController {
 		BufferedReader br = null;
 		try {
 			// Loading presidential election result data
-			br = new BufferedReader(new FileReader("nst-est2018-alldata.csv"));
+			System.out.println(filePath);
+
+			br = new BufferedReader(new FileReader(filePath));
 			String line = "";
 			ArrayList<String> thisLineList;
 			while ((line = br.readLine()) != null) {
+				System.out.println("Hello@");
+
+				System.out.println("Line: " + line);
 				thisLineList = new ArrayList<>();
 				for (String s : line.split(",")) {
 					thisLineList.add(s);
@@ -429,6 +438,7 @@ public class RobController {
 			return new ModelAndView("data-import-error");
 		}
 
+		//Getting arrayList of found data categories
 		ArrayList<String> categories;
 		if (verticalTable) {
 			categories = dataMap.get(0);
@@ -439,20 +449,21 @@ public class RobController {
 			}
 		}
 
+		//Saving indexes of these by name for easy retrieval after user has selected name of category they're saving
 		for (int i = 0; i < categories.size(); i++) {
 			catIndexMap.put(categories.get(i), i);
 		}
 
 		ModelAndView mv = new ModelAndView("set-custom-data-settings");
 		mv.addObject("categories", categories);
+		mv.addObject("beginYear",beginYear);
+		mv.addObject("endYear", endYear);
 
 		return mv;
 	}
 
 	@RequestMapping("calculate-prediction-rate-and-compare")
 	public ModelAndView calcPredictionRate(Integer beginYear, Integer endYear, String compCat) {
-		System.out.println("beginYear: " + beginYear);
-		System.out.println("endYear: " + endYear);
 		double totalMoneyDonated = 0.0;
 		double totalWinningMoneyDonated = 0.0;
 		
@@ -460,46 +471,52 @@ public class RobController {
 		ArrayList<Double> predictionRates = new ArrayList<>();
 		ElResult thisYearResult = null;
 		
+		//Iterating through the states
+		String scatterData = "";
+		
 		for (State s : states) {
 			totalMoneyDonated = 0.0;
 			totalWinningMoneyDonated = 0.0;
 			List<CandFundsPerState> candFundsList = cfpsRepo.findByStateCode(s.getStateCode());
-			// Get total amount of money donated by state within given time bounds
-			// Get total amount donated to the winning candidate
-			// Divide this by total amount
-			System.out.println(candFundsList);
+			//Iterating through each presidential candidate for this state
 			for (CandFundsPerState c : candFundsList) {
 				
-				double thisFunds = c.getFunds();
-				totalMoneyDonated += thisFunds;
+				//Adding money donated to total
+			
+				int year = c.getYear();
 				
-				thisYearResult = resRepo.findByElectionYear(c.getYear()).get(0);
-				if (c.getCandId() == thisYearResult.getWinnerId()) {
-					totalWinningMoneyDonated += thisFunds;
+				//Checking if this candidate ran in a year that qualifies for this query given bounds
+				if ((year >= beginYear) && (year <= endYear)) {
+					double thisFunds = c.getFunds();
+					
+					totalMoneyDonated += thisFunds;
+					
+					//Determining if this was a winning candidate and adding to totalWinningMoney if so
+					thisYearResult = resRepo.findByElectionYear(c.getYear()).get(0);
+					if (c.getCandId() == thisYearResult.getWinnerId()) {
+						totalWinningMoneyDonated += thisFunds;
+					}
+					
 				}
+				
 			}
 			
-			predictionRates.add(totalWinningMoneyDonated/totalMoneyDonated);
+			// Divide this by total amount
+			double pct = (totalWinningMoneyDonated/totalMoneyDonated);
+			scatterData += "{x:" + pct + ",y:" + cspRepo.getPropertyFromState(compCat, s.getStateCode()).get(0).getValue()
+					+ "}";
+			if (s.getStateCode() != "PR") {
+				scatterData += ",";
+			}
 
 		}
-		System.out.println(predictionRates);
 		ModelAndView mv = new ModelAndView("show-custom-data-chart");
 		
+		mv.addObject("category", compCat);
 		mv.addObject("beginYear",beginYear);
 		mv.addObject("endYear", endYear);
-		
-		mv.addObject("states",states);
-		mv.addObject("predictionRates", predictionRates);
-		
-		ArrayList<Double> customPropDataset = new ArrayList<Double>();
-		
-		//Loading custom properties for comparison
-		List<CustomStateProperty> customProps = cspRepo.findByCategory(compCat);
-		for (CustomStateProperty c : customProps) {
-			customPropDataset.add(c.getValue());
-		}
-		
-		mv.addObject("dataSet", customPropDataset);
+		mv.addObject("states",states);		
+		mv.addObject("scatterData", scatterData);
 		
 		return mv;
 	}
@@ -610,10 +627,11 @@ public class RobController {
 	}
 
 	@RequestMapping("save-data-to-db")
-	public ModelAndView saveDataToDb(String categories) {
+	public ModelAndView saveDataToDb(String categories, int beginYear, int endYear) {
+
 		String stateName = "";
 		String data = "";
-
+		
 		int catIndex = catIndexMap.get(categories);
 
 		for (String s : categories.split("&&")) {
@@ -622,20 +640,30 @@ public class RobController {
 				if (verticalTable) {
 					for (int i = scRow; i < dataMap.size(); i++) {
 						stateName = dataMap.get(i).get(scCol);
-						System.out.println(stateName);
+
+						if (stateName.length() != 2) {
+							System.out.println(stateName);
+							stateName = sRepo.findByStateName(stateName).get(0).getStateCode();
+						}
+						
 						data = dataMap.get(i).get(catIndex);
 						cspRepo.save(new CustomStateProperty(stateName, s, Double.valueOf(data)));
 					}
 				} else {
 					for (int i = scCol; i < dataMap.get(0).size(); i++) {
 						stateName = dataMap.get(scRow).get(i);
+						
+						if (stateName.length() != 2) {
+							stateName = sRepo.findByStateName(stateName).get(0).getStateCode();
+						}
+						
 						data = dataMap.get(catIndex).get(i);
 						cspRepo.save(new CustomStateProperty(stateName, s, Double.valueOf(data)));
 					}
 				}
 			}
 		}
-		ModelAndView mv = new ModelAndView("redirect:/");
+		ModelAndView mv = new ModelAndView("redirect:/calculate-prediction-rate-and-compare?beginYear=" + beginYear +"&endYear=2016&compCat=" + categories);
 		return mv;
 	}
 
