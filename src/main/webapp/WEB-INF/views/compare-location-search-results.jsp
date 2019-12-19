@@ -16,10 +16,14 @@
 </head>
 <body>
 	<ul class="nav nav-tabs bg-dark navbar-dark">
-		<li class="nav-item"><a class="nav-link active" href="#">Active</a>
+		<li class="nav-item"><a class="nav-link active" href="#"><strong>Presidential Election Search: City Comparison</strong></a>
 		</li>
-		<li class="nav-item"><a class="nav-link" href="#"
-			style="color: white;">Link</a></li>
+		<li class="nav-item"><a class="nav-link" href="/"
+			style="color: white;">Home</a></li>
+			<li class="nav-item"><a class="nav-link" href="/about"
+			style="color: white;">About</a></li>
+			<li class="nav-item"><a class="nav-link" href="/contact"
+			style="color: white;">Contact</a></li>
 	</ul>
 	<div class="container">
 		<br>

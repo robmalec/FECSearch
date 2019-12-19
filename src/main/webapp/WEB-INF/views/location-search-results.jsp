@@ -13,34 +13,37 @@
 	crossorigin="anonymous">
 </head>
 <body>
-<ul class="nav nav-tabs bg-dark navbar-dark">
-			<li class="nav-item"><a class="nav-link active" href="#">Active</a>
-			</li>
-			<li class="nav-item"><a class="nav-link" href="#"
-				style="color: white;">Link</a></li>
-		</ul>
+	<ul class="nav nav-tabs bg-dark navbar-dark">
+		<li class="nav-item"><a class="nav-link active" href="#"><strong>Presidential
+					Elections: City & Election Year Search</strong></a></li>
+		<li class="nav-item"><a class="nav-link" href="/"
+			style="color: white;">Home</a></li>
+			<li class="nav-item"><a class="nav-link" href="/about"
+			style="color: white;">About</a></li>
+			<li class="nav-item"><a class="nav-link" href="/contact"
+			style="color: white;">Contact</a></li>
+	</ul>
 	<div class="container">
-	<br>
+		<br>
 		<div class="row" style="border-bottom: 2pt solid;">
 			<div class="col-lg-12 text-center">
 				<h1>${location}</h1>
 				<br>
 			</div>
 		</div>
-		<br>
-		<div class="row">
-			<div class="col-lg-12 text-center" style="border-bottom: 2pt solid;">
-				<h3>In ${results.getElectionYear()}, the largest number of contributions went to:</h3>
-				<br>
-			</div>
-		</div>
 		<div class="row" style="border-bottom: 2pt solid;">
-			<div class="col-lg-4 text-center align-self-center">
+			<div class="col-lg-4 text-center">
+				<div class="row" style="border-bottom:2pt solid; margin-top:10pt;">
+					<div class="col-lg-12" style="margin-bottom: 10pt;">
+						<h3>Top Fundraiser</h3>
+					</div>
+				</div>
 				<div class="row">
-					<div class="col-lg-12">
-					<br>
-						<h4>${majname}</h4>
-						<img alt="" src="${urls.get(majname)}" style="max-height: 200px;"> <br>
+					<div class="col-lg-12  align-self-center">
+						<br>
+						<h1>${majname}</h1>
+						<img alt="" src="${urls.get(majname)}" style="max-height: 300px;">
+						<br>
 					</div>
 				</div>
 				<br>
@@ -56,103 +59,53 @@
 				</div>
 			</div>
 			<div class="col-lg-8" style="border-left: solid 2pt;">
-				<br>
-				<div class="row">
-					<div class="col-lg-4 text-center">
+				<div class="row"
+					style="border-bottom: solid 2pt;">
+					<div class="col-lg-12 text-center" style=" margin-top: 5pt;margin-bottom: 5pt;">
+						<h5>${majname}</h5>
+					</div>
+				</div>
+				<div class="row" style="border-bottom: 2pt solid;">
+					<div class="col-lg-4 text-center" style=" margin-top: 5pt;margin-bottom: 5pt;">
 						<h6>Total Donations:</h6>
 						<p>$${totWinDon}</p>
 					</div>
-					<div class="col-lg-4 text-center">
+					<div class="col-lg-4 text-center" style=" margin-top: 5pt;margin-bottom: 5pt;">
 						<h6>Largest Donation:</h6>
 						<p>$${bigWinDon}</p>
 					</div>
-					<div class="col-lg-4 text-center">
+					<div class="col-lg-4 text-center" style=" margin-top: 5pt;margin-bottom: 5pt;">
 						<h6>Average Donation:</h6>
 						<p>$${avgWinDon}</p>
 					</div>
 				</div>
+				<div class="row"
+					style="border-bottom: solid 2pt;">
+					<div class="col-lg-12 text-center" style=" margin-top: 5pt;margin-bottom: 5pt;">
+						<h5>${losName}</h5>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-4 text-center" style=" margin-top: 5pt;margin-bottom: 5pt;">
+						<h6>Total Donations:</h6>
+						<p>$${totLoseDon}</p>
+					</div>
+					<div class="col-lg-4 text-center" style=" margin-top: 5pt;margin-bottom: 5pt;">
+						<h6>Largest Donation:</h6>
+						<p>$${bigLoseDon}</p>
+					</div>
+					<div class="col-lg-4 text-center" style=" margin-top: 5pt;margin-bottom: 5pt;">
+						<h6>Average Donation:</h6>
+						<p>$${avgLoseDon}</p>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col-lg-12">
-						<canvas id="myChart" style="max-width:100%; max-height:300px;"></canvas>
+						<canvas id="myChart" style="max-width: 100%; max-height: 300px;"></canvas>
 						<br>
 					</div>
 				</div>
 			</div>
-		</div>
-		<br>
-		<div class="row">
-			<div class="col-lg-12 text-center">
-				<h1>${location}</h1>
-			</div>
-		</div>
-		<br>
-		<hr>
-		<div class="row">
-			<div class="col-lg-12 text-center">
-				<h3>The majority of donations from ${location} went to:</h3>
-			</div>
-		</div>
-		<hr>
-		<div class="row">
-			<div class="col-lg-12 text-center">
-				<h4>${majname}</h4>
-				<h6> in ${results.getElectionYear()}</h6>
-			</div>
-		</div>
-		<hr>
-		<div class="row">
-			<div class="col-lg-12 text-center">
-				<h3>Average Donations</h3>
-			</div>
-		</div>
-		<hr>
-		<div class="row">
-			<div class="col-lg-6 text-center">
-				<h6>To ${largest_total_winner_recipient}</h6>
-				<h4 class="win-lose-total">$${avg_winning_donation}</h4>
-			</div>
-			<div class="col-lg-6 text-center">
-				<h6>To ${largest_total_loser_recipient}</h6>
-				<h4 class="win-lose-total">$${avg_losing_donation}</h4>
-			</div>
-		</div>
-		<hr>
-		<div class="row">
-			<div class="col-lg-12 text-center">
-				<h3>Largest Individual Donations</h3>
-			</div>
-		</div>
-		<hr>
-		<div class="row">
-			<div class="col-lg-6 text-center">
-			<h6>To ${largest_total_winner_recipient}</h6>
-				<h4 class="win-lose-total">$${largest_winning_donation}</h4>
-			</div>
-			<div class="col-lg-6 text-center">
-			<h6>To ${largest_total_loser_recipient}</h6>
-				<h4 class="win-lose-total">$${largest_losing_donation}</h4>
-			</div>
-		</div>
-		<hr>
-		<div class="row">
-			<div class="col-lg-12 text-center">
-				<h3>Total Donations</h3>
-			</div>
-		</div>
-		<hr>
-		<div class="row">
-			<div class="col-lg-6 text-center">
-			<h6>To ${largest_total_winner_recipient}</h6>
-				<h4 class="win-lose-total">$${largest_winner_total}</h4>
-			</div>
-			<div class="col-lg-6 text-center">
-			<h6>To ${largest_total_loser_recipient}</h6>
-				<h4 class="win-lose-total">$${largest_loser_total}</h4>
-			</div>
-		</div>
-		<br>
-		<div class="col-lg-12">
-			<canvas id="myChart" width="100%" height="400px"></canvas>
 		</div>
 		<br>
 	</div>
