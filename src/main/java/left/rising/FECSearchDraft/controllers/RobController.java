@@ -191,7 +191,7 @@ public class RobController {
 		String stateName = sRepo.findByStateCode(stateCode).get(0).getStateName();
 		mv.addObject("stateName", stateName);
 
-		if ((fundsFromThisState.size() == 0) || (beginYear != 1980)) {
+		if (fundsFromThisState.size() == 0) {
 			// Running this code if there isn't any per-state search data saved in our DB
 			HttpEntity<String> httpEnt = new HttpEntity<>("parameters", getHeaders());
 			ResponseEntity<StateScheduleAResults> respEnt;
@@ -284,29 +284,36 @@ public class RobController {
 		Double totalFunds = 0.0;
 
 		Double thisCandFunds = 0.0;
+		ArrayList<Object[]> candFundsArr = new ArrayList<>();
 		for (CandFundsPerState c : fundsFromThisState) {
-			thisCandFunds = c.getFunds();
-			totalFunds += thisCandFunds;
-			String thisCandName = getCandidateData(c.getCandId()).getName();
+			if (yearIsWithinRange(c.getYear(),beginYear,endYear)) {
+				candFundsArr.add(getCandidateInfo(c.getCandId(),c.getFunds(),c.getYear()));
+				thisCandFunds = c.getFunds();
+				totalFunds += thisCandFunds;
+				String thisCandName = getCandidateData(c.getCandId()).getName();
 
-			ElResult result = getResultOfYear(c.getYear());
+				ElResult result = getResultOfYear(c.getYear());
 
-			// Determine if candidate is a winner or loser
-			if (c.getCandId() == result.getWinnerId()) {
-				totalWinningFunds += thisCandFunds;
-				if (thisCandFunds > bmw.getFunds()) {
-					bmw = c;
-				} else if (thisCandFunds < smw.getFunds()) {
-					smw = c;
-				}
-			} else if (c.getCandId() == result.getLoserId()) {
-				totalLosingFunds += thisCandFunds;
-				if (thisCandFunds > bml.getFunds()) {
-					bml = c;
-				} else if (thisCandFunds < sml.getFunds()) {
-					sml = c;
+				// Determine if candidate is a winner or loser
+				if (c.getCandId() == result.getWinnerId()) {
+					totalWinningFunds += thisCandFunds;
+					if (thisCandFunds > bmw.getFunds()) {
+						bmw = c;
+					}
+					if (thisCandFunds < smw.getFunds()) {
+						smw = c;
+					}
+				} else if (c.getCandId() == result.getLoserId()) {
+					totalLosingFunds += thisCandFunds;
+					if (thisCandFunds > bml.getFunds()) {
+						bml = c;
+					}
+					if (thisCandFunds < sml.getFunds()) {
+						sml = c;
+					}
 				}
 			}
+			
 		}
 
 		fundsFromThisState.sort(new Comparator<CandFundsPerState>() {
@@ -319,19 +326,15 @@ public class RobController {
 			}
 		});
 
-		ArrayList<Object[]> candFundsArr = new ArrayList<>();
-		for (CandFundsPerState c : fundsFromThisState) {
-			candFundsArr.add(getCandidateInfo(c.getCandId(), c.getFunds(), c.getYear()));
-		}
-
+		
 		// Sorting array of per-candidate state fundraising numbers
 
 		mv.addObject("candFundsList", candFundsArr);
 		mv.addObject("totalWinningFunds", formatDollarAmount(totalWinningFunds));
 		mv.addObject("totalLosingFunds", formatDollarAmount(totalLosingFunds));
 		mv.addObject("totalFunds", formatDollarAmount(totalFunds));
-		
-		double predictionScore = 100.0 * (totalWinningFunds/totalFunds);
+
+		double predictionScore = 100.0 * (totalWinningFunds / totalFunds);
 		mv.addObject("predictionScore", String.format("%2.2f", predictionScore));
 
 		mv.addObject("bmw", getCandidateData(bmw.getCandId()));
@@ -348,8 +351,9 @@ public class RobController {
 
 		return mv;
 	}
+
 	@RequestMapping("show-load-custom-data-page")
-	public ModelAndView showLoadCustomDataPage(){
+	public ModelAndView showLoadCustomDataPage() {
 		return new ModelAndView("load-custom-data");
 	}
 
@@ -441,7 +445,7 @@ public class RobController {
 			return new ModelAndView("data-import-error");
 		}
 
-		//Getting arrayList of found data categories
+		// Getting arrayList of found data categories
 		ArrayList<String> categories;
 		if (verticalTable) {
 			categories = dataMap.get(0);
@@ -452,14 +456,15 @@ public class RobController {
 			}
 		}
 
-		//Saving indexes of these by name for easy retrieval after user has selected name of category they're saving
+		// Saving indexes of these by name for easy retrieval after user has selected
+		// name of category they're saving
 		for (int i = 0; i < categories.size(); i++) {
 			catIndexMap.put(categories.get(i), i);
 		}
 
 		ModelAndView mv = new ModelAndView("set-custom-data-settings");
 		mv.addObject("categories", categories);
-		mv.addObject("beginYear",beginYear);
+		mv.addObject("beginYear", beginYear);
 		mv.addObject("endYear", endYear);
 
 		return mv;
@@ -469,49 +474,51 @@ public class RobController {
 	public ModelAndView calcPredictionRate(Integer beginYear, Integer endYear, String compCat) {
 		double totalMoneyDonated = 0.0;
 		double totalWinningMoneyDonated = 0.0;
-		
+
 		List<State> states = sRepo.findAll();
 		ArrayList<Double> predictionRates = new ArrayList<>();
 		ElResult thisYearResult = null;
-		
-		//Iterating through the states
+
+		// Iterating through the states
 		String scatterData = "";
-		
+
 		Boolean saveStateOpacity = ((cspRepo.findByCategory("predictionScore").size() == 0));
-		
+
 		for (State s : states) {
 			totalMoneyDonated = 0.0;
 			totalWinningMoneyDonated = 0.0;
 			List<CandFundsPerState> candFundsList = cfpsRepo.findByStateCode(s.getStateCode());
-			//Iterating through each presidential candidate for this state
+			// Iterating through each presidential candidate for this state
 			for (CandFundsPerState c : candFundsList) {
-				
-				//Adding money donated to total
-			
+
+				// Adding money donated to total
+
 				int year = c.getYear();
-				
-				//Checking if this candidate ran in a year that qualifies for this query given bounds
+
+				// Checking if this candidate ran in a year that qualifies for this query given
+				// bounds
 				if ((year >= beginYear) && (year <= endYear)) {
 					double thisFunds = c.getFunds();
-					
+
 					totalMoneyDonated += thisFunds;
-					
-					//Determining if this was a winning candidate and adding to totalWinningMoney if so
+
+					// Determining if this was a winning candidate and adding to totalWinningMoney
+					// if so
 					thisYearResult = resRepo.findByElectionYear(c.getYear()).get(0);
 					if (c.getCandId() == thisYearResult.getWinnerId()) {
 						totalWinningMoneyDonated += thisFunds;
 					}
-					
+
 				}
-				
+
 			}
-			
+
 			// Divide this by total amount
-			double pct = (totalWinningMoneyDonated/totalMoneyDonated);
-			scatterData += "{x:" + pct + ",y:" + cspRepo.getPropertyFromState(compCat, s.getStateCode()).get(0).getValue()
-					+ "}";
-			
-			//Code for calculating values for states' overall election prediction abilities
+			double pct = (totalWinningMoneyDonated / totalMoneyDonated);
+			scatterData += "{x:" + pct + ",y:"
+					+ cspRepo.getPropertyFromState(compCat, s.getStateCode()).get(0).getValue() + "}";
+
+			// Code for calculating values for states' overall election prediction abilities
 			if (saveStateOpacity) {
 				cspRepo.save(new CustomStateProperty(s.getStateCode(), "predictionScore", pct));
 			}
@@ -521,13 +528,13 @@ public class RobController {
 
 		}
 		ModelAndView mv = new ModelAndView("show-custom-data-chart");
-		
+
 		mv.addObject("category", compCat);
-		mv.addObject("beginYear",beginYear);
+		mv.addObject("beginYear", beginYear);
 		mv.addObject("endYear", endYear);
-		mv.addObject("states",states);		
+		mv.addObject("states", states);
 		mv.addObject("scatterData", scatterData);
-		
+
 		return mv;
 	}
 
@@ -641,7 +648,7 @@ public class RobController {
 
 		String stateName = "";
 		String data = "";
-		
+
 		int catIndex = catIndexMap.get(categories);
 
 		for (String s : categories.split("&&")) {
@@ -655,26 +662,31 @@ public class RobController {
 							System.out.println(stateName);
 							stateName = sRepo.findByStateName(stateName).get(0).getStateCode();
 						}
-						
+
 						data = dataMap.get(i).get(catIndex);
 						cspRepo.save(new CustomStateProperty(stateName, s, Double.valueOf(data)));
 					}
 				} else {
 					for (int i = scCol; i < dataMap.get(0).size(); i++) {
 						stateName = dataMap.get(scRow).get(i);
-						
+
 						if (stateName.length() != 2) {
 							stateName = sRepo.findByStateName(stateName).get(0).getStateCode();
 						}
-						
+
 						data = dataMap.get(catIndex).get(i);
 						cspRepo.save(new CustomStateProperty(stateName, s, Double.valueOf(data)));
 					}
 				}
 			}
 		}
-		ModelAndView mv = new ModelAndView("redirect:/calculate-prediction-rate-and-compare?beginYear=" + beginYear +"&endYear=2016&compCat=" + categories);
+		ModelAndView mv = new ModelAndView("redirect:/calculate-prediction-rate-and-compare?beginYear=" + beginYear
+				+ "&endYear=2016&compCat=" + categories);
 		return mv;
+	}
+
+	Boolean yearIsWithinRange(int year, int beginYear, int endYear) {
+		return ((year >= beginYear) && (year <= endYear));
 	}
 
 	Boolean getIsStateName(String input) {
