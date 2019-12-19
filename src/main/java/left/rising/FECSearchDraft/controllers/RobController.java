@@ -467,6 +467,7 @@ public class RobController {
 			// Get total amount of money donated by state within given time bounds
 			// Get total amount donated to the winning candidate
 			// Divide this by total amount
+			System.out.println(candFundsList);
 			for (CandFundsPerState c : candFundsList) {
 				
 				double thisFunds = c.getFunds();
@@ -481,6 +482,7 @@ public class RobController {
 			predictionRates.add(totalWinningMoneyDonated/totalMoneyDonated);
 
 		}
+		System.out.println(predictionRates);
 		ModelAndView mv = new ModelAndView("show-custom-data-chart");
 		
 		mv.addObject("beginYear",beginYear);
@@ -518,7 +520,7 @@ public class RobController {
 
 		for (State s : sRepo.findAll()) {
 
-			if (true/*cfpsRepo.findByStateCode(s.getStateCode()).size() == 0*/) {
+			if (cfpsRepo.findByStateCode(s.getStateCode()).size() == 0) {
 				String stateCode = s.getStateCode();
 				ArrayList<CandFundsPerState> fundsFromThisState = new ArrayList<>();
 
