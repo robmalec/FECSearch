@@ -676,20 +676,12 @@ public class RobController {
 	 * Returns true if input is either a state name or stateCode
 	 */
 	Boolean getIsStateName(String input) {
-		if (input.length() > 2) {
-			for (String s : PrimaryController.stateNames) {
-				if (input.equalsIgnoreCase(s)) {
-					return true;
-				}
-			}
-		} else {
-			for (String s : PrimaryController.stateCodes) {
-				if (input.equalsIgnoreCase(s)) {
-					return true;
-				}
+		String[] stateArr = (input.length() > 2) ? PrimaryController.stateNames : PrimaryController.stateCodes;
+		for (String s : stateArr) {
+			if (input.equalsIgnoreCase(s)) {
+				return true;
 			}
 		}
-
 		return false;
 	}
 
