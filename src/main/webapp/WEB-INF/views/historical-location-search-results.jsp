@@ -30,6 +30,7 @@
 			<div class="col-lg-12 text-center">
 				<h1>${location}</h1>
 				<br>
+				<h2>${percentWinnersSupported}% of the candidates supported by ${location} turned out to be winners.</h2>
 			</div>
 		</div>
 		<div class="row" style="border-bottom: 2pt solid;">
